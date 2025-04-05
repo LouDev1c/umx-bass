@@ -1,7 +1,5 @@
 from typing import Optional
-
 import torch
-import torchaudio
 from torch import Tensor
 import torch.nn as nn
 
@@ -9,6 +7,7 @@ try:
     from asteroid_filterbanks.enc_dec import Encoder, Decoder
     from asteroid_filterbanks.transforms import to_torchaudio, from_torchaudio
     from asteroid_filterbanks import torch_stft_fb
+    from torchaudio.functional import cqt, icqt
 except ImportError:
     pass
 
