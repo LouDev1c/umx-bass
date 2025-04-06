@@ -87,120 +87,40 @@ def main():
     parser = argparse.ArgumentParser(description="Open Unmix Trainer")
 
     # which target do we want to train?
-    parser.add_argument(
-        "--target",
-        type=str,
-        default="vocals",
-        help="target source (will be passed to the dataset)",
-    )
+    parser.add_argument("--target", type=str, default="vocals", help="target source (will be passed to the dataset)")
 
     # Dataset paramaters
-    parser.add_argument(
-        "--dataset",
-        type=str,
-        default="musdb",
-        choices=[
-            "musdb",
-            "aligned",
-            "sourcefolder",
-            "trackfolder_var",
-            "trackfolder_fix",
-        ],
-        help="Name of the dataset.",
-    )
+    parser.add_argument("--dataset", type=str, default="musdb", choices=["musdb", "aligned", "sourcefolder", "trackfolder_var", "trackfolder_fix"], help="Name of the dataset.")
     parser.add_argument("--root", type=str, help="root path of dataset")
-    parser.add_argument(
-        "--output",
-        type=str,
-        default="open-unmix",
-        help="provide output path base folder name",
-    )
+    parser.add_argument("--output", type=str, default="open-unmix", help="provide output path base folder name")
     parser.add_argument("--model", type=str, help="Name or path of pretrained model to fine-tune")
     parser.add_argument("--checkpoint", type=str, help="Path of checkpoint to resume training")
-    parser.add_argument(
-        "--audio-backend",
-        type=str,
-        default="soundfile",
-        help="Set torchaudio backend (`sox_io` or `soundfile`",
-    )
+    parser.add_argument("--audio-backend", type=str, default="soundfile", help="Set torchaudio backend (`sox_io` or `soundfile`")
 
     # Training Parameters
     parser.add_argument("--epochs", type=int, default=1000)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate, defaults to 1e-3")
-    parser.add_argument(
-        "--patience",
-        type=int,
-        default=140,
-        help="maximum number of train epochs (default: 140)",
-    )
-    parser.add_argument(
-        "--lr-decay-patience",
-        type=int,
-        default=80,
-        help="lr decay patience for plateau scheduler",
-    )
-    parser.add_argument(
-        "--lr-decay-gamma",
-        type=float,
-        default=0.3,
-        help="gamma of learning rate scheduler decay",
-    )
+    parser.add_argument("--patience", type=int, default=140, help="maximum number of train epochs (default: 140)")
+    parser.add_argument("--lr-decay-patience", type=int, default=80, help="lr decay patience for plateau scheduler")
+    parser.add_argument("--lr-decay-gamma", type=float, default=0.3, help="gamma of learning rate scheduler decay",)
     parser.add_argument("--weight-decay", type=float, default=0.00001, help="weight decay")
-    parser.add_argument(
-        "--seed", type=int, default=42, metavar="S", help="random seed (default: 42)"
-    )
+    parser.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
 
     # Model Parameters
-    parser.add_argument(
-        "--seq-dur",
-        type=float,
-        default=6.0,
-        help="Sequence duration in seconds" "value of <=0.0 will use full/variable length",
-    )
-    parser.add_argument(
-        "--unidirectional",
-        action="store_true",
-        default=False,
-        help="Use unidirectional LSTM",
-    )
+    parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
+    parser.add_argument("--unidirectional", action="store_true", default=False, help="Use unidirectional LSTM")
     parser.add_argument("--nfft", type=int, default=4096, help="STFT fft size and window size")
     parser.add_argument("--nhop", type=int, default=1024, help="STFT hop size")
-    parser.add_argument(
-        "--hidden-size",
-        type=int,
-        default=512,
-        help="hidden size parameter of bottleneck layers",
-    )
-    parser.add_argument(
-        "--bandwidth", type=int, default=16000, help="maximum model bandwidth in herz"
-    )
-    parser.add_argument(
-        "--nb-channels",
-        type=int,
-        default=2,
-        help="set number of channels for model (1, 2)",
-    )
-    parser.add_argument(
-        "--nb-workers", type=int, default=0, help="Number of workers for dataloader."
-    )
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        default=False,
-        help="Speed up training init for dev purposes",
-    )
+    parser.add_argument("--hidden-size", type=int, default=512, help="hidden size parameter of bottleneck layers")
+    parser.add_argument("--bandwidth", type=int, default=16000, help="maximum model bandwidth in herz")
+    parser.add_argument("--nb-channels", type=int, default=2, help="set number of channels for model (1, 2)")
+    parser.add_argument("--nb-workers", type=int, default=0, help="Number of workers for dataloader.")
+    parser.add_argument("--debug", action="store_true", default=False, help="Speed up training init for dev purposes")
 
     # Misc Parameters
-    parser.add_argument(
-        "--quiet",
-        action="store_true",
-        default=False,
-        help="less verbose during training",
-    )
-    parser.add_argument(
-        "--no-cuda", action="store_true", default=False, help="disables CUDA training"
-    )
+    parser.add_argument("--quiet", action="store_true", default=False, help="less verbose during training")
+    parser.add_argument("--no-cuda", action="store_true", default=False, help="disables CUDA training")
 
     args, _ = parser.parse_known_args()
 

@@ -10,87 +10,87 @@ from openunmix import utils
 import torch.hub
 
 
-def umxse_spec(targets=None, device="cpu", pretrained=True):
-    target_urls = {
-        "speech": "https://zenodo.org/records/3786908/files/speech_f5e0d9f9.pth",
-        "noise": "https://zenodo.org/records/3786908/files/noise_04a6fc2d.pth",
-    }
-
-    from .model import OpenUnmix
-
-    if targets is None:
-        targets = ["speech", "noise"]
-
-    # determine the maximum bin count for a 16khz bandwidth model
-    max_bin = utils.bandwidth_to_max_bin(rate=16000.0, n_fft=1024, bandwidth=16000)
-
-    # load open unmix models speech enhancement models
-    target_models = {}
-    for target in targets:
-        target_unmix = OpenUnmix(nb_bins=1024 // 2 + 1, nb_channels=1, hidden_size=256, max_bin=max_bin)
-
-        # enable centering of stft to minimize reconstruction error
-        if pretrained:
-            state_dict = torch.hub.load_state_dict_from_url(target_urls[target], map_location=device)
-            target_unmix.load_state_dict(state_dict, strict=False)
-            target_unmix.eval()
-
-        target_unmix.to(device)
-        target_models[target] = target_unmix
-    return target_models
-
-
-def umxse(targets=None, residual=False, niter=1, device="cpu", pretrained=True, filterbank="torch", wiener_win_len=300):
-    """
-    Open Unmix Speech Enhancemennt 1-channel BiLSTM Model
-    trained on the 28-speaker version of Voicebank+Demand
-    (Sampling rate: 16kHz)
-
-    Args:
-        targets (str): select the targets for the source to be separated.
-                a list including: ['speech', 'noise'].
-                If you don't pick them all, you probably want to
-                activate the `residual=True` option.
-                Defaults to all available targets per model.
-        pretrained (bool): If True, returns a model pre-trained on MUSDB18-HQ
-        residual (bool): if True, a "garbage" target is created
-        niter (int): the number of post-processingiterations, defaults to 0
-        device (str): selects device to be used for inference
-        wiener_win_len (int or None): The size of the excerpts
-            (number of frames) on which to apply filtering
-            independently. This means assuming time varying stereo models and
-            localization of sources.
-            None means not batching but using the whole signal. It comes at the
-            price of a much larger memory usage.
-        filterbank (str): filterbank implementation method.
-            Supported are `['torch', 'asteroid']`. `torch` is about 30% faster
-            compared to `asteroid` on large FFT sizes such as 4096. However,
-            asteroids stft can be exported to onnx, which makes is practical
-            for deployment.
-
-    Reference:
-        Uhlich, Stefan, & Mitsufuji, Yuki. (2020).
-        Open-Unmix for Speech Enhancement (UMX SE).
-        Zenodo. http://doi.org/10.5281/zenodo.3786908
-    """
-    from .model import Separator
-
-    target_models = umxse_spec(targets=targets, device=device, pretrained=pretrained)
-
-    separator = Separator(
-        target_models=target_models,
-        niter=niter,
-        residual=residual,
-        n_fft=1024,
-        n_hop=512,
-        nb_channels=1,
-        sample_rate=16000.0,
-        wiener_win_len=wiener_win_len,
-        filterbank=filterbank,
-    ).to(device)
-
-    return separator
-
+# def umxse_spec(targets=None, device="cpu", pretrained=True):
+#     target_urls = {
+#         "speech": "https://zenodo.org/records/3786908/files/speech_f5e0d9f9.pth",
+#         "noise": "https://zenodo.org/records/3786908/files/noise_04a6fc2d.pth",
+#     }
+#
+#     from .model import OpenUnmix
+#
+#     if targets is None:
+#         targets = ["speech", "noise"]
+#
+#     # determine the maximum bin count for a 16khz bandwidth model
+#     max_bin = utils.bandwidth_to_max_bin(rate=16000.0, n_fft=1024, bandwidth=16000)
+#
+#     # load open unmix models speech enhancement models
+#     target_models = {}
+#     for target in targets:
+#         target_unmix = OpenUnmix(nb_bins=1024 // 2 + 1, nb_channels=1, hidden_size=256, max_bin=max_bin)
+#
+#         # enable centering of stft to minimize reconstruction error
+#         if pretrained:
+#             state_dict = torch.hub.load_state_dict_from_url(target_urls[target], map_location=device)
+#             target_unmix.load_state_dict(state_dict, strict=False)
+#             target_unmix.eval()
+#
+#         target_unmix.to(device)
+#         target_models[target] = target_unmix
+#     return target_models
+#
+#
+# def umxse(targets=None, residual=False, niter=1, device="cpu", pretrained=True, filterbank="torch", wiener_win_len=300):
+#     """
+#     Open Unmix Speech Enhancemennt 1-channel BiLSTM Model
+#     trained on the 28-speaker version of Voicebank+Demand
+#     (Sampling rate: 16kHz)
+#
+#     Args:
+#         targets (str): select the targets for the source to be separated.
+#                 a list including: ['speech', 'noise'].
+#                 If you don't pick them all, you probably want to
+#                 activate the `residual=True` option.
+#                 Defaults to all available targets per model.
+#         pretrained (bool): If True, returns a model pre-trained on MUSDB18-HQ
+#         residual (bool): if True, a "garbage" target is created
+#         niter (int): the number of post-processingiterations, defaults to 0
+#         device (str): selects device to be used for inference
+#         wiener_win_len (int or None): The size of the excerpts
+#             (number of frames) on which to apply filtering
+#             independently. This means assuming time varying stereo models and
+#             localization of sources.
+#             None means not batching but using the whole signal. It comes at the
+#             price of a much larger memory usage.
+#         filterbank (str): filterbank implementation method.
+#             Supported are `['torch', 'asteroid']`. `torch` is about 30% faster
+#             compared to `asteroid` on large FFT sizes such as 4096. However,
+#             asteroids stft can be exported to onnx, which makes is practical
+#             for deployment.
+#
+#     Reference:
+#         Uhlich, Stefan, & Mitsufuji, Yuki. (2020).
+#         Open-Unmix for Speech Enhancement (UMX SE).
+#         Zenodo. http://doi.org/10.5281/zenodo.3786908
+#     """
+#     from .model import Separator
+#
+#     target_models = umxse_spec(targets=targets, device=device, pretrained=pretrained)
+#
+#     separator = Separator(
+#         target_models=target_models,
+#         niter=niter,
+#         residual=residual,
+#         n_fft=1024,
+#         n_hop=512,
+#         nb_channels=1,
+#         sample_rate=16000.0,
+#         wiener_win_len=wiener_win_len,
+#         filterbank=filterbank,
+#     ).to(device)
+#
+#     return separator
+#
 
 def umxhq_spec(targets=None, device="cpu", pretrained=True):
     from .model import OpenUnmix
