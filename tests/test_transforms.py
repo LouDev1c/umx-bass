@@ -24,15 +24,15 @@ def hop(request, nfft):
     return nfft // request.param
 
 # 新增CQT专用参数
-@pytest.fixture(params=[96])  # 默认84个频点（覆盖7个八度）
+@pytest.fixture(params=[84])  # 默认84个频点（覆盖7个八度）
 def n_bins(request):
     return request.param
 
-@pytest.fixture(params=[256])  # CQT专用hop_length
+@pytest.fixture(params=[512])  # CQT专用hop_length
 def cqt_hop_length(request):
     return request.param
 
-@pytest.fixture(params=[27.0])  # 最低频率（C2音符）
+@pytest.fixture(params=[32.7])  # 最低频率（C2音符）
 def f_min(request):
     return request.param
 

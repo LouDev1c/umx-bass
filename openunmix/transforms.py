@@ -2,8 +2,9 @@ from typing import Optional
 import torch
 from torch import Tensor
 import torch.nn as nn
-import librosa
-import numpy as np
+import torch.nn.functional as F
+import math
+from tqdm import tqdm
 
 try:
     from asteroid_filterbanks.enc_dec import Encoder, Decoder
@@ -14,34 +15,43 @@ except ImportError:
 
 
 def make_filterbanks(
-        n_fft: int = 4096,
-        n_hop: int = 1024,
-        center: bool = False,
-        sample_rate: float = 44100.0,
-        n_bins: int = 60,
-        hop_length: int = 512,
-        f_min: float = 30,
-        bins_per_octave: int = 12,
-        method: str = "stft"):
+    n_fft: int = 4096,
+    n_hop: int = 1024,
+    center: bool = False,
+    sample_rate: int = 44100,
+    n_bins: int = 84,
+    hop_length: int = 512,
+    f_min: float = 32.7,
+    bins_per_octave: int = 12,
+    method: str = "stft",
+    window_type: str = "hann",
+    n_iter: int = 32
+):
     window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
 
     if method == "stft":
+
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
-        encoder = Librosa_CQT(
+        encoder = CQT(
+            sr=sample_rate,
             n_bins=n_bins,
-            hop_length=hop_length,
-            f_min=f_min,
             bins_per_octave=bins_per_octave,
-            sample_rate=sample_rate
+            fmin=f_min,
+            n_hop=hop_length,  # 使用专门的hop_length参数
+            center=center,
+            window=window
         )
-        decoder = Librosa_ICQT(
+        decoder = ICQT(
+            sr=sample_rate,
             n_bins=n_bins,
-            hop_length=hop_length,
-            f_min=f_min,
             bins_per_octave=bins_per_octave,
-            sample_rate=sample_rate
+            fmin=f_min,
+            n_hop=hop_length,
+            center=center,
+            window=window,
+            n_iter=n_iter
         )
     elif method == "asteroid":
         fb = torch_stft_fb.TorchSTFTFB.from_torch_args(
@@ -184,170 +194,347 @@ class TorchISTFT(nn.Module):
         return y
 
 
-class Librosa_CQT(nn.Module):
-    """Constant-Q Transform using Librosa's implementation with PyTorch compatibility"""
+class CQT(nn.Module):
     def __init__(
             self,
-            n_bins: int = 84,                   # 涵盖音符数
-            hop_length: int = 512,
-            f_min: float = 32.7,                  # 贝斯E1对应的频率
-            bins_per_octave: int = 12,          # 每个八度的音符数量
-            sample_rate: float = 44100.0,
-            window: str = 'hann',
-            scale: bool = True,
-            pad_mode: str = 'constant',
-            norm: int = 1,
-            filter_scale: float = 0.8,
-            tuning: float = 0.0,
-            sparsity: float = 0.01,
-            res_type: str = 'soxr_hq',
-            return_complex: bool = True
+            sr: int,
+            n_bins=84,
+            bins_per_octave=12,
+            fmin: float = 32.7,
+            n_hop=512,
+            center: bool = False,
+            window: Optional[nn.Parameter] = None
     ):
-        super().__init__()
+        super(CQT, self).__init__()
+
+        self.sr = sr
         self.n_bins = n_bins
-        self.hop_length = hop_length
-        self.f_min = f_min
         self.bins_per_octave = bins_per_octave
-        self.sample_rate = sample_rate
-        self.window = window
-        self.scale = scale
-        self.pad_mode = pad_mode
-        self.norm = norm
-        self.filter_scale = filter_scale
-        self.tuning = tuning
-        self.sparsity = sparsity
-        self.res_type = res_type
-        self.return_complex = return_complex
+        self.fmin = fmin
+        self.n_hop = n_hop
+        self.center = center
 
-    def forward(self, x: Tensor) -> Tensor:
-        """Forward CQT transform similar to STFT output format
-        Args:
-            x (Tensor): Input audio of shape (batch, channels, time)
-        Returns:
-            Tensor: CQT coefficients of shape (batch, channels, bins, frames, complex=2)
-        """
-        # Convert to numpy array for librosa processing
-        device = x.device
-        batch, channels, _ = x.shape
+        # Calculate Q value
+        self.Q = 1.0 / (2.0 ** (1.0 / bins_per_octave) - 1.0)
 
-        # Reshape to process all channels at once (batch * channels, time)
-        x_flat = x.reshape(-1, x.size(-1)).detach().cpu().numpy()
+        # Compute the frequencies for each bin
+        self.frequencies = fmin * (2 ** (torch.arange(n_bins, dtype=torch.float32) / bins_per_octave))
 
-        # Pre-allocate output array
-        cqt_real_imag = np.zeros((len(x_flat), self.n_bins, (x.size(-1) // self.hop_length) + 1, 2),
-                                 dtype=np.float32)
+        # Compute the window lengths for each bin
+        self.window_lengths = torch.round(self.Q * sr / self.frequencies).long()
 
-        # Process all audios in parallel
-        for i, audio in enumerate(x_flat):
-            cqt = librosa.cqt(
-                audio,
-                sr=self.sample_rate,
-                hop_length=self.hop_length,
-                fmin=self.f_min,
-                n_bins=self.n_bins,
-                bins_per_octave=self.bins_per_octave,
-                window=self.window,
-                scale=self.scale,
-                pad_mode=self.pad_mode,
-                norm=self.norm,
-                filter_scale=self.filter_scale,
-                tuning=self.tuning,
-                sparsity=self.sparsity,
-                res_type=self.res_type
-            )
-            if self.return_complex:
-                cqt_real_imag[i, ..., 0] = cqt.real
-                cqt_real_imag[i, ..., 1] = cqt.imag
+        # Compute maximum window length for padding
+        self.max_window_length = self.window_lengths.max().item()
+
+        # Create window function
+        if window is None:
+            # We'll create windows on the fly in forward pass since they have different lengths
+            self.window = None
+        else:
+            self.window = window
+
+        # Pre-compute complex exponential terms
+        self.register_buffer('complex_exponentials', self._create_complex_exponentials())
+
+    def _create_complex_exponentials(self):
+        """Create complex exponential terms for each frequency bin."""
+        t = torch.arange(self.max_window_length, dtype=torch.float32)
+        t = t.unsqueeze(0)  # [1, max_window_length]
+
+        # Compute angular frequencies
+        omega = 2 * math.pi * self.frequencies.unsqueeze(1) / self.sr  # [n_bins, 1]
+
+        # Compute complex exponentials
+        complex_exp = torch.exp(-1j * omega * t)  # [n_bins, max_window_length]
+
+        return complex_exp
+
+    def _create_windows(self, device):
+        """Create windows for each frequency bin."""
+        windows = []
+        for length in self.window_lengths:
+            if self.window is None:
+                # Use Hann window
+                win = torch.hann_window(length, device=device)
             else:
-                mag, phase = librosa.magphase(cqt)
-                cqt_real_imag[i, ..., 0] = mag
-                cqt_real_imag[i, ..., 1] = phase
+                # Use provided window (truncated to appropriate length)
+                win = self.window[:length]
+            windows.append(win)
+        return windows
 
-        # Reshape back to (batch, channels, bins, frames, 2)
-        output = torch.from_numpy(cqt_real_imag).to(device)
-        return output.view(batch, channels, self.n_bins, -1, 2)
-
-
-class Librosa_ICQT(nn.Module):
-    """Inverse Constant-Q Transform using Librosa's implementation with PyTorch compatibility"""
-
-    def __init__(
-            self,
-            n_bins: int = 96,
-            hop_length: int = 256,
-            f_min: float = 27.0,
-            bins_per_octave: int = 12,
-            sample_rate: float = 44100.0,
-            window: str = 'hann',
-            scale: bool = True,
-            norm: int = 1,
-            filter_scale: int = 1,
-            tuning: float = 0.0,
-            sparsity: float = 0.01,
-            res_type: str = 'soxr_hq',
-            input_type: str = 'complex'
-    ):
-        super().__init__()
-        self.n_bins = n_bins
-        self.hop_length = hop_length
-        self.f_min = f_min
-        self.bins_per_octave = bins_per_octave
-        self.sample_rate = sample_rate
-        self.window = window
-        self.scale = scale
-        self.norm = norm
-        self.filter_scale = filter_scale
-        self.tuning = tuning
-        self.sparsity = sparsity
-        self.res_type = res_type
-        self.input_type = input_type
-
-    def forward(self, X: Tensor, length: Optional[int] = None) -> Tensor:
-        """Inverse CQT transform similar to ISTFT
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """CQT forward path
 
         Args:
-            X (Tensor): CQT coefficients of shape (batch, channels, bins, frames, complex=2)
-            length (int, optional): Target output length in samples
+            x (Tensor): audio waveform of shape (nb_samples, nb_channels, nb_timesteps)
 
         Returns:
-            Tensor: Reconstructed audio of shape (batch, channels, time)
+            CQT (Tensor): complex CQT of shape
+                (nb_samples, nb_channels, n_bins, nb_frames, complex=2)
+                last axis is stacked real and imaginary
         """
-        # Convert to numpy array for librosa processing
+        shape = x.size()
+        nb_samples, nb_channels, nb_timesteps = shape
+
+        # Pack batch and channels
+        x = x.view(-1, nb_timesteps)
+
+        if self.center:
+            # Pad the signal on both sides
+            x = F.pad(x, (self.max_window_length // 2, self.max_window_length // 2), mode='reflect')
+
+        # Get device
+        device = x.device
+
+        # Create windows for each frequency bin
+        windows = self._create_windows(device)
+
+        # Compute number of frames
+        n_frames = 1 + (x.shape[-1] - self.max_window_length) // self.n_hop
+
+        # Initialize output tensor
+        cqt = torch.zeros((x.shape[0], self.n_bins, n_frames),
+                          dtype=torch.complex64, device=device)
+
+        # Compute CQT for each frequency bin
+        for k in range(self.n_bins):
+            window_length = self.window_lengths[k].item()
+            window = windows[k]
+
+            # Extract frames
+            frames = F.unfold(
+                x.unsqueeze(1).unsqueeze(-1),
+                kernel_size=(1, window_length),
+                stride=(1, self.n_hop)
+            )  # [batch, window_length, n_frames]
+
+            frames = frames.transpose(1, 2)  # [batch, n_frames, window_length]
+
+            # Apply window
+            frames = frames * window.unsqueeze(0)
+
+            # Compute dot product with complex exponential
+            complex_exp = self.complex_exponentials[k, :window_length]
+            cqt[:, k, :] = torch.sum(frames * complex_exp, dim=-1)
+
+        # Convert to real/imaginary representation
+        cqt = torch.view_as_real(cqt)
+
+        # Unpack batch and channels
+        cqt = cqt.view(nb_samples, nb_channels, self.n_bins, n_frames, 2)
+
+        return cqt
+
+
+class ICQT(nn.Module):
+    """Multichannel Inverse Constant-Q Transform using PyTorch operations.
+
+        Args:
+            sr (int): Sample rate of the input audio
+            n_bins (int, optional): Number of frequency bins. Defaults to 84.
+            bins_per_octave (int, optional): Number of bins per octave. Defaults to 12.
+            fmin (float, optional): Minimum frequency. Defaults to 32.7 (C1).
+            n_hop (int, optional): Hop length between frames. Defaults to 1024.
+            center (bool, optional): If True, the signals first window is zero padded.
+                Defaults to False.
+            window (nn.Parameter, optional): Window function. Defaults to Hann window.
+            n_iter (int, optional): Number of Griffin-Lim iterations for phase reconstruction.
+                Defaults to 32.
+        """
+
+    def __init__(
+        self,
+        sr: int,
+        n_bins: int = 84,
+        bins_per_octave: int = 12,
+        fmin: float = 32.7,
+        n_hop: int = 1024,
+        center: bool = False,
+        window: Optional[nn.Parameter] = None,
+        n_iter: int = 32,
+    ):
+        super(ICQT, self).__init__()
+
+        # Store parameters
+        self.sr = sr
+        self.n_bins = n_bins
+        self.bins_per_octave = bins_per_octave
+        self.fmin = fmin
+        self.n_hop = n_hop
+        self.center = center
+        self.n_iter = n_iter
+
+        # Compute Q factor
+        self.Q = 1.0 / (2 ** (1.0 / bins_per_octave) - 1)
+
+        # Compute the frequencies for each bin
+        self.frequencies = fmin * (2 ** (torch.arange(n_bins, dtype=torch.float32) / bins_per_octave))
+
+        # Compute the window lengths for each bin
+        self.window_lengths = torch.round(self.Q * sr / self.frequencies).long()
+
+        # Compute maximum window length for padding
+        self.max_window_length = self.window_lengths.max().item()
+
+        # Create window function
+        if window is None:
+            # We'll create windows on the fly in forward pass since they have different lengths
+            self.window = None
+        else:
+            self.window = window
+
+        # Pre-compute complex exponential terms for reconstruction
+        self.register_buffer('complex_exponentials', self._create_complex_exponentials())
+
+        # Create a forward CQT for Griffin-Lim iterations
+        self.cqt = CQT(
+            sr=sr,
+            n_bins=n_bins,
+            bins_per_octave=bins_per_octave,
+            fmin=fmin,
+            n_hop=n_hop,
+            center=center,
+            window=window
+        )
+
+    def _create_complex_exponentials(self):
+        """Create complex exponential terms for each frequency bin."""
+        t = torch.arange(self.max_window_length, dtype=torch.float32)
+        t = t.unsqueeze(0)  # [1, max_window_length]
+
+        # Compute angular frequencies
+        omega = 2 * math.pi * self.frequencies.unsqueeze(1) / self.sr  # [n_bins, 1]
+
+        # Compute complex exponentials
+        complex_exp = torch.exp(1j * omega * t)  # [n_bins, max_window_length] (note positive sign)
+
+        return complex_exp
+
+    def _create_windows(self, device):
+        """Create windows for each frequency bin."""
+        windows = []
+        for length in self.window_lengths:
+            if self.window is None:
+                # Use Hann window
+                win = torch.hann_window(length, device=device)
+            else:
+                # Use provided window (truncated to appropriate length)
+                win = self.window[:length]
+            windows.append(win)
+        return windows
+
+    def _griffin_lim(self, mag_cqt: torch.Tensor, length: Optional[int] = None) -> torch.Tensor:
+        """Griffin-Lim algorithm for phase reconstruction.
+
+        Args:
+            mag_cqt (Tensor): Magnitude CQT of shape (batch, n_bins, n_frames)
+            length (int, optional): Target output length
+
+        Returns:
+            Tensor: Reconstructed waveform
+        """
+        # Initialize random phase
+        angles = 2 * math.pi * torch.rand_like(mag_cqt)
+        complex_spec = mag_cqt * torch.exp(1j * angles)
+
+        # Convert to time-frequency representation expected by ICQT
+        cqt_input = torch.view_as_real(complex_spec.unsqueeze(-1).expand(*complex_spec.shape, 2))
+
+        for _ in range(self.n_iter):
+            # Inverse transform
+            waveform = self.forward(cqt_input, length=length)
+
+            # Forward transform
+            new_cqt = self.cqt(waveform)
+            new_angles = torch.angle(torch.view_as_complex(new_cqt))
+
+            # Update phase while keeping magnitude
+            complex_spec = mag_cqt * torch.exp(1j * new_angles)
+            cqt_input = torch.view_as_real(complex_spec.unsqueeze(-1).expand(*complex_spec.shape, 2))
+
+        return waveform
+
+    def forward(self, X: torch.Tensor, length: Optional[int] = None) -> torch.Tensor:
+        """ICQT forward path
+
+        Args:
+            X (Tensor): complex CQT of shape
+                (nb_samples, nb_channels, n_bins, nb_frames, complex=2)
+            length (int, optional): Target output length. Defaults to None.
+
+        Returns:
+            Tensor: audio waveform of shape (nb_samples, nb_channels, nb_timesteps)
+        """
+        shape = X.size()
+        nb_samples, nb_channels, n_bins, n_frames, _ = shape
+
+        # Check if input is magnitude-only (all imaginary parts zero)
+        is_magnitude = torch.allclose(X[..., 1], torch.zeros_like(X[..., 1]))
+
+        if is_magnitude:
+            # Use Griffin-Lim algorithm for phase reconstruction
+            mag_cqt = X[..., 0]
+            mag_cqt = mag_cqt.reshape(-1, n_bins, n_frames)
+            waveform = self._griffin_lim(mag_cqt, length=length)
+            return waveform.reshape(nb_samples, nb_channels, -1)
+
+        # Pack batch and channels
+        X = X.reshape(-1, n_bins, n_frames, 2)
+        complex_cqt = torch.view_as_complex(X)
+
+        # Get device
         device = X.device
-        batch, channels, _, _, _ = X.size()
 
-        # Reshape to (batch * channels, bins, frames, 2)
-        X_flat = X.reshape(-1, *X.shape[2:]).cpu().numpy()
-        audio_list = []
+        # Create windows for each frequency bin
+        windows = self._create_windows(device)
 
-        for i, x in enumerate(X_flat):
-            if self.input_type == 'complex':
-                cqt = x[..., 0] + 1j * x[..., 1]  # Reconstruct complex CQT
-            else:  # 'magphase'
-                cqt = x[..., 0] * np.exp(1j * x[..., 1])  # Mag * e^(j*phase)
+        # Compute output length if not provided
+        if length is None:
+            length = (n_frames - 1) * self.n_hop + self.max_window_length
 
-            # Inverse CQT
-            audio = librosa.icqt(
-                cqt,
-                sr=self.sample_rate,
-                hop_length=self.hop_length,
-                fmin=self.f_min,
-                bins_per_octave=self.bins_per_octave,
-                window=self.window,
-                scale=self.scale,
-                norm=self.norm,
-                filter_scale=self.filter_scale,
-                tuning=self.tuning,
-                sparsity=self.sparsity,
-                res_type=self.res_type,
-                length=length
-            )
-            audio_list.append(audio)
+        # Initialize output signal
+        output = torch.zeros((X.shape[0], length), device=device)
+        norm = torch.zeros_like(output)
 
-        # Stack and reshape
-        audio_np = np.stack(audio_list).reshape(batch, channels, -1)
-        return torch.from_numpy(audio_np).to(device)
+        # Reconstruct signal for each frequency bin
+        for k in range(n_bins):
+            window_length = self.window_lengths[k].item()
+            window = windows[k]
 
+            # Compute time positions of frames
+            time_steps = torch.arange(n_frames, device=device) * self.n_hop
+
+            # Compute the complex sinusoids for this bin
+            sinusoid = self.complex_exponentials[k, :window_length]
+
+            # Compute the frames
+            frames = complex_cqt[:, k].unsqueeze(-1) * sinusoid.unsqueeze(0) * window.unsqueeze(0)
+
+            # Overlap-add the frames
+            for t in range(n_frames):
+                start = time_steps[t]
+                end = start + window_length
+                if end > length:
+                    frames = frames[:, :length - start]
+                    window_length = frames.shape[-1]
+                    end = length
+
+                output[:, start:end] += frames[:, t]
+                norm[:, start:end] += window[:window_length].pow(2)
+
+        # Normalize by window power
+        norm = torch.where(norm > 1e-10, norm, torch.ones_like(norm))
+        output = output / norm
+
+        if self.center:
+            # Remove padding if center was True
+            pad = self.max_window_length // 2
+            output = output[:, pad:-pad] if length is None else output[:, pad:pad+length]
+
+        # Unpack batch and channels
+        output = output.reshape(nb_samples, nb_channels, -1)
+
+        return output
 
 class AsteroidSTFT(nn.Module):
     def __init__(self, fb):
