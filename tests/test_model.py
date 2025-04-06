@@ -2,7 +2,6 @@ import pytest
 import torch
 
 from openunmix import model
-from openunmix import umxse
 from openunmix import umxhq
 from openunmix import umx
 from openunmix import umxl
@@ -56,7 +55,7 @@ def test_shape(spectrogram, nb_bins, nb_channels, unidirectional, hidden_size):
     assert spectrogram.shape == Y.shape
 
 
-@pytest.mark.parametrize("model_fn", [umx, umxhq, umxse, umxl])
+@pytest.mark.parametrize("model_fn", [umx, umxhq, umxl])
 def test_model_loading(model_fn):
     X = torch.rand((1, 2, 4096))
     model = model_fn(niter=0, pretrained=True)

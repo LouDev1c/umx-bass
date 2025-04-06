@@ -3,6 +3,7 @@ import functools
 import json
 import multiprocessing
 from typing import Optional, Union
+from sklearn.metrics import f1_score
 
 import musdb
 import museval
@@ -67,7 +68,7 @@ if __name__ == "__main__":
         help="provide targets to be processed. \
               If none, all available targets will be computed",
     )
-    parser.add_argument("--model", default="umx", type=str, help="path to mode base directory of pretrained models")
+    parser.add_argument("--model", default="umxl", type=str, help="path to mode base directory of pretrained models")
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")
     parser.add_argument("--root", type=str, help="Path to MUSDB18")
