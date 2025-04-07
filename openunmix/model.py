@@ -51,7 +51,6 @@ class OpenUnmix(nn.Module):
         self.hidden_size = hidden_size
 
         self.fc1 = Linear(self.nb_bins * nb_channels, hidden_size, bias=False)
-
         self.bn1 = BatchNorm1d(hidden_size)
 
         if unidirectional:
@@ -68,9 +67,16 @@ class OpenUnmix(nn.Module):
             dropout=0.4 if nb_layers > 1 else 0,
         )
 
+        # 添加频率感知注意力层
+        self.freq_attention = nn.Sequential(
+            Linear(hidden_size * 2, hidden_size),
+            nn.ReLU(),
+            Linear(hidden_size, hidden_size * 2),
+            nn.Sigmoid()
+        )
+
         fc2_hiddensize = hidden_size * 2
         self.fc2 = Linear(in_features=fc2_hiddensize, out_features=hidden_size, bias=False)
-
         self.bn2 = BatchNorm1d(hidden_size)
 
         self.fc3 = Linear(
@@ -142,6 +148,10 @@ class OpenUnmix(nn.Module):
 
         # lstm skip connection
         x = torch.cat([x, lstm_out[0]], -1)
+
+        # 应用频率感知注意力机制
+        attention_weights = self.freq_attention(x)
+        x = x * attention_weights
 
         # 后续处理保持不变
         x = self.fc2(x.reshape(-1, x.shape[-1]))

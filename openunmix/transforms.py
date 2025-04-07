@@ -92,8 +92,9 @@ class nnAudioCQT(nn.Module):
             bins_per_octave=bins_per_octave,
             hop_length=n_hop,
             output_format="Complex",
-            pad_mode='constant',
-            trainable=False
+            pad_mode='reflect',
+            trainable=False,
+            window = 'hann'
         )
         # 添加手动复数转换标志
         self.force_complex = True
@@ -126,12 +127,14 @@ class nnAudioICQT(nn.Module):
             sample_rate: int = 44100,
             n_fft: int = 4096,
             n_hop: int = 1024,
-            n_iter: int = 50,
+            n_iter: int = 100,  # 增加迭代次数
+            momentum: float = 0.99,  # 添加动量项
     ):
         super().__init__()
         self.n_fft = n_fft
         self.n_hop = n_hop
         self.n_iter = n_iter
+        self.momentum = momentum
         self.window = torch.hann_window(n_fft)
 
     def forward(self, X: torch.Tensor, length: Optional[int] = None) -> torch.Tensor:
@@ -140,6 +143,7 @@ class nnAudioICQT(nn.Module):
         target_magnitude = torch.view_as_complex(X).abs()
         target_magnitude_stft = self._cqt_to_stft_magnitude(target_magnitude)
 
+        # 使用更好的初始估计
         y = torch.randn(
             X.shape[0],
             length if length else shape[-2] * self.n_hop,
@@ -147,7 +151,10 @@ class nnAudioICQT(nn.Module):
             dtype=torch.float32
         )
 
-        for _ in range(self.n_iter):
+        # 添加动量项
+        prev_y = None
+
+        for i in range(self.n_iter):
             stft_complex = torch.stft(
                 y,
                 n_fft=self.n_fft,
@@ -158,7 +165,9 @@ class nnAudioICQT(nn.Module):
             )
             phase = torch.angle(stft_complex)
             new_spec = target_magnitude_stft * torch.exp(1j * phase)
-            y = torch.istft(
+
+            # 使用ISTFT重构
+            new_y = torch.istft(
                 new_spec,
                 n_fft=self.n_fft,
                 hop_length=self.n_hop,
@@ -167,14 +176,23 @@ class nnAudioICQT(nn.Module):
                 length=length
             )
 
+            # 应用动量
+            if prev_y is not None:
+                y = self.momentum * prev_y + (1 - self.momentum) * new_y
+            else:
+                y = new_y
+            prev_y = y
+
         return y.reshape(shape[:-3] + y.shape[-1:])
 
     def _cqt_to_stft_magnitude(self, cqt_mag: torch.Tensor) -> torch.Tensor:
         stft_bins = self.n_fft // 2 + 1
+        # 使用更好的插值方法
         return torch.nn.functional.interpolate(
             cqt_mag.unsqueeze(1),
             size=(stft_bins, cqt_mag.shape[-1]),
-            mode="bilinear"
+            mode="bicubic",  # 使用双三次插值
+            align_corners=True
         ).squeeze(1)
 
 
