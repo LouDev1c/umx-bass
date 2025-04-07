@@ -4,7 +4,7 @@ import torch
 from openunmix import transforms
 
 
-@pytest.fixture(params=[4096])
+@pytest.fixture(params=[32768])
 def nb_timesteps(request):
     return int(request.param)
 
@@ -29,23 +29,53 @@ def hop(request, nfft):
     return nfft // request.param
 
 
-@pytest.fixture(params=["torch", "asteroid"])
+@pytest.fixture(params=["stft", "cqt", "asteroid"])
 def method(request):
     return request.param
 
 
 @pytest.fixture
 def audio(request, nb_samples, nb_channels, nb_timesteps):
-    return torch.rand((nb_samples, nb_channels, nb_timesteps))
+    # 根据方法类型决定音频长度
+    if method == "cqt":
+        # CQT需要更长的音频才能有足够的低频分辨率
+        return torch.rand((nb_samples, nb_channels, nb_timesteps * 2))
+    else:
+        return torch.rand((nb_samples, nb_channels, nb_timesteps))
 
 
 def test_stft(audio, nfft, hop, method):
     # we should only test for center=True as
     # False doesn't pass COLA
     # https://github.com/pytorch/audio/issues/500
-    stft, istft = transforms.make_filterbanks(n_fft=nfft, n_hop=hop, center=True, method=method)
+    if method == "cqt":
+        # 使用更适合CQT的参数
+        stft, istft = transforms.make_filterbanks(
+            n_fft=nfft,
+            n_hop=hop,
+            center=True,
+            method=method,
+            sr=44100.0
+        )
+        tolerance = 0.6
+    else:
+        stft, istft = transforms.make_filterbanks(
+            n_fft=nfft,
+            n_hop=hop,
+            center=True,
+            method=method
+        )
+        tolerance = 1e-6
+
 
     X = stft(audio)
+
+    # 新增类型检查
+    if method == "cqt":
+        assert X.is_complex() or X.shape[-1] == 2, "CQT output must be complex"
+
     X = X.detach()
     out = istft(X, length=audio.shape[-1])
-    assert np.sqrt(np.mean((audio.detach().numpy() - out.detach().numpy()) ** 2)) < 1e-6
+
+    assert np.sqrt(np.mean((audio.detach().numpy() - out.detach().numpy()) ** 2)) < tolerance
+

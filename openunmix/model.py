@@ -205,7 +205,7 @@ class Separator(nn.Module):
         n_hop: int = 1024,
         nb_channels: int = 2,
         wiener_win_len: Optional[int] = 300,
-        filterbank: str = "torch",
+        filterbank: str = "stft",
     ):
         super(Separator, self).__init__()
 
@@ -278,7 +278,6 @@ class Separator(nn.Module):
 
         # create an additional target if we need to build a residual
         if self.residual:
-            # we add an additional target
             nb_sources += 1
 
         if nb_sources == 1 and self.niter > 0:
