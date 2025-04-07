@@ -50,7 +50,7 @@ def umxhq(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="torch",
+    filterbank="stft",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model trained on MUSDB18-HQ
@@ -137,7 +137,7 @@ def umx(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="torch",
+    filterbank="stft",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model trained on MUSDB18
@@ -224,7 +224,7 @@ def umxl(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="torch",
+    filterbank="stft",
 ):
     """
     Open Unmix Extra (UMX-L), 2-channel/stereo BLSTM Model trained on a private dataset

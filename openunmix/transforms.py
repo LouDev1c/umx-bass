@@ -322,4 +322,4 @@ class ComplexNorm(nn.Module):
         if self.mono:
             spec = torch.mean(spec, 1, keepdim=True)
 
-        return
+        return spec

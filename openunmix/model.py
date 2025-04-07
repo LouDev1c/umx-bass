@@ -143,7 +143,7 @@ class OpenUnmix(nn.Module):
         # lstm skip connection
         x = torch.cat([x, lstm_out[0]], -1)
 
-        # first dense stage + batch norm
+        # 后续处理保持不变
         x = self.fc2(x.reshape(-1, x.shape[-1]))
         x = self.bn2(x)
 
@@ -220,7 +220,7 @@ class Separator(nn.Module):
             n_hop=n_hop,
             center=True,
             method=filterbank,
-            sample_rate=sample_rate,
+            sr=sample_rate
         )
         self.complexnorm = ComplexNorm(mono=nb_channels == 1)
 
