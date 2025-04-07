@@ -6,53 +6,69 @@ def process_results_to_excel(pandas_file, output_excel):
     # 读取.pandas文件
     df = pd.read_pickle(pandas_file)
 
-    # 打印数据结构以便调试
-    print("DataFrame结构:")
-    print(df.head())
-    print("\n数据类型:")
-    print(df.dtypes)
-
     # 创建新的DataFrame来存储结果
     results = pd.DataFrame(columns=['编号', 'vocals', 'drums', 'bass', 'other', 'F1 score'])
 
-    # 添加编号列
-    results['编号'] = range(1, 51)
+    # 获取所有唯一的track名称
+    unique_tracks = df['track'].unique()
 
-    # 提取每个音轨的SDR值
-    for i in range(50):
-        track_data = df.iloc[i]
-        # 打印当前track_data的结构
-        print(f"\n处理第{i + 1}条数据:")
-        print(track_data)
+    # 为每个track创建一行数据
+    for i, track_name in enumerate(unique_tracks):
+        # 获取当前track的所有数据
+        track_data = df[df['track'] == track_name]
 
-        # 检查数据结构并提取数据
-        if isinstance(track_data, dict):
-            # 如果数据是字典格式
-            results.at[i, 'vocals'] = track_data.get('vocals', {}).get('SDR', np.nan)
-            results.at[i, 'drums'] = track_data.get('drums', {}).get('SDR', np.nan)
-            results.at[i, 'bass'] = track_data.get('bass', {}).get('SDR', np.nan)
-            results.at[i, 'other'] = track_data.get('other', {}).get('SDR', np.nan)
-            results.at[i, 'F1 score'] = track_data.get('bass_f1', np.nan)
+        # 初始化结果行
+        results.at[i, '编号'] = i + 1
+
+        # 提取每个音轨的SDR值
+        for target in ['vocals', 'drums', 'bass', 'other']:
+            # 获取该音轨的所有SDR值
+            sdr_values = track_data[(track_data['target'] == target) & (track_data['metric'] == 'SDR')]['score']
+            if not sdr_values.empty:
+                # 使用中位数作为该音轨的SDR值
+                results.at[i, target] = sdr_values.median()
+            else:
+                results.at[i, target] = np.nan
+
+        # 提取bass的F1 score
+        # 查找包含'F1 score:'的metric
+        f1_data = track_data[track_data['metric'].str.contains('F1 score:', na=False)]
+        if not f1_data.empty:
+            # 提取F1 score值
+            f1_score = float(f1_data['metric'].iloc[0].split('F1 score: ')[1])
+            results.at[i, 'F1 score'] = f1_score
         else:
-            # 如果数据是其他格式，尝试不同的访问方式
-            try:
-                results.at[i, 'vocals'] = track_data.vocals.SDR
-                results.at[i, 'drums'] = track_data.drums.SDR
-                results.at[i, 'bass'] = track_data.bass.SDR
-                results.at[i, 'other'] = track_data.other.SDR
-                results.at[i, 'F1 score'] = track_data.bass_f1
-            except AttributeError:
-                print(f"无法访问第{i + 1}条数据的属性")
-                continue
+            results.at[i, 'F1 score'] = np.nan
+
+    # 添加平均值行
+    results.loc[50, '编号'] = '平均值'
+    for col in ['vocals', 'drums', 'bass', 'other', 'F1 score']:
+        results.loc[50, col] = results[col].mean()
+
+    # 添加中位数行
+    results.loc[51, '编号'] = '中位数'
+    for col in ['vocals', 'drums', 'bass', 'other', 'F1 score']:
+        results.loc[51, col] = results[col].median()
 
     # 保存到Excel文件
     results.to_excel(output_excel, index=False)
-    print(f"\n结果已保存到 {output_excel}")
+    print(f"结果已保存到 {output_excel}")
+
+    # 打印一些统计信息
+    print("\n统计信息:")
+    print(f"处理了 {len(unique_tracks)} 首歌曲")
+    print("\n各音轨SDR中位数:")
+    for target in ['vocals', 'drums', 'bass', 'other']:
+        print(f"{target}: {results[target].median():.2f}")
+    print(f"\nF1 score中位数: {results['F1 score'].median():.4f}")
+    print("\n各指标平均值:")
+    for col in ['vocals', 'drums', 'bass', 'other', 'F1 score']:
+        print(f"{col}: {results[col].mean():.4f}")
 
 
 if __name__ == "__main__":
     # 指定输入和输出文件路径
     pandas_file = "umxl.pandas"  # 根据实际文件名修改
-    output_excel = "evaluation_results.xlsx"
+    output_excel = "umxl_evaluation_results.xlsx"
 
     process_results_to_excel(pandas_file, output_excel)
