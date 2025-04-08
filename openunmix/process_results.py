@@ -73,8 +73,8 @@ def process_results_to_excel(pandas_file, log_file, output_excel):
 
 
 if __name__ == "__main__":
-    pandas_file = "umxl.pandas"
-    log_file = r"E:\open-unmix\umx-bass\umxl_evaluation"
-    output_excel = "umxl_evaluation_results.xlsx"
+    pandas_file = "umxhq.pandas"
+    log_file = r"E:\open-unmix\umx-bass\umxhq_evaluation"
+    output_excel = "umxhq_evaluation_results.xlsx"
 
     process_results_to_excel(pandas_file, log_file, output_excel)

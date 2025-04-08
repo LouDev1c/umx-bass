@@ -65,7 +65,7 @@ def test_separate_and_evaluate(mock_track, mock_separator, mock_museval, mock_mu
             scores = evaluate.separate_and_evaluate(
                 track=mock_track,
                 targets=["vocals", "drums", "bass", "other"],
-                model_str_or_path="umxl",
+                model_str_or_path="umx",
                 niter=1,
                 output_dir=output_dir,
                 eval_dir=eval_dir,

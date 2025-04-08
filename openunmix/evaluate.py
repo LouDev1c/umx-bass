@@ -260,60 +260,13 @@ if __name__ == "__main__":
         help="provide targets to be processed. \
                If none, all available targets will be computed",
     )
-
-    parser.add_argument(
-        "--model",
-        default="umxl",
-        type=str,
-        help="path to mode base directory of pretrained models",
-    )
-
-    parser.add_argument(
-        "--outdir",
-        type=str,
-        help="Results path where audio evaluation results are stored",
-    )
-
-    parser.add_argument("--model", default="umxl", type=str, help="path to mode base directory of pretrained models")
+    parser.add_argument("--model", default="umx", type=str, help="path to mode base directory of pretrained models")
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")
-
     parser.add_argument("--root", type=str, help="Path to MUSDB18")
-
     parser.add_argument("--subset", type=str, default="test", help="MUSDB subset (`train`/`test`)")
-
     parser.add_argument("--cores", type=int, default=1)
-
     parser.add_argument("--no-cuda", action="store_true", default=False, help="disables CUDA inference")
-
-    parser.add_argument(
-        "--is-wav",
-        action="store_true",
-        default=False,
-        help="flags wav version of the dataset",
-    )
-
-    parser.add_argument(
-        "--niter",
-        type=int,
-        default=1,
-        help="number of iterations for refining results.",
-    )
-
-    parser.add_argument(
-        "--wiener-win-len",
-        type=int,
-        default=300,
-        help="Number of frames on which to apply filtering independently",
-    )
-
-    parser.add_argument(
-        "--residual",
-        type=str,
-        default=None,
-        help="if provided, build a source with given name" "for the mix minus all estimated targets",
-    )
-
     parser.add_argument("--is-wav", action="store_true", default=False, help="flags wav version of the dataset")
     parser.add_argument("--niter", type=int, default=1, help="number of iterations for refining results.", )
     parser.add_argument("--wiener-win-len", type=int, default=300,

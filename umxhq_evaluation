@@ -1,306 +1,456 @@
-  2%|▏         | 1/50 [00:18<15:17, 18.73s/it]AM Contra - Heart Peripheral
- vocals          ==> SDR:   8.683  SIR:  -2.935  ISR:  11.188  SAR:   1.567
-drums           ==> SDR:   4.114  SIR: -12.417  ISR:  10.366  SAR:   0.257
-bass            ==> SDR:   1.960  SIR: -14.696  ISR:   6.251  SAR:   0.201
-other           ==> SDR:   0.351  SIR:  -7.073  ISR:   0.782  SAR:   0.304
+  0%|          | 0/50 [00:00<?, ?it/s]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8799
+AM Contra - Heart Peripheral
+ vocals          ==> SDR:   8.683  SIR:  -2.937  ISR:  11.189  SAR:   1.566
+drums           ==> SDR:   4.113  SIR: -12.416  ISR:  10.365  SAR:   0.257
+bass            ==> SDR:   1.960  SIR: -14.695  ISR:   6.252  SAR:   0.201
+other           ==> SDR:   0.351  SIR:  -7.073  ISR:   0.783  SAR:   0.304
 
+  2%|▏         | 1/50 [00:15<12:31, 15.33s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9398
 Al James - Schoolboy Facination
- vocals          ==> SDR:   7.128  SIR:  -2.581  ISR:   9.100  SAR:   1.400
-drums           ==> SDR:   4.031  SIR: -18.711  ISR:   8.106  SAR:   0.047
+ vocals          ==> SDR:   7.128  SIR:  -2.581  ISR:   9.099  SAR:   1.400
+drums           ==> SDR:   4.031  SIR: -18.710  ISR:   8.106  SAR:   0.047
 bass            ==> SDR:   6.187  SIR:   3.303  ISR:   1.153  SAR:   1.126
-other           ==> SDR:   2.629  SIR:  -9.223  ISR:  -1.231  SAR:   0.091
+other           ==> SDR:   2.629  SIR:  -9.222  ISR:  -1.231  SAR:   0.091
 
-  6%|▌         | 3/50 [00:36<08:34, 10.95s/it]Angels In Amplifiers - I'm Alright
- vocals          ==> SDR:   9.787  SIR:   4.732  ISR:   6.606  SAR:   4.148
-drums           ==> SDR:   5.345  SIR:  -8.888  ISR:   7.555  SAR:   0.416
-bass            ==> SDR:   3.102  SIR:  -2.010  ISR:   5.757  SAR:   1.347
-other           ==> SDR:   5.567  SIR:  -4.241  ISR:  10.664  SAR:   1.453
+  4%|▍         | 2/50 [00:27<10:42, 13.39s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9388
+  6%|▌         | 3/50 [00:39<10:07, 12.92s/it]Angels In Amplifiers - I'm Alright
+ vocals          ==> SDR:   9.787  SIR:   4.731  ISR:   6.605  SAR:   4.147
+drums           ==> SDR:   5.345  SIR:  -8.886  ISR:   7.554  SAR:   0.416
+bass            ==> SDR:   3.102  SIR:  -2.011  ISR:   5.757  SAR:   1.346
+other           ==> SDR:   5.568  SIR:  -4.239  ISR:  10.666  SAR:   1.454
 
-Arise - Run Run Run
- vocals          ==> SDR:   4.616  SIR:  -1.869  ISR:   9.051  SAR:   1.471
-drums           ==> SDR:   3.618  SIR:  -8.591  ISR:  14.917  SAR:   0.536
-bass            ==> SDR:   2.315  SIR:  -3.465  ISR:  18.413  SAR:   2.035
-other           ==> SDR:   0.854  SIR:  -1.543  ISR:   0.951  SAR:  -0.022
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9123
+  8%|▊         | 4/50 [00:52<09:45, 12.74s/it]Arise - Run Run Run
+ vocals          ==> SDR:   4.616  SIR:  -1.868  ISR:   9.051  SAR:   1.472
+drums           ==> SDR:   3.618  SIR:  -8.590  ISR:  14.917  SAR:   0.536
+bass            ==> SDR:   2.315  SIR:  -3.465  ISR:  18.412  SAR:   2.035
+other           ==> SDR:   0.854  SIR:  -1.541  ISR:   0.952  SAR:  -0.021
 
- 10%|█         | 5/50 [00:53<07:00,  9.35s/it]BKS - Bulldozer
- vocals          ==> SDR:   5.716  SIR:   1.029  ISR:   1.771  SAR:   1.022
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9479
+ 10%|█         | 5/50 [01:04<09:25, 12.57s/it]BKS - Bulldozer
+ vocals          ==> SDR:   5.716  SIR:   1.028  ISR:   1.771  SAR:   1.023
 drums           ==> SDR:   8.182  SIR: -10.989  ISR:  12.482  SAR:   0.283
-bass            ==> SDR:   5.817  SIR:  -0.299  ISR:   7.648  SAR:   2.173
-other           ==> SDR:   3.428  SIR: -13.596  ISR:   7.877  SAR:   0.213
+bass            ==> SDR:   5.817  SIR:  -0.300  ISR:   7.648  SAR:   2.173
+other           ==> SDR:   3.428  SIR: -13.595  ISR:   7.877  SAR:   0.213
 
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9338
 BKS - Too Much
- vocals          ==> SDR:   8.286  SIR:  -0.636  ISR:   6.733  SAR:   2.544
-drums           ==> SDR:   6.268  SIR:  -1.939  ISR:   3.863  SAR:   1.173
+ vocals          ==> SDR:   8.286  SIR:  -0.637  ISR:   6.735  SAR:   2.544
+drums           ==> SDR:   6.268  SIR:  -1.940  ISR:   3.863  SAR:   1.173
 bass            ==> SDR:   8.725  SIR:   3.731  ISR:  -0.672  SAR:   1.086
-other           ==> SDR:   4.793  SIR:  -1.424  ISR:  -2.456  SAR:   0.405
+other           ==> SDR:   4.793  SIR:  -1.423  ISR:  -2.458  SAR:   0.405
 
- 14%|█▍        | 7/50 [01:10<06:29,  9.06s/it]Ben Carrigan - We'll Talk About It All Tonight
- vocals          ==> SDR:   3.313  SIR:  -0.997  ISR:   3.855  SAR:   1.485
+ 12%|█▏        | 6/50 [01:16<09:03, 12.36s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8963
+ 14%|█▍        | 7/50 [01:28<08:43, 12.18s/it]Ben Carrigan - We'll Talk About It All Tonight
+ vocals          ==> SDR:   3.313  SIR:  -0.999  ISR:   3.854  SAR:   1.484
 drums           ==> SDR:   6.584  SIR:  -2.994  ISR:  10.191  SAR:   1.540
-bass            ==> SDR:   7.103  SIR:   0.647  ISR:  14.700  SAR:   3.298
-other           ==> SDR:   2.693  SIR:  -5.110  ISR:   3.728  SAR:   0.942
+bass            ==> SDR:   7.103  SIR:   0.646  ISR:  14.700  SAR:   3.297
+other           ==> SDR:   2.693  SIR:  -5.109  ISR:   3.728  SAR:   0.943
 
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9147
 Bobby Nobody - Stitch Up
- vocals          ==> SDR:   7.292  SIR:  -9.105  ISR:   4.234  SAR:   0.367
-drums           ==> SDR:   3.073  SIR:  -4.011  ISR:   6.118  SAR:   1.000
-bass            ==> SDR:   0.970  SIR: -14.884  ISR:   2.302  SAR:   0.145
-other           ==> SDR:   3.025  SIR:  -1.465  ISR:  -4.163  SAR:   0.130
+ vocals          ==> SDR:   7.292  SIR:  -9.104  ISR:   4.232  SAR:   0.367
+drums           ==> SDR:   3.073  SIR:  -4.013  ISR:   6.118  SAR:   1.000
+bass            ==> SDR:   0.970  SIR: -14.883  ISR:   2.302  SAR:   0.145
+other           ==> SDR:   3.025  SIR:  -1.466  ISR:  -4.163  SAR:   0.130
 
- 18%|█▊        | 9/50 [01:28<06:08,  8.98s/it]Buitraker - Revo X
- vocals          ==> SDR:   2.248  SIR: -16.197  ISR:   2.877  SAR:   0.070
-drums           ==> SDR:   9.552  SIR:  -4.368  ISR:  11.642  SAR:   1.268
+ 16%|█▌        | 8/50 [01:40<08:30, 12.15s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9369
+Buitraker - Revo X
+ vocals          ==> SDR:   2.248  SIR: -16.199  ISR:   2.877  SAR:   0.070
+drums           ==> SDR:   9.552  SIR:  -4.366  ISR:  11.642  SAR:   1.269
 bass            ==> SDR:   6.646  SIR:  -4.765  ISR:  -2.511  SAR:   0.621
-other           ==> SDR:   4.760  SIR:  -3.117  ISR:  -1.957  SAR:   0.389
+other           ==> SDR:   4.760  SIR:  -3.118  ISR:  -1.956  SAR:   0.389
 
+ 18%|█▊        | 9/50 [01:52<08:20, 12.21s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8727
 Carlos Gonzalez - A Place For Us
- vocals          ==> SDR:   4.882  SIR:   3.271  ISR:   5.629  SAR:   2.282
-drums           ==> SDR:   4.785  SIR:  -3.599  ISR:   6.547  SAR:   1.165
-bass            ==> SDR:  -0.890  SIR:  -9.329  ISR:   1.831  SAR:   0.482
+ vocals          ==> SDR:   4.881  SIR:   3.272  ISR:   5.629  SAR:   2.282
+drums           ==> SDR:   4.785  SIR:  -3.597  ISR:   6.547  SAR:   1.165
+bass            ==> SDR:  -0.889  SIR:  -9.328  ISR:   1.831  SAR:   0.482
 other           ==> SDR:   2.675  SIR:  -2.390  ISR:   7.753  SAR:   2.183
 
- 22%|██▏       | 11/50 [01:46<05:44,  8.83s/it]Cristina Vane - So Easy
+ 20%|██        | 10/50 [02:07<08:40, 13.00s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8854
+Cristina Vane - So Easy
  vocals          ==> SDR:  13.748  SIR:  -4.821  ISR:  14.255  SAR:   0.993
 drums           ==> SDR:  11.309  SIR:  -1.708  ISR:  15.835  SAR:   2.053
-bass            ==> SDR:   1.744  SIR:   3.518  ISR:  -5.118  SAR:   0.019
-other           ==> SDR:   2.485  SIR:  -5.913  ISR:   6.267  SAR:   0.815
+bass            ==> SDR:   1.744  SIR:   3.516  ISR:  -5.118  SAR:   0.019
+other           ==> SDR:   2.485  SIR:  -5.914  ISR:   6.266  SAR:   0.815
 
-Detsky Sad - Walkie Talkie
- vocals          ==> SDR:   6.799  SIR:  -0.106  ISR:  11.167  SAR:   2.890
-drums           ==> SDR:   5.964  SIR:   0.302  ISR:   7.259  SAR:   2.530
-bass            ==> SDR:   0.001  SIR: -21.630  ISR:   0.002  SAR:  -2.026
-other           ==> SDR:  -0.546  SIR:  -6.860  ISR:   2.328  SAR:   0.688
+ 22%|██▏       | 11/50 [02:20<08:27, 13.01s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8972
+ 24%|██▍       | 12/50 [02:32<08:01, 12.67s/it]Detsky Sad - Walkie Talkie
+ vocals          ==> SDR:   6.793  SIR:  -0.225  ISR:  11.251  SAR:   2.889
+drums           ==> SDR:   5.963  SIR:   0.257  ISR:   7.287  SAR:   2.514
+bass            ==> SDR:   0.001  SIR: -21.665  ISR:   0.002  SAR:  -2.052
+other           ==> SDR:  -0.548  SIR:  -6.877  ISR:   2.291  SAR:   0.685
 
- 26%|██▌       | 13/50 [02:02<05:14,  8.50s/it]Enda Reilly - Cur An Long Ag Seol
- vocals          ==> SDR:  10.453  SIR:   7.712  ISR:  13.391  SAR:   7.562
-drums           ==> SDR:   4.499  SIR:  -7.656  ISR:   6.005  SAR:   0.397
-bass            ==> SDR:   1.861  SIR:  -4.479  ISR:   2.890  SAR:   0.781
-other           ==> SDR:   5.307  SIR:  -2.606  ISR:   3.837  SAR:   0.862
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9265
+Enda Reilly - Cur An Long Ag Seol
+ vocals          ==> SDR:  10.453  SIR:   7.713  ISR:  13.391  SAR:   7.561
+drums           ==> SDR:   4.499  SIR:  -7.654  ISR:   6.006  SAR:   0.397
+bass            ==> SDR:   1.861  SIR:  -4.480  ISR:   2.891  SAR:   0.781
+other           ==> SDR:   5.307  SIR:  -2.607  ISR:   3.837  SAR:   0.863
 
+ 26%|██▌       | 13/50 [02:44<07:41, 12.46s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8840
 Forkupines - Semantics
- vocals          ==> SDR:   7.536  SIR:  -6.748  ISR:   6.547  SAR:   0.564
-drums           ==> SDR:   7.238  SIR:  -4.309  ISR:  12.131  SAR:   1.297
-bass            ==> SDR:   6.395  SIR:   2.137  ISR:   1.276  SAR:   1.479
-other           ==> SDR:   5.559  SIR:   1.022  ISR:   2.641  SAR:   1.485
+ vocals          ==> SDR:   7.536  SIR:  -6.749  ISR:   6.546  SAR:   0.563
+drums           ==> SDR:   7.238  SIR:  -4.305  ISR:  12.131  SAR:   1.298
+bass            ==> SDR:   6.396  SIR:   2.138  ISR:   1.276  SAR:   1.479
+other           ==> SDR:   5.559  SIR:   1.023  ISR:   2.638  SAR:   1.484
 
- 30%|███       | 15/50 [02:17<04:39,  7.99s/it]Georgia Wonder - Siren
- vocals          ==> SDR:   5.886  SIR:  -3.304  ISR:   8.660  SAR:   1.614
-drums           ==> SDR:   6.394  SIR:  -9.381  ISR:  10.283  SAR:   0.408
-bass            ==> SDR:   6.471  SIR:  -0.898  ISR:   9.268  SAR:   1.803
+ 28%|██▊       | 14/50 [02:58<07:48, 13.01s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9130
+Georgia Wonder - Siren
+ vocals          ==> SDR:   5.886  SIR:  -3.305  ISR:   8.660  SAR:   1.613
+drums           ==> SDR:   6.394  SIR:  -9.380  ISR:  10.283  SAR:   0.408
+bass            ==> SDR:   6.471  SIR:  -0.897  ISR:   9.268  SAR:   1.804
 other           ==> SDR:   4.447  SIR:   4.628  ISR: -10.248  SAR:   0.190
 
+ 30%|███       | 15/50 [03:14<08:02, 13.79s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8671
 Girls Under Glass - We Feel Alright
- vocals          ==> SDR:   5.071  SIR:   3.758  ISR:   1.008  SAR:   1.064
-drums           ==> SDR:   6.194  SIR:  -2.805  ISR:  13.988  SAR:   2.015
-bass            ==> SDR:   0.454  SIR:  -0.605  ISR:   0.554  SAR:   0.111
-other           ==> SDR:   2.564  SIR:  -4.872  ISR:   1.072  SAR:   0.603
+ vocals          ==> SDR:   5.071  SIR:   3.760  ISR:   1.008  SAR:   1.064
+drums           ==> SDR:   6.194  SIR:  -2.804  ISR:  13.987  SAR:   2.015
+bass            ==> SDR:   0.454  SIR:  -0.605  ISR:   0.554  SAR:   0.110
+other           ==> SDR:   2.563  SIR:  -4.872  ISR:   1.073  SAR:   0.603
 
- 34%|███▍      | 17/50 [02:33<04:27,  8.10s/it]Hollow Ground - Ill Fate
- vocals          ==> SDR:   7.160  SIR:  -5.570  ISR:  -2.663  SAR:   0.202
-drums           ==> SDR:   5.388  SIR:  -9.784  ISR:  10.408  SAR:   0.409
-bass            ==> SDR:   1.544  SIR: -14.141  ISR:   3.979  SAR:   0.253
+ 32%|███▏      | 16/50 [03:30<08:12, 14.48s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9886
+Hollow Ground - Ill Fate
+ vocals          ==> SDR:   7.160  SIR:  -5.569  ISR:  -2.662  SAR:   0.202
+drums           ==> SDR:   5.388  SIR:  -9.781  ISR:  10.408  SAR:   0.409
+bass            ==> SDR:   1.545  SIR: -14.141  ISR:   3.979  SAR:   0.253
 other           ==> SDR:   2.431  SIR: -11.132  ISR:   1.124  SAR:   0.068
 
+ 34%|███▍      | 17/50 [03:44<07:57, 14.46s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8874
 James Elder & Mark M Thompson - The English Actor
  vocals          ==> SDR:   5.003  SIR:  -8.740  ISR:   2.017  SAR:   0.199
 drums           ==> SDR:   4.615  SIR:  -2.998  ISR:   6.388  SAR:   1.194
-bass            ==> SDR:   7.674  SIR:   6.313  ISR:  10.316  SAR:   6.507
+bass            ==> SDR:   7.673  SIR:   6.313  ISR:  10.316  SAR:   6.507
 other           ==> SDR:   4.512  SIR:  -6.049  ISR:  10.576  SAR:   1.177
 
- 38%|███▊      | 19/50 [02:50<04:20,  8.40s/it]Juliet's Rescue - Heartbeats
- vocals          ==> SDR:   9.843  SIR:  -2.135  ISR:   3.603  SAR:   1.139
-drums           ==> SDR:  10.842  SIR:  -0.489  ISR:  20.586  SAR:   2.620
-bass            ==> SDR:  -2.521  SIR: -15.224  ISR:   3.286  SAR:   0.230
-other           ==> SDR:   3.859  SIR:  -4.999  ISR:   4.812  SAR:   0.763
+ 36%|███▌      | 18/50 [03:58<07:38, 14.32s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9123
+Juliet's Rescue - Heartbeats
+ vocals          ==> SDR:   9.843  SIR:  -2.133  ISR:   3.602  SAR:   1.139
+drums           ==> SDR:  10.842  SIR:  -0.487  ISR:  20.587  SAR:   2.621
+bass            ==> SDR:  -2.521  SIR: -15.223  ISR:   3.284  SAR:   0.230
+other           ==> SDR:   3.859  SIR:  -5.001  ISR:   4.811  SAR:   0.763
 
+ 38%|███▊      | 19/50 [04:12<07:16, 14.08s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9246
 Little Chicago's Finest - My Own
- vocals          ==> SDR:   5.089  SIR:  -1.469  ISR:   2.206  SAR:   0.644
-drums           ==> SDR:   8.253  SIR:  -0.810  ISR:  10.571  SAR:   2.364
-bass            ==> SDR:  10.541  SIR:  13.384  ISR:  11.782  SAR:   6.873
-other           ==> SDR:   1.836  SIR:  -6.448  ISR:   4.075  SAR:   0.426
+ vocals          ==> SDR:   5.088  SIR:  -1.469  ISR:   2.205  SAR:   0.644
+drums           ==> SDR:   8.253  SIR:  -0.810  ISR:  10.570  SAR:   2.364
+bass            ==> SDR:  10.541  SIR:  13.383  ISR:  11.783  SAR:   6.873
+other           ==> SDR:   1.836  SIR:  -6.448  ISR:   4.076  SAR:   0.426
 
- 42%|████▏     | 21/50 [03:09<04:19,  8.93s/it]Louis Cressy Band - Good Time
- vocals          ==> SDR:   6.354  SIR:  -4.588  ISR:   7.168  SAR:   0.668
-drums           ==> SDR:   6.378  SIR:  -5.737  ISR:   9.179  SAR:   0.804
+ 40%|████      | 20/50 [04:26<07:02, 14.10s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9368
+Louis Cressy Band - Good Time
+ vocals          ==> SDR:   6.354  SIR:  -4.587  ISR:   7.168  SAR:   0.668
+drums           ==> SDR:   6.378  SIR:  -5.737  ISR:   9.178  SAR:   0.804
 bass            ==> SDR:   6.746  SIR:  -1.911  ISR:   2.331  SAR:   0.624
-other           ==> SDR:   6.321  SIR:  -4.439  ISR:   1.031  SAR:   0.542
+other           ==> SDR:   6.321  SIR:  -4.439  ISR:   1.032  SAR:   0.543
 
+ 42%|████▏     | 21/50 [04:42<07:08, 14.79s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9436
 Lyndsey Ollard - Catching Up
- vocals          ==> SDR:  13.215  SIR:  -1.642  ISR:  13.228  SAR:   2.054
-drums           ==> SDR:   6.396  SIR:   1.756  ISR:   9.434  SAR:   2.548
+ vocals          ==> SDR:  13.215  SIR:  -1.643  ISR:  13.229  SAR:   2.053
+drums           ==> SDR:   6.396  SIR:   1.757  ISR:   9.434  SAR:   2.549
 bass            ==> SDR:   4.939  SIR:   3.962  ISR:  10.688  SAR:   2.827
-other           ==> SDR:   4.979  SIR:   0.485  ISR:  -4.120  SAR:   0.350
+other           ==> SDR:   4.979  SIR:   0.483  ISR:  -4.120  SAR:   0.350
 
- 46%|████▌     | 23/50 [03:25<03:48,  8.46s/it]M.E.R.C. Music - Knockout
+ 44%|████▍     | 22/50 [04:54<06:28, 13.86s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9512
+ 46%|████▌     | 23/50 [05:06<05:58, 13.29s/it]M.E.R.C. Music - Knockout
  vocals          ==> SDR:   6.535  SIR:  -8.115  ISR:   8.774  SAR:   0.528
-drums           ==> SDR:   4.113  SIR: -17.331  ISR:   5.520  SAR:   0.050
+drums           ==> SDR:   4.113  SIR: -17.331  ISR:   5.519  SAR:   0.050
 bass            ==> SDR:   8.082  SIR:   1.696  ISR:   3.080  SAR:   2.080
 other           ==> SDR:   3.087  SIR:  -1.533  ISR: -10.786  SAR:   0.140
 
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9399
 Moosmusic - Big Dummy Shake
- vocals          ==> SDR:  11.419  SIR:  -2.161  ISR:  10.762  SAR:   1.923
-drums           ==> SDR:   8.064  SIR:   1.037  ISR:  11.490  SAR:   3.006
-bass            ==> SDR:   6.484  SIR:  -5.413  ISR:  10.261  SAR:   1.219
-other           ==> SDR:   4.168  SIR:  -6.212  ISR:  -2.554  SAR:   0.152
+ vocals          ==> SDR:  11.420  SIR:  -2.160  ISR:  10.764  SAR:   1.924
+drums           ==> SDR:   8.064  SIR:   1.035  ISR:  11.490  SAR:   3.005
+bass            ==> SDR:   6.483  SIR:  -5.413  ISR:  10.261  SAR:   1.219
+other           ==> SDR:   4.168  SIR:  -6.209  ISR:  -2.555  SAR:   0.152
 
- 50%|█████     | 25/50 [03:40<03:23,  8.12s/it]Motor Tapes - Shore
- vocals          ==> SDR:  -6.166  SIR: -12.679  ISR:   8.542  SAR:   0.753
-drums           ==> SDR:   5.934  SIR:  -3.136  ISR:   7.907  SAR:   1.234
-bass            ==> SDR:   5.056  SIR:   0.820  ISR:   8.598  SAR:   3.350
+ 48%|████▊     | 24/50 [05:18<05:36, 12.94s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9317
+Motor Tapes - Shore
+ vocals          ==> SDR:  -6.166  SIR: -12.678  ISR:   8.542  SAR:   0.753
+drums           ==> SDR:   5.935  SIR:  -3.134  ISR:   7.909  SAR:   1.235
+bass            ==> SDR:   5.056  SIR:   0.821  ISR:   8.597  SAR:   3.350
 other           ==> SDR:   3.753  SIR:  -0.146  ISR:   0.572  SAR:   0.695
 
-Mu - Too Bright
- vocals          ==> SDR:  13.399  SIR:   2.309  ISR:   8.181  SAR:   4.726
-drums           ==> SDR:  13.233  SIR:   4.211  ISR:  18.822  SAR:   5.339
-bass            ==> SDR:   4.713  SIR:  -7.430  ISR:  11.552  SAR:   0.701
-other           ==> SDR:   5.847  SIR:  -0.709  ISR:   3.863  SAR:   1.368
+ 50%|█████     | 25/50 [05:30<05:13, 12.55s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9877
+ 52%|█████▏    | 26/50 [05:41<04:55, 12.30s/it]Mu - Too Bright
+ vocals          ==> SDR:  13.399  SIR:   2.310  ISR:   8.182  SAR:   4.726
+drums           ==> SDR:  13.233  SIR:   4.211  ISR:  18.823  SAR:   5.339
+bass            ==> SDR:   4.713  SIR:  -7.430  ISR:  11.552  SAR:   0.702
+other           ==> SDR:   5.847  SIR:  -0.708  ISR:   3.864  SAR:   1.369
 
- 54%|█████▍    | 27/50 [03:57<03:06,  8.13s/it]Nerve 9 - Pray For The Rain
- vocals          ==> SDR:   5.903  SIR:   0.365  ISR:   4.298  SAR:   1.305
-drums           ==> SDR:   9.900  SIR:   3.277  ISR:  13.466  SAR:   4.404
-bass            ==> SDR:   3.967  SIR:  -2.573  ISR:   5.720  SAR:   1.429
-other           ==> SDR:   2.327  SIR:  -4.609  ISR:   8.617  SAR:   1.419
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9197
+Nerve 9 - Pray For The Rain
+ vocals          ==> SDR:   5.903  SIR:   0.363  ISR:   4.296  SAR:   1.305
+drums           ==> SDR:   9.900  SIR:   3.278  ISR:  13.466  SAR:   4.404
+bass            ==> SDR:   3.967  SIR:  -2.572  ISR:   5.719  SAR:   1.429
+other           ==> SDR:   2.327  SIR:  -4.614  ISR:   8.617  SAR:   1.418
 
+ 54%|█████▍    | 27/50 [05:53<04:41, 12.24s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8960
 PR - Happy Daze
- vocals          ==> SDR: -20.795  SIR: -23.438  ISR:  -4.676  SAR:   0.097
-drums           ==> SDR:   8.521  SIR:   7.203  ISR:  17.081  SAR:   9.887
-bass            ==> SDR:   2.944  SIR:   5.508  ISR:   3.438  SAR:   3.506
-other           ==> SDR:   0.003  SIR:  -6.782  ISR:   0.005  SAR:  -3.154
+ vocals          ==> SDR: -20.796  SIR: -23.440  ISR:  -4.675  SAR:   0.097
+drums           ==> SDR:   8.522  SIR:   7.205  ISR:  17.082  SAR:   9.888
+bass            ==> SDR:   2.946  SIR:   5.512  ISR:   3.440  SAR:   3.500
+other           ==> SDR:   0.003  SIR:  -6.777  ISR:   0.005  SAR:  -3.154
 
- 58%|█████▊    | 29/50 [04:12<02:43,  7.81s/it]PR - Oh No
- vocals          ==> SDR: -14.494  SIR: -26.316  ISR:  -1.646  SAR:   0.330
-drums           ==> SDR:   6.104  SIR:   2.571  ISR:   7.345  SAR:   4.305
-bass            ==> SDR:   0.985  SIR:   6.022  ISR:   0.110  SAR:   0.016
-other           ==> SDR:   1.618  SIR:  -5.503  ISR:   5.107  SAR:   2.275
+ 56%|█████▌    | 28/50 [06:08<04:45, 13.00s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9382
+PR - Oh No
+ vocals          ==> SDR: -14.494  SIR: -26.316  ISR:  -1.645  SAR:   0.330
+drums           ==> SDR:   6.104  SIR:   2.572  ISR:   7.344  SAR:   4.306
+bass            ==> SDR:   0.985  SIR:   6.021  ISR:   0.110  SAR:   0.016
+other           ==> SDR:   1.618  SIR:  -5.502  ISR:   5.107  SAR:   2.276
 
+ 58%|█████▊    | 29/50 [06:23<04:44, 13.56s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8874
 Punkdisco - Oral Hygiene
- vocals          ==> SDR:   7.365  SIR:   3.546  ISR:  14.569  SAR:   5.029
-drums           ==> SDR:   5.853  SIR:  -4.459  ISR:  10.802  SAR:   1.183
-bass            ==> SDR:   6.473  SIR:   3.628  ISR:   9.511  SAR:   3.969
-other           ==> SDR:   1.502  SIR:  -9.764  ISR:   2.779  SAR:   0.193
+ vocals          ==> SDR:   7.364  SIR:   3.545  ISR:  14.569  SAR:   5.028
+drums           ==> SDR:   5.852  SIR:  -4.459  ISR:  10.802  SAR:   1.183
+bass            ==> SDR:   6.473  SIR:   3.628  ISR:   9.511  SAR:   3.968
+other           ==> SDR:   1.502  SIR:  -9.765  ISR:   2.779  SAR:   0.193
 
- 62%|██████▏   | 31/50 [04:27<02:23,  7.55s/it]Raft Monk - Tiring
- vocals          ==> SDR:   4.778  SIR:  -7.779  ISR:   6.577  SAR:   0.509
-drums           ==> SDR:   5.086  SIR:  -8.548  ISR:   8.947  SAR:   0.487
+ 60%|██████    | 30/50 [06:35<04:21, 13.07s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9113
+ 62%|██████▏   | 31/50 [06:47<04:00, 12.63s/it]Raft Monk - Tiring
+ vocals          ==> SDR:   4.778  SIR:  -7.780  ISR:   6.577  SAR:   0.509
+drums           ==> SDR:   5.086  SIR:  -8.546  ISR:   8.946  SAR:   0.488
 bass            ==> SDR:   2.514  SIR:  -1.224  ISR:  -3.466  SAR:   0.565
-other           ==> SDR:   2.153  SIR:  -5.287  ISR:  -2.002  SAR:   0.133
+other           ==> SDR:   2.153  SIR:  -5.287  ISR:  -2.001  SAR:   0.133
 
-Sambasevam Shanmugam - Kaathaadi
- vocals          ==> SDR:   8.933  SIR:  -6.957  ISR:   8.514  SAR:   0.723
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9440
+ 64%|██████▍   | 32/50 [06:58<03:40, 12.27s/it]Sambasevam Shanmugam - Kaathaadi
+ vocals          ==> SDR:   8.933  SIR:  -6.956  ISR:   8.514  SAR:   0.723
 drums           ==> SDR:   3.131  SIR:  -7.196  ISR:  13.349  SAR:   0.626
-bass            ==> SDR:   5.576  SIR:   5.400  ISR:   5.993  SAR:   3.952
+bass            ==> SDR:   5.576  SIR:   5.400  ISR:   5.991  SAR:   3.952
 other           ==> SDR:   4.047  SIR:  -1.646  ISR:   5.135  SAR:   1.633
 
- 66%|██████▌   | 33/50 [04:43<02:14,  7.88s/it]Secretariat - Borderline
- vocals          ==> SDR:   7.117  SIR:  -3.797  ISR:  12.003  SAR:   1.330
-drums           ==> SDR:   2.436  SIR:  -1.643  ISR:   5.565  SAR:   0.718
-bass            ==> SDR:   4.094  SIR:   4.754  ISR:  -0.087  SAR:   1.186
-other           ==> SDR:   5.086  SIR:  -3.465  ISR:   5.084  SAR:   0.795
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9138
+Secretariat - Borderline
+ vocals          ==> SDR:   7.117  SIR:  -3.798  ISR:  12.002  SAR:   1.330
+drums           ==> SDR:   2.436  SIR:  -1.639  ISR:   5.565  SAR:   0.718
+bass            ==> SDR:   4.094  SIR:   4.754  ISR:  -0.086  SAR:   1.186
+other           ==> SDR:   5.086  SIR:  -3.464  ISR:   5.085  SAR:   0.795
 
-Secretariat - Over The Top
- vocals          ==> SDR:   7.685  SIR:   4.974  ISR:  15.803  SAR:   5.406
+ 66%|██████▌   | 33/50 [07:10<03:24, 12.05s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9467
+ 68%|██████▊   | 34/50 [07:22<03:12, 12.01s/it]Secretariat - Over The Top
+ vocals          ==> SDR:   7.685  SIR:   4.976  ISR:  15.804  SAR:   5.406
 drums           ==> SDR:   5.703  SIR:   2.530  ISR:   9.142  SAR:   3.119
-bass            ==> SDR:   9.856  SIR:   5.740  ISR:   7.833  SAR:   2.396
-other           ==> SDR:   4.527  SIR:  -4.089  ISR:   6.432  SAR:   0.712
+bass            ==> SDR:   9.856  SIR:   5.740  ISR:   7.832  SAR:   2.395
+other           ==> SDR:   4.527  SIR:  -4.091  ISR:   6.434  SAR:   0.712
 
- 70%|███████   | 35/50 [04:58<01:56,  7.76s/it]Side Effects Project - Sing With Me
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9386
+ 70%|███████   | 35/50 [07:33<02:57, 11.87s/it]Side Effects Project - Sing With Me
  vocals          ==> SDR:  10.362  SIR:  -2.270  ISR:  20.489  SAR:   2.178
-drums           ==> SDR:  11.370  SIR:  11.896  ISR:  10.709  SAR:   7.781
-bass            ==> SDR:   7.305  SIR:   9.443  ISR:   2.149  SAR:   1.662
-other           ==> SDR:   2.377  SIR:  -2.052  ISR:  -2.549  SAR:   0.086
+drums           ==> SDR:  11.370  SIR:  11.897  ISR:  10.710  SAR:   7.781
+bass            ==> SDR:   7.306  SIR:   9.443  ISR:   2.149  SAR:   1.662
+other           ==> SDR:   2.378  SIR:  -2.053  ISR:  -2.550  SAR:   0.086
 
-Signe Jakobsen - What Have You Done To Me
- vocals          ==> SDR:   8.565  SIR:  -7.261  ISR:   2.277  SAR:   0.295
-drums           ==> SDR:   2.262  SIR: -14.785  ISR:   3.894  SAR:   0.026
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9155
+ 72%|███████▏  | 36/50 [07:44<02:43, 11.69s/it]Signe Jakobsen - What Have You Done To Me
+ vocals          ==> SDR:   8.565  SIR:  -7.259  ISR:   2.277  SAR:   0.295
+drums           ==> SDR:   2.262  SIR: -14.785  ISR:   3.895  SAR:   0.026
 bass            ==> SDR:  -2.110  SIR: -17.936  ISR:   7.346  SAR:   0.142
-other           ==> SDR:   3.750  SIR:  -3.684  ISR:   3.971  SAR:   0.861
+other           ==> SDR:   3.751  SIR:  -3.683  ISR:   3.972  SAR:   0.861
 
- 74%|███████▍  | 37/50 [05:14<01:40,  7.72s/it]Skelpolu - Resurrection
- vocals          ==> SDR:   0.023  SIR: -12.595  ISR:   0.025  SAR:  -0.004
-drums           ==> SDR:   6.111  SIR: -10.415  ISR:  -0.568  SAR:   0.099
-bass            ==> SDR:   9.753  SIR:  -3.755  ISR:  13.871  SAR:   1.467
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9722
+ 74%|███████▍  | 37/50 [07:56<02:31, 11.68s/it]Skelpolu - Resurrection
+ vocals          ==> SDR:   0.023  SIR: -12.589  ISR:   0.025  SAR:  -0.004
+drums           ==> SDR:   6.111  SIR: -10.415  ISR:  -0.571  SAR:   0.099
+bass            ==> SDR:   9.753  SIR:  -3.755  ISR:  13.870  SAR:   1.467
 other           ==> SDR:  -2.316  SIR: -11.323  ISR:  -6.902  SAR:   0.212
 
-Speak Softly - Broken Man
- vocals          ==> SDR:   2.155  SIR:  -3.243  ISR:  -7.075  SAR:   0.164
- 76%|███████▌  | 38/50 [05:22<01:32,  7.73s/it]drums           ==> SDR:   3.601  SIR:  -5.250  ISR:   6.280  SAR:   0.784
-bass            ==> SDR:  10.176  SIR:   6.300  ISR:  14.339  SAR:   5.226
-other           ==> SDR:   4.152  SIR: -11.762  ISR:   4.789  SAR:   0.180
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9671
+ 76%|███████▌  | 38/50 [08:08<02:20, 11.67s/it]Speak Softly - Broken Man
+ vocals          ==> SDR:   2.155  SIR:  -3.498  ISR:  -7.076  SAR:   0.161
+drums           ==> SDR:   3.601  SIR:  -5.384  ISR:   6.280  SAR:   0.760
+bass            ==> SDR:  10.176  SIR:   6.285  ISR:  14.339  SAR:   5.261
+other           ==> SDR:   4.152  SIR: -11.681  ISR:   4.790  SAR:   0.184
 
- 78%|███████▊  | 39/50 [05:29<01:24,  7.72s/it]Speak Softly - Like Horses
- vocals          ==> SDR:   6.612  SIR:  -2.663  ISR:  10.903  SAR:   1.754
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9693
+Speak Softly - Like Horses
+ vocals          ==> SDR:   6.612  SIR:  -2.661  ISR:  10.903  SAR:   1.755
 drums           ==> SDR:   3.315  SIR:  -8.646  ISR:   2.951  SAR:   0.117
-bass            ==> SDR:  13.561  SIR:  10.190  ISR:  -3.555  SAR:   1.054
+bass            ==> SDR:  13.561  SIR:  10.190  ISR:  -3.554  SAR:   1.054
 other           ==> SDR:   4.567  SIR:  -9.703  ISR:  10.111  SAR:   0.485
 
-The Doppler Shift - Atrophy
- vocals          ==> SDR:   6.697  SIR:   4.580  ISR:   0.891  SAR:   0.816
-drums           ==> SDR:   7.111  SIR:  -3.066  ISR:  13.960  SAR:   1.778
-bass            ==> SDR:   2.939  SIR: -15.715  ISR:   6.497  SAR:   0.105
+ 78%|███████▊  | 39/50 [08:20<02:10, 11.84s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8938
+ 80%|████████  | 40/50 [08:32<01:57, 11.79s/it]The Doppler Shift - Atrophy
+ vocals          ==> SDR:   6.697  SIR:   4.581  ISR:   0.891  SAR:   0.816
+drums           ==> SDR:   7.110  SIR:  -3.067  ISR:  13.960  SAR:   1.778
+bass            ==> SDR:   2.938  SIR: -15.715  ISR:   6.497  SAR:   0.105
 other           ==> SDR:   4.081  SIR:  -5.924  ISR:   5.777  SAR:   0.715
 
- 82%|████████▏ | 41/50 [05:45<01:09,  7.71s/it]The Easton Ellises (Baumi) - SDRNR
- vocals          ==> SDR:   3.498  SIR:   0.794  ISR:   5.350  SAR:   2.611
-drums           ==> SDR:   7.115  SIR:  -7.610  ISR:  13.002  SAR:   0.605
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8567
+The Easton Ellises (Baumi) - SDRNR
+ vocals          ==> SDR:   3.498  SIR:   0.795  ISR:   5.351  SAR:   2.611
+drums           ==> SDR:   7.115  SIR:  -7.609  ISR:  13.002  SAR:   0.605
 bass            ==> SDR:   4.592  SIR:   9.073  ISR:  -5.224  SAR:   0.729
-other           ==> SDR:   0.004  SIR: -10.530  ISR:  -0.104  SAR:   0.009
+other           ==> SDR:   0.003  SIR: -10.530  ISR:  -0.104  SAR:   0.009
 
+ 82%|████████▏ | 41/50 [08:44<01:46, 11.84s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9030
 The Easton Ellises - Falcon 69
  vocals          ==> SDR:   3.641  SIR:  -8.896  ISR:   2.731  SAR:   0.446
 drums           ==> SDR:   7.311  SIR:  -0.656  ISR:   8.952  SAR:   1.590
 bass            ==> SDR:   5.350  SIR:  -2.617  ISR:   9.040  SAR:   1.551
-other           ==> SDR:   2.062  SIR: -12.690  ISR:   3.828  SAR:   0.207
+other           ==> SDR:   2.062  SIR: -12.691  ISR:   3.828  SAR:   0.207
 
- 86%|████████▌ | 43/50 [06:01<00:55,  7.90s/it]The Long Wait - Dark Horses
+ 84%|████████▍ | 42/50 [08:55<01:34, 11.86s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9133
+The Long Wait - Dark Horses
  vocals          ==> SDR:   7.805  SIR:   0.475  ISR:   8.015  SAR:   2.412
-drums           ==> SDR:   4.468  SIR:  -9.078  ISR:  10.238  SAR:   0.421
-bass            ==> SDR:   5.940  SIR:   9.129  ISR:  -4.875  SAR:   1.370
+drums           ==> SDR:   4.468  SIR:  -9.077  ISR:  10.238  SAR:   0.421
+bass            ==> SDR:   5.941  SIR:   9.130  ISR:  -4.875  SAR:   1.370
 other           ==> SDR:   3.105  SIR:  -6.243  ISR:  -0.588  SAR:   0.168
 
+ 86%|████████▌ | 43/50 [09:08<01:23, 11.96s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9674
 The Mountaineering Club - Mallory
- vocals          ==> SDR:   7.564  SIR:  -0.066  ISR:   9.387  SAR:   1.936
-drums           ==> SDR:   7.412  SIR:   7.800  ISR:   8.783  SAR:   6.205
+ vocals          ==> SDR:   7.564  SIR:  -0.066  ISR:   9.386  SAR:   1.936
+drums           ==> SDR:   7.412  SIR:   7.799  ISR:   8.783  SAR:   6.204
 bass            ==> SDR:   7.789  SIR:   2.758  ISR:   5.925  SAR:   3.222
-other           ==> SDR:   3.283  SIR:  -9.163  ISR:   6.539  SAR:   0.407
+other           ==> SDR:   3.282  SIR:  -9.163  ISR:   6.539  SAR:   0.407
 
- 90%|█████████ | 45/50 [06:16<00:39,  7.90s/it]The Sunshine Garcia Band - For I Am The Moon
- vocals          ==> SDR:   8.874  SIR:   1.904  ISR:   5.583  SAR:   2.793
+ 88%|████████▊ | 44/50 [09:20<01:12, 12.07s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9374
+The Sunshine Garcia Band - For I Am The Moon
+ vocals          ==> SDR:   8.873  SIR:   1.905  ISR:   5.583  SAR:   2.793
 drums           ==> SDR:   2.161  SIR:  -9.968  ISR:   4.144  SAR:   0.048
-bass            ==> SDR:   7.192  SIR:   5.479  ISR:   0.571  SAR:   3.135
-other           ==> SDR:   5.303  SIR:  -5.226  ISR:   7.458  SAR:   0.928
+bass            ==> SDR:   7.193  SIR:   5.479  ISR:   0.570  SAR:   3.135
+other           ==> SDR:   5.303  SIR:  -5.227  ISR:   7.458  SAR:   0.928
 
+ 90%|█████████ | 45/50 [09:32<00:59, 11.94s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8725
 Timboz - Pony
- vocals          ==> SDR:   4.170  SIR:  -1.904  ISR:   7.400  SAR:   1.720
-drums           ==> SDR:   2.242  SIR:  -9.276  ISR:   3.287  SAR:   0.309
-bass            ==> SDR:  -0.655  SIR:  -7.985  ISR:   6.119  SAR:   0.954
-other           ==> SDR:   6.191  SIR:  -2.484  ISR:  10.377  SAR:   1.847
+ vocals          ==> SDR:   4.170  SIR:  -1.905  ISR:   7.398  SAR:   1.719
+drums           ==> SDR:   2.242  SIR:  -9.274  ISR:   3.287  SAR:   0.309
+bass            ==> SDR:  -0.655  SIR:  -7.984  ISR:   6.119  SAR:   0.954
+other           ==> SDR:   6.191  SIR:  -2.483  ISR:  10.377  SAR:   1.847
 
- 94%|█████████▍| 47/50 [06:31<00:23,  7.70s/it]Tom McKenzie - Directions
+ 92%|█████████▏| 46/50 [09:43<00:47, 11.83s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9108
+Tom McKenzie - Directions
  vocals          ==> SDR:   6.200  SIR: -10.880  ISR:   1.141  SAR:   0.111
 drums           ==> SDR:  11.537  SIR:   3.143  ISR:  21.857  SAR:   4.679
-bass            ==> SDR:   4.094  SIR:  -7.991  ISR:   2.857  SAR:   0.527
-other           ==> SDR:   0.368  SIR:  -5.073  ISR:  -2.464  SAR:   0.110
+bass            ==> SDR:   4.093  SIR:  -7.991  ISR:   2.857  SAR:   0.527
+other           ==> SDR:   0.368  SIR:  -5.072  ISR:  -2.464  SAR:   0.110
 
+ 94%|█████████▍| 47/50 [09:55<00:35, 11.82s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9641
 Triviul feat. The Fiend - Widow
- vocals          ==> SDR:   7.996  SIR:   7.959  ISR:  -8.586  SAR:   0.423
-drums           ==> SDR:   3.213  SIR: -15.469  ISR:   4.042  SAR:   0.079
-bass            ==> SDR:  10.464  SIR:   6.004  ISR:   9.864  SAR:   6.062
-other           ==> SDR:   1.151  SIR: -17.713  ISR:   2.719  SAR:   0.038
+ vocals          ==> SDR:   7.996  SIR:   7.960  ISR:  -8.586  SAR:   0.423
+drums           ==> SDR:   3.212  SIR: -15.469  ISR:   4.042  SAR:   0.079
+bass            ==> SDR:  10.464  SIR:   6.003  ISR:   9.863  SAR:   6.061
+other           ==> SDR:   1.151  SIR: -17.712  ISR:   2.719  SAR:   0.038
 
- 98%|█████████▊| 49/50 [06:47<00:07,  7.73s/it]We Fell From The Sky - Not You
- vocals          ==> SDR:   5.070  SIR:  -1.051  ISR:   4.480  SAR:   1.292
-drums           ==> SDR:   8.629  SIR:  -4.237  ISR:  14.954  SAR:   1.301
+ 96%|█████████▌| 48/50 [10:07<00:23, 11.84s/it]C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9383
+ 98%|█████████▊| 49/50 [10:19<00:11, 11.86s/it]We Fell From The Sky - Not You
+ vocals          ==> SDR:   5.070  SIR:  -1.047  ISR:   4.480  SAR:   1.293
+drums           ==> SDR:   8.629  SIR:  -4.240  ISR:  14.953  SAR:   1.301
 bass            ==> SDR:  -0.739  SIR: -16.778  ISR:   4.811  SAR:   0.104
-other           ==> SDR:   4.509  SIR:  -1.362  ISR:  -2.915  SAR:   0.469
+other           ==> SDR:   4.509  SIR:  -1.363  ISR:  -2.917  SAR:   0.469
 
+C:\Users\10213\.conda\envs\umx\lib\site-packages\librosa\feature\spectral.py:2148: UserWarning: Empty filters detected in mel frequency basis. Some channels will produce empty responses. Try increasing your sampling rate (and fmax) or reducing n_mels.
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9062
 Zeno - Signs
- vocals          ==> SDR:   7.443  SIR:  -2.195  ISR:   7.106  SAR:   1.100
-drums           ==> SDR:   6.680  SIR:   0.369  ISR:  11.106  SAR:   2.664
-bass            ==> SDR:   2.225  SIR: -12.514  ISR:   2.282  SAR:   0.092
-other           ==> SDR:   4.646  SIR:  -1.643  ISR:   6.081  SAR:   0.764
+ vocals          ==> SDR:   7.443  SIR:  -2.195  ISR:   7.107  SAR:   1.100
+drums           ==> SDR:   6.680  SIR:   0.371  ISR:  11.105  SAR:   2.665
+bass            ==> SDR:   2.224  SIR: -12.514  ISR:   2.282  SAR:   0.092
+other           ==> SDR:   4.646  SIR:  -1.644  ISR:   6.084  SAR:   0.764
 
-100%|██████████| 50/50 [06:55<00:00,  8.31s/it]
+100%|██████████| 50/50 [10:30<00:00, 12.62s/it]
 Aggrated Scores (median over frames, median over tracks)
-vocals          ==> SDR:   6.748  SIR:  -2.178  ISR:   6.591  SAR:   1.215
-drums           ==> SDR:   6.108  SIR:  -4.124  ISR:   9.813  SAR:   1.178
-bass            ==> SDR:   4.997  SIR:  -0.452  ISR:   4.395  SAR:   1.203
-other           ==> SDR:   3.355  SIR:  -5.036  ISR:   2.749  SAR:   0.447
+vocals          ==> SDR:   6.745  SIR:  -2.178  ISR:   6.591  SAR:   1.216
+drums           ==> SDR:   6.108  SIR:  -4.127  ISR:   9.812  SAR:   1.178
+bass            ==> SDR:   4.998  SIR:  -0.453  ISR:   4.395  SAR:   1.203
+other           ==> SDR:   3.355  SIR:  -5.037  ISR:   2.749  SAR:   0.447
