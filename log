@@ -3,4 +3,4 @@
 2   model.py 在LSTM层后添加频率感知注意力机制
     test_model.py 添加代码测试模型
 3   evaluate.py 新增F1 score用于检验音符提取效果
-    test_evaluate.py 添加代码测试F1 score运行效果
+    test_evaluate.py 新增该程序用于测试Museval和F1 score运行效果
