@@ -4,3 +4,4 @@
     test_model.py 添加代码测试模型
 3   evaluate.py 新增F1 score用于检验音符提取效果
     test_evaluate.py 新增该程序用于测试Museval和F1 score运行效果
+4   process_results.py 用于将.pandas文件和.txt文件当中的数据提取到excel表格并计算均值和中位数

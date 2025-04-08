@@ -92,7 +92,7 @@ def main():
     # Dataset paramaters
     parser.add_argument("--dataset", type=str, default="musdb", choices=["musdb", "aligned", "sourcefolder", "trackfolder_var", "trackfolder_fix"], help="Name of the dataset.")
     parser.add_argument("--root", type=str, help="root path of dataset")
-    parser.add_argument("--output", type=str, default="open-unmix", help="provide output path base folder name")
+    parser.add_argument("--output", type=str, default="umx-bass", help="provide output path base folder name")
     parser.add_argument("--model", type=str, help="Name or path of pretrained model to fine-tune")
     parser.add_argument("--checkpoint", type=str, help="Path of checkpoint to resume training")
     parser.add_argument("--audio-backend", type=str, default="soundfile", help="Set torchaudio backend (`sox_io` or `soundfile`")
