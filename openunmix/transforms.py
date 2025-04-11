@@ -1,8 +1,6 @@
 from typing import Optional
-
 import torch
 import torch.nn as nn
-import torchaudio
 from torch import Tensor
 from nnAudio.features import CQT
 
@@ -34,7 +32,6 @@ def make_filterbanks(
             n_hop=n_hop
         )
         decoder = nnAudioICQT(
-            sample_rate=int(sr),
             n_fft=n_fft,  # 使用传入的n_fft参数
             n_hop=n_hop,
             n_iter=50  # Griffin-Lim迭代次数
@@ -94,10 +91,11 @@ class nnAudioCQT(nn.Module):
             output_format="Complex",
             pad_mode='reflect',
             trainable=False,
-            window = 'hann'
+            window='hann'
         )
         # 添加手动复数转换标志
         self.force_complex = True
+        self.out_complex = None
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         shape = x.size()
@@ -111,79 +109,89 @@ class nnAudioCQT(nn.Module):
             cqt_complex = cqt_out
         else:
             if self.force_complex and cqt_out.shape[-1] == 2:
-                # 如果输出是分开的实部和虚部
                 cqt_complex = torch.view_as_complex(cqt_out.contiguous())
             else:
                 raise RuntimeError(
                     f"CQT output format not supported. Shape: {cqt_out.shape}, is_complex: {cqt_out.is_complex()}")
+        # 存储复数输出
+        self.out_complex = cqt_complex
+        magnitude = torch.view_as_real(cqt_complex)
 
         # 转换为实部/虚部表示
-        return torch.view_as_real(cqt_complex).reshape(shape[0], shape[1], -1, cqt_complex.shape[-1], 2)
+        return magnitude.reshape(shape[0], shape[1], -1, cqt_complex.shape[-1], 2)
 
+    def get_complex(self):
+        if self.out_complex is None:
+            raise RuntimeError("No complex output available. Call forward() first.")
+        return self.out_complex
 
 class nnAudioICQT(nn.Module):
     def __init__(
             self,
-            sample_rate: int = 44100,
             n_fft: int = 4096,
             n_hop: int = 1024,
             n_iter: int = 100,  # 增加迭代次数
             momentum: float = 0.99,  # 添加动量项
     ):
         super().__init__()
+        self._prev_y = None
         self.n_fft = n_fft
         self.n_hop = n_hop
         self.n_iter = n_iter
         self.momentum = momentum
         self.window = torch.hann_window(n_fft)
 
-    def forward(self, X: torch.Tensor, length: Optional[int] = None) -> torch.Tensor:
-        shape = X.size()
-        X = X.reshape(-1, *shape[-3:])
-        target_magnitude = torch.view_as_complex(X).abs()
-        target_magnitude_stft = self._cqt_to_stft_magnitude(target_magnitude)
+        # 存储对应的CQT编码器
+        self._cqt_encoder = None
 
-        # 使用更好的初始估计
-        y = torch.randn(
-            X.shape[0],
-            length if length else shape[-2] * self.n_hop,
-            device=X.device,
-            dtype=torch.float32
+    def set_cqt_encoder(self, encoder):
+        self._cqt_encoder = encoder
+
+    def forward(self, X: torch.Tensor, length: Optional[int] = None) -> torch.Tensor:
+        if self._cqt_encoder is None:
+            raise RuntimeError("CQT encoder not set. Call set_cqt_encoder() first.")
+        shape = X.size()
+        X = X.reshape(-1, *shape[-2:])
+        # 获取原始复数输出
+        cqt_complex = self._cqt_encoder.get_complex()
+        if cqt_complex is None:
+            raise RuntimeError("No complex output available from CQT encoder")
+
+        # 提取相位信息
+        phase = torch.angle(cqt_complex)
+
+        # 将CQT幅度谱转换为STFT幅度谱
+        stft_magnitude = self._cqt_to_stft_magnitude(X)
+
+        # 确保相位和幅度谱的维度匹配
+        if phase.shape[1] != stft_magnitude.shape[1]:
+            # 使用插值调整相位谱的维度
+            phase = torch.nn.functional.interpolate(
+                phase.unsqueeze(1),
+                size=(stft_magnitude.shape[1], phase.shape[2]),
+                mode="linear",
+                align_corners=True
+            ).squeeze(1)
+
+        # 使用原始相位重建复数谱
+        stft_complex = stft_magnitude * torch.exp(1j * phase)
+
+        # 使用ISTFT重构时域信号
+        y = torch.istft(
+            stft_complex,
+            n_fft=self.n_fft,
+            hop_length=self.n_hop,
+            win_length=self.n_fft,
+            window=self.window.to(X.device),
+            length=length
         )
 
-        # 添加动量项
-        prev_y = None
+        # 应用动量项
+        if hasattr(self, '_prev_y'):
+            y = self.momentum * self._prev_y + (1 - self.momentum) * y
+        self._prev_y = y
 
-        for i in range(self.n_iter):
-            stft_complex = torch.stft(
-                y,
-                n_fft=self.n_fft,
-                hop_length=self.n_hop,
-                win_length=self.n_fft,
-                window=self.window.to(y.device),
-                return_complex=True
-            )
-            phase = torch.angle(stft_complex)
-            new_spec = target_magnitude_stft * torch.exp(1j * phase)
-
-            # 使用ISTFT重构
-            new_y = torch.istft(
-                new_spec,
-                n_fft=self.n_fft,
-                hop_length=self.n_hop,
-                win_length=self.n_fft,
-                window=self.window.to(y.device),
-                length=length
-            )
-
-            # 应用动量
-            if prev_y is not None:
-                y = self.momentum * prev_y + (1 - self.momentum) * new_y
-            else:
-                y = new_y
-            prev_y = y
-
-        return y.reshape(shape[:-3] + y.shape[-1:])
+        return y.reshape(shape[:-2] + y.shape[-1:])
 
     def _cqt_to_stft_magnitude(self, cqt_mag: torch.Tensor) -> torch.Tensor:
         stft_bins = self.n_fft // 2 + 1
@@ -311,8 +319,7 @@ class TorchISTFT(nn.Module):
 class ComplexNorm(nn.Module):
     r"""Compute the norm of complex tensor input.
 
-    Extension of `torchaudio.functional.complex_norm` with mono
-
+    Extension of `torchaudio.functional.complex_norm` with mon
     Args:
         mono (bool): Downmix to single channel after applying power norm
             to maximize
@@ -327,17 +334,13 @@ class ComplexNorm(nn.Module):
         Args:
             spec: complex_tensor (Tensor): Tensor shape of
                 `(..., complex=2)`
-
         Returns:
             Tensor: Power/Mag of input
                 `(...,)`
         """
         # take the magnitude
-
         spec = torch.abs(torch.view_as_complex(spec))
-
         # down-mix in the mag domain to preserve energy
         if self.mono:
             spec = torch.mean(spec, 1, keepdim=True)
-
         return spec
