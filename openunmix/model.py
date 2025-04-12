@@ -75,6 +75,19 @@ class OpenUnmix(nn.Module):
             Linear(hidden_size, hidden_size * 2),
             nn.Sigmoid()
         )
+        
+        # 添加贝斯频率掩码
+        self.bass_mask = nn.Parameter(
+            torch.ones(self.hidden_size * 2),  # 使用hidden_size * 2作为掩码长度
+            requires_grad=True
+        )
+        # 初始化贝斯频率掩码，增强低频部分
+        with torch.no_grad():
+            # 计算每个频率bin对应的频率
+            freqs = torch.linspace(0, 1, self.hidden_size * 2)
+            # 增强低频部分（20-200Hz对应的bin）
+            bass_range = (freqs < 0.1)  # 大约对应20-200Hz
+            self.bass_mask[bass_range] = 2.0  # 增强低频权重
 
         fc2_hiddensize = hidden_size * 2
         self.fc2 = Linear(in_features=fc2_hiddensize, out_features=hidden_size, bias=False)
@@ -154,6 +167,14 @@ class OpenUnmix(nn.Module):
         # 应用频率感知注意力机制
         attention_weights = self.freq_attention(x)
         x = x * attention_weights
+        
+        # 应用贝斯频率掩码
+        # 保存原始形状
+        original_shape = x.shape
+        # 打印形状以调试
+        print(f"Original shape: {original_shape}")
+        # 直接应用掩码，不需要reshape
+        x = x * self.bass_mask.view(1, 1, -1)  # 广播到所有通道
 
         # 后续处理保持不变
         x = self.fc2(x.reshape(-1, x.shape[-1]))
