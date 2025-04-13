@@ -2,7 +2,7 @@ import pytest
 import torch
 import numpy as np
 import tempfile
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch, MagicMock
 from openunmix import evaluate
 
 
@@ -65,7 +65,7 @@ def test_separate_and_evaluate(mock_track, mock_separator, mock_museval, mock_mu
             scores = evaluate.separate_and_evaluate(
                 track=mock_track,
                 targets=["vocals", "drums", "bass", "other"],
-                model_str_or_path="umx",
+                model_str_or_path="umxl",
                 niter=1,
                 output_dir=output_dir,
                 eval_dir=eval_dir,
