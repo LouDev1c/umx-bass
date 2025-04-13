@@ -35,7 +35,7 @@ def make_filterbanks(
         decoder = nnAudioICQT(
             n_fft=n_fft,  # 使用传入的n_fft参数
             n_hop=n_hop,
-            n_iter=50  # Griffin-Lim迭代次数
+            n_iter=25  # Griffin-Lim迭代次数
         )
     elif method == "asteroid":
         fb = torch_stft_fb.TorchSTFTFB.from_torch_args(
@@ -124,7 +124,7 @@ class nnAudioICQT(nn.Module):
             sample_rate: int = 44100,
             n_fft: int = 4096,
             n_hop: int = 1024,
-            n_iter: int = 50,
+            n_iter: int = 25,
     ):
         super().__init__()
         self.n_fft = n_fft
