@@ -44,9 +44,9 @@ def temp_dir():
 
 def test_plot_loss_history(temp_dir):
     """测试loss历史记录绘图功能"""
-    # 创建模拟的loss数据
-    train_losses = [1.0, 0.8, 0.6, 0.4, 0.2]
-    valid_losses = [1.2, 0.9, 0.7, 0.5, 0.3]
+    # 创建模拟的loss数据，1000个epoch
+    train_losses = [1.0 - 0.0008 * i for i in range(1000)]  # 从1.0线性下降到0.2
+    valid_losses = [1.2 - 0.0009 * i for i in range(1000)]  # 从1.2线性下降到0.3
     
     # 生成图表
     output_path = temp_dir / "test_loss_history.png"
@@ -106,9 +106,9 @@ def test_valid_function(mock_model, mock_data):
 
 def test_loss_history_saving(temp_dir):
     """测试loss历史记录保存功能"""
-    # 创建模拟的loss历史数据
-    train_losses = [1.0, 0.8, 0.6, 0.4, 0.2]
-    valid_losses = [1.2, 0.9, 0.7, 0.5, 0.3]
+    # 创建模拟的loss历史数据，1000个epoch
+    train_losses = [1.0 - 0.0008 * i for i in range(1000)]  # 从1.0线性下降到0.2
+    valid_losses = [1.2 - 0.0009 * i for i in range(1000)]  # 从1.2线性下降到0.3
     
     # 保存数据
     np.save(temp_dir / "train_loss_history.npy", np.array(train_losses))
@@ -121,6 +121,46 @@ def test_loss_history_saving(temp_dir):
     # 验证数据是否正确保存
     loaded_train = np.load(temp_dir / "train_loss_history.npy")
     loaded_valid = np.load(temp_dir / "valid_loss_history.npy")
+    
+    assert np.allclose(loaded_train, train_losses)
+    assert np.allclose(loaded_valid, valid_losses)
+
+def test_1000_epochs_loss_plot(temp_dir):
+    """测试1000个epoch的loss绘图功能"""
+    # 创建更真实的loss数据，包含一些波动
+    epochs = 1000
+    base_train = np.linspace(1.0, 0.2, epochs)
+    base_valid = np.linspace(1.2, 0.3, epochs)
+    
+    # 添加一些随机波动
+    train_noise = np.random.normal(0, 0.02, epochs)
+    valid_noise = np.random.normal(0, 0.03, epochs)
+    
+    train_losses = base_train + train_noise
+    valid_losses = base_valid + valid_noise
+    
+    # 确保loss不会小于0
+    train_losses = np.maximum(train_losses, 0)
+    valid_losses = np.maximum(valid_losses, 0)
+    
+    # 生成图表
+    output_path = temp_dir / "1000_epochs_loss_history.png"
+    plot_loss_history(train_losses, valid_losses, output_path)
+    
+    # 验证文件是否创建
+    assert output_path.exists()
+    
+    # 验证图像内容
+    img = plt.imread(output_path)
+    assert img.shape[0] > 0 and img.shape[1] > 0
+    
+    # 保存数据
+    np.save(temp_dir / "1000_epochs_train_loss.npy", train_losses)
+    np.save(temp_dir / "1000_epochs_valid_loss.npy", valid_losses)
+    
+    # 验证数据是否正确保存
+    loaded_train = np.load(temp_dir / "1000_epochs_train_loss.npy")
+    loaded_valid = np.load(temp_dir / "1000_epochs_valid_loss.npy")
     
     assert np.allclose(loaded_train, train_losses)
     assert np.allclose(loaded_valid, valid_losses) 
