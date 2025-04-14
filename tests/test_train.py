@@ -18,8 +18,8 @@ def mock_model():
     encoder = MagicMock()
     unmix = MagicMock()
     
-    # 设置模拟模型的返回值
-    mock_tensor = torch.tensor([0.5], requires_grad=True)
+    # 设置模拟模型的返回值，确保有正确的维度
+    mock_tensor = torch.tensor([[[0.5]]], requires_grad=True)  # [batch, channels, time]
     unmix.return_value = mock_tensor
     encoder.return_value = mock_tensor
     
@@ -75,7 +75,9 @@ def test_train_function(mock_model, mock_data):
     
     # 运行训练
     with patch('torch.nn.functional.mse_loss', return_value=torch.tensor(0.5, requires_grad=True)):
-        loss = train(MagicMock(), unmix, encoder, device, train_sampler, optimizer)
+        with patch('openunmix.utils.AverageMeter') as mock_avg:
+            mock_avg.return_value.avg = 0.5
+            loss = train(MagicMock(), unmix, encoder, device, train_sampler, optimizer)
     
     # 验证loss值
     assert isinstance(loss, float)
