@@ -11,6 +11,7 @@ from git import Repo
 import os
 import copy
 import torchaudio
+import matplotlib.pyplot as plt
 
 from openunmix import data
 from openunmix import model
@@ -81,6 +82,20 @@ def get_statistics(args, encoder, dataset):
     # set inital input scaler values
     std = np.maximum(scaler.scale_, 1e-4 * np.max(scaler.scale_))
     return scaler.mean_, std
+
+
+def plot_loss_history(train_losses, valid_losses, output_path):
+    """绘制训练和验证loss曲线"""
+    plt.figure(figsize=(10, 6))
+    plt.plot(train_losses, label='Training Loss')
+    plt.plot(valid_losses, label='Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss History')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(output_path)
+    plt.close()
 
 
 def main():
@@ -233,17 +248,31 @@ def main():
         train_times = []
         best_epoch = 0
 
+    # 添加loss历史记录
+    train_loss_history = []
+    valid_loss_history = []
+
     for epoch in t:
         t.set_description("Training epoch")
         end = time.time()
         train_loss = train(args, unmix, encoder, device, train_sampler, optimizer)
         valid_loss = valid(args, unmix, encoder, device, valid_sampler)
         scheduler.step(valid_loss)
-        train_losses.append(train_loss)
-        valid_losses.append(valid_loss)
-
+        
+        # 记录loss历史
+        train_loss_history.append(train_loss)
+        valid_loss_history.append(valid_loss)
+        
         t.set_postfix(train_loss=train_loss, val_loss=valid_loss)
-
+        
+        # 每10个epoch保存一次loss图
+        if epoch % 10 == 0:
+            plot_loss_history(
+                train_loss_history, 
+                valid_loss_history,
+                Path(target_path, f"loss_history_epoch_{epoch}.png")
+            )
+        
         stop = es.step(valid_loss)
 
         if valid_loss == es.best:
@@ -283,6 +312,17 @@ def main():
         if stop:
             print("Apply Early Stopping")
             break
+
+    # 训练结束后保存最终的loss图
+    plot_loss_history(
+        train_loss_history,
+        valid_loss_history,
+        Path(target_path, "final_loss_history.png")
+    )
+    
+    # 保存loss历史数据
+    np.save(Path(target_path, "train_loss_history.npy"), np.array(train_loss_history))
+    np.save(Path(target_path, "valid_loss_history.npy"), np.array(valid_loss_history))
 
 
 if __name__ == "__main__":
