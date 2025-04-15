@@ -23,6 +23,7 @@ tqdm.monitor_interval = 0
 
 def train(args, unmix, encoder, device, train_sampler, optimizer):
     losses = utils.AverageMeter()
+    batch_losses = []  # 记录每个batch的loss
     unmix.train()
     pbar = tqdm.tqdm(train_sampler, disable=args.quiet)
     for x, y in pbar:
@@ -36,8 +37,9 @@ def train(args, unmix, encoder, device, train_sampler, optimizer):
         loss.backward()
         optimizer.step()
         losses.update(loss.item(), Y.size(1))
+        batch_losses.append(loss.item())  # 记录当前batch的loss
         pbar.set_postfix(loss="{:.3f}".format(losses.avg))
-    return losses.avg
+    return losses.avg, batch_losses  # 返回平均loss和每个batch的loss
 
 
 def valid(args, unmix, encoder, device, valid_sampler):
@@ -84,11 +86,29 @@ def get_statistics(args, encoder, dataset):
     return scaler.mean_, std
 
 
-def plot_loss_history(train_losses, valid_losses, output_path):
-    """绘制训练和验证loss曲线"""
-    plt.figure(figsize=(10, 6))
-    plt.plot(train_losses, label='Training Loss')
-    plt.plot(valid_losses, label='Validation Loss')
+def plot_loss_history(train_losses, valid_losses, output_path, batch_size=None):
+    """绘制训练和验证loss曲线
+    
+    Args:
+        train_losses: 每个batch的训练loss列表
+        valid_losses: 每个epoch的验证loss列表
+        output_path: 输出文件路径
+        batch_size: 每个epoch的batch数量，用于计算x轴刻度
+    """
+    plt.figure(figsize=(12, 6))
+    
+    # 绘制训练loss
+    if batch_size is not None:
+        # 计算每个batch的x轴位置
+        x_train = np.arange(len(train_losses)) / batch_size
+        plt.plot(x_train, train_losses, label='Training Loss (per batch)', alpha=0.5)
+    else:
+        plt.plot(train_losses, label='Training Loss (per batch)', alpha=0.5)
+    
+    # 绘制验证loss
+    x_valid = np.arange(len(valid_losses))
+    plt.plot(x_valid, valid_losses, label='Validation Loss (per epoch)', linewidth=2)
+    
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training and Validation Loss History')
@@ -249,19 +269,20 @@ def main():
         best_epoch = 0
 
     # 添加loss历史记录
-    train_loss_history = []
-    valid_loss_history = []
+    train_loss_history = []  # 记录每个batch的loss
+    valid_loss_history = []  # 记录每个epoch的loss
+    batch_size = len(train_sampler)  # 获取每个epoch的batch数量
 
     for epoch in t:
         t.set_description("Training epoch")
         end = time.time()
-        train_loss = train(args, unmix, encoder, device, train_sampler, optimizer)
+        train_loss, batch_losses = train(args, unmix, encoder, device, train_sampler, optimizer)
         valid_loss = valid(args, unmix, encoder, device, valid_sampler)
         scheduler.step(valid_loss)
         
         # 记录loss历史
-        train_loss_history.append(train_loss)
-        valid_loss_history.append(valid_loss)
+        train_loss_history.extend(batch_losses)  # 添加所有batch的loss
+        valid_loss_history.append(valid_loss)  # 添加epoch的验证loss
         
         t.set_postfix(train_loss=train_loss, val_loss=valid_loss)
         
@@ -270,7 +291,8 @@ def main():
             plot_loss_history(
                 train_loss_history, 
                 valid_loss_history,
-                Path(target_path, f"loss_history_epoch_{epoch}.png")
+                Path(target_path, f"loss_history_epoch_{epoch}.png"),
+                batch_size
             )
         
         stop = es.step(valid_loss)
@@ -317,7 +339,8 @@ def main():
     plot_loss_history(
         train_loss_history,
         valid_loss_history,
-        Path(target_path, "final_loss_history.png")
+        Path(target_path, "final_loss_history.png"),
+        batch_size
     )
     
     # 保存loss历史数据
