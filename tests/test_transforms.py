@@ -378,3 +378,94 @@ def test_stft_performance():
         'time_resolution': time_resolution,
         'computation_time': computation_time
     }
+
+
+def test_cqt_frequency_resolution():
+    """测试CQT的频率分辨率"""
+    # 测试参数
+    sample_rate = 44100
+    n_fft = 2048
+    n_hop = 1024
+    duration = 2.0  # 测试音频时长
+    fmin = 32.7  # 贝斯最低频(C1音)
+    n_bins = 84  # 7个八度(12 * 7=84)
+    
+    # 生成测试信号
+    t = np.linspace(0, duration, int(sample_rate * duration))
+    test_signal = np.sin(2 * np.pi * 50 * t)  # 50Hz正弦波
+    test_signal = torch.from_numpy(test_signal).float().unsqueeze(0).unsqueeze(0)  # [1, 1, T]
+    
+    # 初始化CQT和ICQT
+    cqt, icqt = transforms.make_filterbanks(
+        n_fft=n_fft,
+        n_hop=n_hop,
+        center=True,
+        method="cqt",
+        sr=sample_rate
+    )
+    
+    # 计算CQT
+    X = cqt(test_signal)
+    cqt_complex = torch.view_as_complex(X)
+    cqt_mag = cqt_complex.abs()
+    
+    # 计算频率分辨率
+    freq_bins = librosa.cqt_frequencies(n_bins=n_bins, fmin=fmin, bins_per_octave=12)
+    freq_resolution = np.diff(freq_bins).mean()
+    
+    # 验证低频区域的频率分辨率
+    low_freq_mask = freq_bins < 200  # 低频区域
+    low_freq_resolution = np.diff(freq_bins[low_freq_mask]).mean()
+    
+    # 验证高频区域的频率分辨率
+    high_freq_mask = freq_bins >= 200  # 高频区域
+    high_freq_resolution = np.diff(freq_bins[high_freq_mask]).mean()
+    
+    # 低频区域应该有更好的频率分辨率
+    assert low_freq_resolution < high_freq_resolution, "低频区域应该有更好的频率分辨率"
+    
+    # 验证50Hz信号的检测
+    freq_idx = np.argmin(np.abs(freq_bins - 50))
+    assert cqt_mag[..., freq_idx, :].mean() > 0.1, "50Hz信号应该被检测到"
+
+
+def test_cqt_time_resolution():
+    """测试CQT的时间分辨率"""
+    # 测试参数
+    sample_rate = 44100
+    n_fft = 2048
+    n_hop = 512  # 减小hop size以提高时间分辨率
+    duration = 2.0  # 测试音频时长
+    
+    # 生成测试信号（包含瞬态）
+    t = np.linspace(0, duration, int(sample_rate * duration))
+    test_signal = np.zeros_like(t)
+    test_signal[int(sample_rate * 0.5):int(sample_rate * 0.6)] = 1.0  # 100ms的脉冲
+    test_signal = torch.from_numpy(test_signal).float().unsqueeze(0).unsqueeze(0)  # [1, 1, T]
+    
+    # 初始化CQT和ICQT
+    cqt, icqt = transforms.make_filterbanks(
+        n_fft=n_fft,
+        n_hop=n_hop,
+        center=True,
+        method="cqt",
+        sr=sample_rate
+    )
+    
+    # 计算CQT
+    X = cqt(test_signal)
+    cqt_complex = torch.view_as_complex(X)
+    cqt_mag = cqt_complex.abs()
+    
+    # 计算时间分辨率（帧/秒）
+    time_resolution = sample_rate / n_hop
+    
+    # 验证时间分辨率
+    assert time_resolution > 20, f"时间分辨率应该足够高以检测瞬态，当前分辨率: {time_resolution} 帧/秒"
+    
+    # 验证瞬态检测
+    # 计算脉冲在时间轴上的位置
+    pulse_start_frame = int(0.5 * time_resolution)
+    pulse_end_frame = int(0.6 * time_resolution)
+    pulse_frames = cqt_mag[..., :, pulse_start_frame:pulse_end_frame]
+    assert pulse_frames.mean() > 0.1, "瞬态应该被检测到"

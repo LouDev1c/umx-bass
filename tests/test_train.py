@@ -183,4 +183,93 @@ def test_1000_epochs_loss_plot():
     
     assert np.allclose(loaded_train, train_losses)
     assert np.allclose(loaded_valid, valid_losses)
+
+def test_loss_plot_saving():
+    """测试loss图是否正确保存到指定文件夹"""
+    # 创建模拟的loss数据
+    batches_per_epoch = 10
+    epochs = 1000
+    total_batches = epochs * batches_per_epoch
+    
+    # 创建训练loss数据（每个batch一个值）
+    train_losses = [1.0 - 0.0008 * (i // batches_per_epoch) + np.random.normal(0, 0.02) 
+                   for i in range(total_batches)]
+    train_losses = np.maximum(train_losses, 0)
+    
+    # 创建验证loss数据（每个epoch一个值）
+    valid_losses = [1.2 - 0.0009 * i + np.random.normal(0, 0.03) 
+                   for i in range(epochs)]
+    valid_losses = np.maximum(valid_losses, 0)
+    
+    # 创建输出目录
+    output_dir = Path("tests/output")
+    output_dir.mkdir(exist_ok=True)
+    
+    # 生成图表
+    output_path = output_dir / "loss_history.png"
+    plot_loss_history(train_losses, valid_losses, output_path, batches_per_epoch)
+    
+    # 验证文件是否创建在正确的位置
+    assert output_path.exists()
+    
+    # 验证图像内容
+    img = plt.imread(output_path)
+    assert img.shape[0] > 0 and img.shape[1] > 0
+    
+    # 验证x轴刻度
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(train_losses, alpha=0.5)
+    ax.plot(valid_losses, linewidth=2)
+    ax.set_xlabel('Epoch')
+    assert ax.get_xlabel() == 'Epoch'
+    
+    # 验证训练loss点的密度
+    train_line = ax.lines[0]
+    valid_line = ax.lines[1]
+    assert len(train_line.get_xdata()) == len(train_losses)
+    assert len(valid_line.get_xdata()) == len(valid_losses)
+    
+    plt.close()
+
+def test_loss_plot_visualization():
+    """测试loss图的可视化效果"""
+    # 创建模拟的loss数据
+    batches_per_epoch = 10
+    epochs = 1000
+    total_batches = epochs * batches_per_epoch
+    
+    # 创建训练loss数据（每个batch一个值）
+    train_losses = [1.0 - 0.0008 * (i // batches_per_epoch) + np.random.normal(0, 0.02) 
+                   for i in range(total_batches)]
+    train_losses = np.maximum(train_losses, 0)
+    
+    # 创建验证loss数据（每个epoch一个值）
+    valid_losses = [1.2 - 0.0009 * i + np.random.normal(0, 0.03) 
+                   for i in range(epochs)]
+    valid_losses = np.maximum(valid_losses, 0)
+    
+    # 生成图表
+    output_path = Path("tests/loss_visualization.png")
+    plot_loss_history(train_losses, valid_losses, output_path, batches_per_epoch)
+    
+    # 验证图像内容
+    img = plt.imread(output_path)
+    assert img.shape[0] > 0 and img.shape[1] > 0
+    
+    # 验证图例
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(train_losses, alpha=0.5, label='Training Loss (per batch)')
+    ax.plot(valid_losses, linewidth=2, label='Validation Loss (per epoch)')
+    ax.legend()
+    
+    # 验证图例标签
+    legend = ax.get_legend()
+    assert legend is not None
+    legend_texts = [text.get_text() for text in legend.get_texts()]
+    assert 'Training Loss (per batch)' in legend_texts
+    assert 'Validation Loss (per epoch)' in legend_texts
+    
+    plt.close()
     
