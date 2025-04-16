@@ -291,7 +291,7 @@ def main():
             plot_loss_history(
                 train_loss_history, 
                 valid_loss_history,
-                Path(target_path, f"loss_history_epoch_{epoch}.png"),
+                Path(target_path, f"{args.output}_loss_history_epoch_{epoch}.png"),
                 batch_size
             )
         
@@ -339,7 +339,7 @@ def main():
     plot_loss_history(
         train_loss_history,
         valid_loss_history,
-        Path(target_path, "final_loss_history.png"),
+        Path(target_path, f"{args.output}_final_loss_history.png"),
         batch_size
     )
     
