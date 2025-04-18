@@ -125,7 +125,7 @@ def main():
     parser.add_argument("--target", type=str, default="bass", help="target source (will be passed to the dataset)")
 
     # Dataset paramaters
-    parser.add_argument("--dataset", type=str, default=r"E:\open-unmix\umx-bass\musdb", help="Name of the dataset.")
+    parser.add_argument("--dataset", type=str, default=r"\umx-bass\musdb", help="Name of the dataset.")
     parser.add_argument("--root", type=str, help="root path of dataset")
     parser.add_argument("--output", type=str, default="umx-bass-2", help="provide output path base folder name")
     parser.add_argument("--model", type=str, help="Name or path of pretrained model to fine-tune")
@@ -282,12 +282,16 @@ def main():
         train_loss, batch_losses = train(args, unmix, encoder, device, train_sampler, optimizer)
         valid_loss = valid(args, unmix, encoder, device, valid_sampler)
         scheduler.step(valid_loss)
+        train_losses.append(train_loss)
+        valid_losses.append(valid_loss)
         
         # 记录loss历史
         train_loss_history.extend(batch_losses)  # 添加所有batch的loss
         valid_loss_history.append(valid_loss)  # 添加epoch的验证loss
         
         t.set_postfix(train_loss=train_loss, val_loss=valid_loss)
+
+        stop = es.step(valid_loss)
         
         # 每10个epoch保存一次loss图
         if epoch % 10 == 0:

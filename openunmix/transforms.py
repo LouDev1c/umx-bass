@@ -4,6 +4,7 @@ import torch.nn as nn
 from torch import Tensor
 from nnAudio.features import CQT
 import torch.nn.functional as F
+import torchaudio
 import numpy as np
 
 try:
@@ -19,16 +20,15 @@ def make_filterbanks(
         n_hop=1024,
         center=False,
         sample_rate=44100.0,
-        method=None):
+        method="stft"):
     window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
 
     if method == "stft":
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
-        # 使用更合理的参数设置
         fmin = 32.7  # 贝斯最低频(C1音)
-        fmax = 2000  # 限制最高频率到2000Hz，因为贝斯主要在这个范围内
+        fmax = 2000  # 限制最高频率到2000Hz
         bins_per_octave = 12
         # 计算八度数
         n_octaves = int(np.log2(fmax / fmin))
