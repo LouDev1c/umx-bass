@@ -76,12 +76,11 @@ def get_statistics(args, encoder, dataset):
     for ind in pbar:
         x, y = dataset_scaler[ind]
         pbar.set_description("Compute dataset statistics")
-        # downmix to mono channel
+        # 降为单通道
         X = encoder(x[None, ...]).mean(1, keepdim=False).permute(0, 2, 1)
-
         scaler.partial_fit(np.squeeze(X))
 
-    # set inital input scaler values
+    # 设置初始输入标量值
     std = np.maximum(scaler.scale_, 1e-4 * np.max(scaler.scale_))
     return scaler.mean_, std
 
@@ -121,10 +120,10 @@ def plot_loss_history(train_losses, valid_losses, output_path, batch_size=None):
 def main():
     parser = argparse.ArgumentParser(description="Umx-Bass Trainer")
 
-    # which target do we want to train?
+    # 训练目标
     parser.add_argument("--target", type=str, default="bass", help="target source (will be passed to the dataset)")
 
-    # Dataset paramaters
+    # 数据集参数
     parser.add_argument("--dataset", type=str, default=r"\umx-bass\musdb", help="Name of the dataset.")
     parser.add_argument("--root", type=str, help="root path of dataset")
     parser.add_argument("--output", type=str, default="umx-bass-2", help="provide output path base folder name")
@@ -132,7 +131,7 @@ def main():
     parser.add_argument("--checkpoint", type=str, help="Path of checkpoint to resume training")
     parser.add_argument("--audio-backend", type=str, default="soundfile", help="Set torchaudio backend (`sox_io` or `soundfile`")
 
-    # Training Parameters
+    # 训练参数
     parser.add_argument("--epochs", type=int, default=1000)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate, defaults to 1e-3")
@@ -142,7 +141,7 @@ def main():
     parser.add_argument("--weight-decay", type=float, default=0.00001, help="weight decay")
     parser.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
 
-    # Model Parameters
+    # 模型参数
     parser.add_argument("--method", type=str, default="stft", help="Method for time/frequency domain transmission")
     parser.add_argument("--use-cqt", type=bool, default=False, help="Whether use cqt to replace STFT")
     parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
@@ -155,7 +154,7 @@ def main():
     parser.add_argument("--nb-workers", type=int, default=0, help="Number of workers for dataloader.")
     parser.add_argument("--debug", action="store_true", default=False, help="Speed up training init for dev purposes")
 
-    # Misc Parameters
+    # 混合参数
     parser.add_argument("--quiet", action="store_true", default=False, help="less verbose during training")
     parser.add_argument("--no-cuda", action="store_true", default=False, help="disables CUDA training")
 
@@ -243,7 +242,7 @@ def main():
 
     es = utils.EarlyStopping(patience=args.patience)
 
-    # if a checkpoint is specified: resume training
+    # 如果检查点已生成，则继续训练
     if args.checkpoint:
         model_path = Path(args.checkpoint).expanduser()
         with open(Path(model_path, args.target + ".json"), "r") as stream:
@@ -266,7 +265,7 @@ def main():
         best_epoch = results["best_epoch"]
         es.best = results["best_loss"]
         es.num_bad_epochs = results["num_bad_epochs"]
-    # else start optimizer from scratch
+    # 否则从头开启优化器
     else:
         t = tqdm.trange(1, args.epochs + 1, disable=args.quiet)
         train_losses = []
