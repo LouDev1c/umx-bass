@@ -122,10 +122,10 @@ def main():
     parser = argparse.ArgumentParser(description="Open Unmix Trainer")
 
     # which target do we want to train?
-    parser.add_argument("--target", type=str, default="vocals", help="target source (will be passed to the dataset)")
+    parser.add_argument("--target", type=str, default="bass", help="target source (will be passed to the dataset)")
 
     # Dataset paramaters
-    parser.add_argument("--dataset", type=str, default="musdb", choices=["musdb", "aligned", "sourcefolder", "trackfolder_var", "trackfolder_fix"], help="Name of the dataset.")
+    parser.add_argument("--dataset", type=str, default=r"E:\open-unmix\umx-bass\musdb", help="Name of the dataset.")
     parser.add_argument("--root", type=str, help="root path of dataset")
     parser.add_argument("--output", type=str, default="umx-bass-2", help="provide output path base folder name")
     parser.add_argument("--model", type=str, help="Name or path of pretrained model to fine-tune")
@@ -186,7 +186,10 @@ def main():
     valid_sampler = torch.utils.data.DataLoader(valid_dataset, batch_size=1, **dataloader_kwargs)
 
     stft, _ = transforms.make_filterbanks(
-        n_fft=args.nfft, n_hop=args.nhop, sr=train_dataset.sample_rate
+        n_fft=args.nfft,
+        n_hop=args.nhop,
+        sample_rate=train_dataset.sample_rate,
+        method="cqt"
     )
     encoder = torch.nn.Sequential(stft, model.ComplexNorm(mono=args.nb_channels == 1)).to(device)
 

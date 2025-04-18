@@ -4,6 +4,7 @@ import torch.nn as nn
 from torch import Tensor
 from nnAudio.features import CQT
 import torch.nn.functional as F
+import numpy as np
 
 try:
     from asteroid_filterbanks.enc_dec import Encoder, Decoder
@@ -17,25 +18,37 @@ def make_filterbanks(
         n_fft=4096,
         n_hop=1024,
         center=False,
-        sr=44100.0,
-        method="stft"):
+        sample_rate=44100.0,
+        method=None):
     window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
 
     if method == "stft":
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
+        # 使用更合理的参数设置
+        fmin = 32.7  # 贝斯最低频(C1音)
+        fmax = 2000  # 限制最高频率到2000Hz，因为贝斯主要在这个范围内
+        bins_per_octave = 12
+        # 计算八度数
+        n_octaves = int(np.log2(fmax / fmin))
+        # 计算总bin数
+        n_bins = n_octaves * bins_per_octave
+        
         encoder = nnAudioCQT(
-            sample_rate=int(sr),  # 确保为int类型
-            fmin=32.7,  # 贝斯最低频(C1音)
-            n_bins=84,  # 7个八度(12 * 7=84)
-            bins_per_octave=12,  # 每八度12个半音
-            n_hop=n_hop
+            sample_rate=int(sample_rate),
+            fmin=fmin,
+            n_bins=n_bins,
+            bins_per_octave=bins_per_octave,
+            n_hop=n_hop,
+            output_format="Complex",
+            pad_mode='constant',
+            trainable=False
         )
         decoder = nnAudioICQT(
-            n_fft=n_fft,  # 使用传入的n_fft参数
+            n_fft=n_fft,
             n_hop=n_hop,
-            n_iter=25  # Griffin-Lim迭代次数
+            n_iter=25
         )
     elif method == "asteroid":
         fb = torch_stft_fb.TorchSTFTFB.from_torch_args(
@@ -44,7 +57,7 @@ def make_filterbanks(
             win_length=n_fft,
             window=window,
             center=center,
-            sample_rate=sr,
+            sample_rate=sample_rate,
         )
         encoder = AsteroidSTFT(fb)
         decoder = AsteroidISTFT(fb)
@@ -81,6 +94,9 @@ class nnAudioCQT(nn.Module):
             n_bins: int = 84,
             bins_per_octave: int = 12,
             n_hop: int = 1024,
+            output_format: str = "Complex",
+            pad_mode: str = 'constant',
+            trainable: bool = False
     ):
         super().__init__()
         self.cqt = CQT(
@@ -89,39 +105,48 @@ class nnAudioCQT(nn.Module):
             n_bins=n_bins,
             bins_per_octave=bins_per_octave,
             hop_length=n_hop,
-            output_format="Complex",
-            pad_mode='constant',
-            trainable=False
+            output_format=output_format,
+            pad_mode=pad_mode,
+            trainable=trainable
         )
-        # 添加手动复数转换标志
-        self.force_complex = True
+        self.n_bins = n_bins
+        self.n_hop = n_hop
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """CQT forward path
+        Args:
+            x (Tensor): audio waveform of
+                shape (nb_samples, nb_channels, nb_timesteps)
+        Returns:
+            CQT (Tensor): complex cqt of
+                shape (nb_samples, nb_channels, nb_bins, nb_frames, complex=2)
+                last axis is stacked real and imaginary
+        """
         shape = x.size()
-        x = x.reshape(-1, shape[-1])
+        # pack batch
+        x = x.view(-1, shape[-1])
 
         # 计算CQT
         cqt_out = self.cqt(x)
-
-        # 处理复数输出
+        
+        # 确保输出是复数格式
         if cqt_out.is_complex():
             cqt_complex = cqt_out
         else:
-            if self.force_complex and cqt_out.shape[-1] == 2:
-                # 如果输出是分开的实部和虚部
-                cqt_complex = torch.view_as_complex(cqt_out.contiguous())
-            else:
-                raise RuntimeError(
-                    f"CQT output format not supported. Shape: {cqt_out.shape}, is_complex: {cqt_out.is_complex()}")
-
+            cqt_complex = torch.view_as_complex(cqt_out.contiguous())
+        
         # 转换为实部/虚部表示
-        return torch.view_as_real(cqt_complex).reshape(shape[0], shape[1], -1, cqt_complex.shape[-1], 2)
+        cqt_real = torch.view_as_real(cqt_complex)
+        
+        # 重塑为与STFT相同的格式
+        cqt_real = cqt_real.view(shape[0], shape[1], self.n_bins, -1, 2)
+        
+        return cqt_real
 
 
 class nnAudioICQT(nn.Module):
     def __init__(
             self,
-            sample_rate: int = 44100,
             n_fft: int = 4096,
             n_hop: int = 1024,
             n_iter: int = 25,
@@ -133,11 +158,26 @@ class nnAudioICQT(nn.Module):
         self.window = torch.hann_window(n_fft)
 
     def forward(self, X: torch.Tensor, length: Optional[int] = None) -> torch.Tensor:
+        """ICQT forward path
+        Args:
+            X (Tensor): complex cqt of
+                shape (nb_samples, nb_channels, nb_bins, nb_frames, complex=2)
+                last axis is stacked real and imaginary
+            length (int, optional): audio signal length to crop the signal
+        Returns:
+            x (Tensor): audio waveform of
+                shape (nb_samples, nb_channels, nb_timesteps)
+        """
         shape = X.size()
         X = X.reshape(-1, *shape[-3:])
+        
+        # 获取幅度谱
         target_magnitude = torch.view_as_complex(X).abs()
+        
+        # 转换为STFT幅度谱
         target_magnitude_stft = self._cqt_to_stft_magnitude(target_magnitude)
 
+        # 初始化随机相位
         y = torch.randn(
             X.shape[0],
             length if length else shape[-2] * self.n_hop,
@@ -145,6 +185,7 @@ class nnAudioICQT(nn.Module):
             dtype=torch.float32
         )
 
+        # 迭代重建
         for _ in range(self.n_iter):
             stft_complex = torch.stft(
                 y,
@@ -165,9 +206,11 @@ class nnAudioICQT(nn.Module):
                 length=length
             )
 
+        # 重塑回原始维度
         return y.reshape(shape[:-3] + y.shape[-1:])
 
     def _cqt_to_stft_magnitude(self, cqt_mag: torch.Tensor) -> torch.Tensor:
+        """将CQT幅度谱转换为STFT幅度谱"""
         stft_bins = self.n_fft // 2 + 1
         return torch.nn.functional.interpolate(
             cqt_mag.unsqueeze(1),
