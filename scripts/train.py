@@ -119,7 +119,7 @@ def plot_loss_history(train_losses, valid_losses, output_path, batch_size=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Open Unmix Trainer")
+    parser = argparse.ArgumentParser(description="Umx-Bass Trainer")
 
     # which target do we want to train?
     parser.add_argument("--target", type=str, default="bass", help="target source (will be passed to the dataset)")
@@ -143,6 +143,8 @@ def main():
     parser.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
 
     # Model Parameters
+    parser.add_argument("--method", type=str, default="stft", help="Method for time/frequency domain transmission")
+    parser.add_argument("--use-cqt", type=bool, default=False, help="Whether use cqt to replace STFT")
     parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
     parser.add_argument("--unidirectional", action="store_true", default=False, help="Use unidirectional LSTM")
     parser.add_argument("--nfft", type=int, default=4096, help="STFT fft size and window size")
@@ -176,7 +178,7 @@ def main():
 
     train_dataset, valid_dataset, args = data.load_datasets(parser, args)
 
-    # create output dir if not exist
+    # 如果输出目录不存在则新建一个
     target_path = Path(args.output)
     target_path.mkdir(parents=True, exist_ok=True)
 
@@ -185,13 +187,14 @@ def main():
     )
     valid_sampler = torch.utils.data.DataLoader(valid_dataset, batch_size=1, **dataloader_kwargs)
 
-    stft, _ = transforms.make_filterbanks(
+    processor, _ = transforms.make_filterbanks(
         n_fft=args.nfft,
         n_hop=args.nhop,
         sample_rate=train_dataset.sample_rate,
-        method="cqt"
+        method=args.method,
+        use_cqt=args.use_cqt,
     )
-    encoder = torch.nn.Sequential(stft, model.ComplexNorm(mono=args.nb_channels == 1)).to(device)
+    encoder = torch.nn.Sequential(processor, model.ComplexNorm(mono=args.nb_channels == 1)).to(device)
 
     separator_conf = {
         "nfft": args.nfft,
@@ -226,7 +229,7 @@ def main():
             nb_channels=args.nb_channels,
             hidden_size=args.hidden_size,
             max_bin=max_bin,
-            unidirectional=args.unidirectional
+            unidirectional=args.unidirectional,
         ).to(device)
 
     optimizer = torch.optim.Adam(unmix.parameters(), lr=args.lr, weight_decay=args.weight_decay)

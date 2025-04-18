@@ -39,10 +39,20 @@ class OpenUnmix(nn.Module):
         input_mean: Optional[np.ndarray] = None,
         input_scale: Optional[np.ndarray] = None,
         max_bin: Optional[int] = None,
+        use_cqt: bool = False
     ):
         super(OpenUnmix, self).__init__()
 
         self.nb_output_bins = nb_bins
+
+        # 根据是否使用CQT设置不同的bin数量
+        if use_cqt:
+            # CQT的bin数量是根据频率范围计算的
+            self.nb_bins = int(np.ceil(np.log2(44100 / 2 / 20) * 12))
+        else:
+            # STFT的bin数量
+            self.nb_bins = nb_bins
+
         if max_bin:
             self.nb_bins = max_bin
         else:
@@ -51,7 +61,6 @@ class OpenUnmix(nn.Module):
         self.hidden_size = hidden_size
 
         self.fc1 = Linear(self.nb_bins * nb_channels, hidden_size, bias=False)
-
         self.bn1 = BatchNorm1d(hidden_size)
 
         if unidirectional:
@@ -94,7 +103,6 @@ class OpenUnmix(nn.Module):
 
         fc2_hiddensize = hidden_size * 2
         self.fc2 = Linear(in_features=fc2_hiddensize, out_features=hidden_size, bias=False)
-
         self.bn2 = BatchNorm1d(hidden_size)
 
         self.fc3 = Linear(
@@ -102,7 +110,6 @@ class OpenUnmix(nn.Module):
             out_features=self.nb_output_bins * nb_channels,
             bias=False,
         )
-
         self.bn3 = BatchNorm1d(self.nb_output_bins * nb_channels)
 
         if input_mean is not None:
