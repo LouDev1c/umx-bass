@@ -3,7 +3,7 @@ from typing import Optional, Mapping
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as f
 from torch import Tensor
 from torch.nn import LSTM, BatchNorm1d, Linear, Parameter
 from .filtering import wiener
@@ -38,16 +38,22 @@ class OpenUnmix(nn.Module):
         unidirectional: bool = False,
         input_mean: Optional[np.ndarray] = None,
         input_scale: Optional[np.ndarray] = None,
-        max_bin: Optional[int] = None
+        max_bin: Optional[int] = None,
+        method: str = None
     ):
         super(OpenUnmix, self).__init__()
         print(f"Original nb_bins={nb_bins}")
-        self.nb_output_bins = nb_bins
 
-        if max_bin:
-            self.nb_bins = max_bin
-        else:
-            self.nb_bins = self.nb_output_bins
+        self.nb_output_bins = nb_bins
+        self.method = method
+
+        if method == "stft":
+            if max_bin:
+                self.nb_bins = max_bin
+            else:
+                self.nb_bins = self.nb_output_bins
+        elif method == "cqt":
+            self.nb_bins = nb_bins
 
         self.hidden_size = hidden_size
 
@@ -130,7 +136,6 @@ class OpenUnmix(nn.Module):
         Args:
             x: input spectrogram of shape
                 `(nb_samples, nb_channels, nb_bins, nb_frames)`
-
         Returns:
             Tensor: filtered spectrogram of shape
                 `(nb_samples, nb_channels, nb_bins, nb_frames)`
@@ -193,7 +198,7 @@ class OpenUnmix(nn.Module):
         x = self.fc2(x.reshape(-1, x.shape[-1]))
         x = self.bn2(x)
 
-        x = F.relu(x)
+        x = f.relu(x)
 
         # second dense stage + layer norm
         x = self.fc3(x)
@@ -208,7 +213,7 @@ class OpenUnmix(nn.Module):
         x += self.output_mean
 
         # since our output is non-negative, we can apply RELU
-        x = F.relu(x) * mix
+        x = f.relu(x) * mix
         # permute back to (nb_samples, nb_channels, nb_bins, nb_frames)
         return x.permute(1, 2, 3, 0)
 

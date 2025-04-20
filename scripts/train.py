@@ -145,8 +145,8 @@ def main():
     parser.add_argument("--method", type=str, default="cqt", help="Method for time/frequency domain transmission")
     parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
     parser.add_argument("--unidirectional", action="store_true", default=False, help="Use unidirectional LSTM")
-    parser.add_argument("--nfft", type=int, default=4096, help="STFT fft size and window size")
-    parser.add_argument("--nhop", type=int, default=1024, help="STFT hop size")
+    parser.add_argument("--nfft", type=int, default=4096, help="fft size and window size")
+    parser.add_argument("--nhop", type=int, default=1024, help="hop size")
     parser.add_argument("--hidden-size", type=int, default=512, help="hidden size parameter of bottleneck layers")
     parser.add_argument("--bandwidth", type=int, default=16000, help="maximum model bandwidth in herz")
     parser.add_argument("--nb-channels", type=int, default=2, help="set number of channels for model (1, 2)")
@@ -228,6 +228,7 @@ def main():
             hidden_size=args.hidden_size,
             max_bin=max_bin,
             unidirectional=args.unidirectional,
+            method=args.method
         ).to(device)
 
     optimizer = torch.optim.Adam(unmix.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -302,8 +303,6 @@ def main():
                 Path(target_path, f"{args.output}_loss_history_epoch_{epoch}.png"),
                 batch_size
             )
-        
-        stop = es.step(valid_loss)
 
         if valid_loss == es.best:
             best_epoch = epoch

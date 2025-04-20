@@ -3,16 +3,6 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 from nnAudio.features import CQT
-import torch.nn.functional as F
-import torchaudio
-import numpy as np
-
-try:
-    from asteroid_filterbanks.enc_dec import Encoder, Decoder
-    from asteroid_filterbanks.transforms import to_torchaudio, from_torchaudio
-    from asteroid_filterbanks import torch_stft_fb
-except ImportError:
-    pass
 
 
 def make_filterbanks(
@@ -29,22 +19,11 @@ def make_filterbanks(
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
-        nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        # nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        nb_bins = 84
         print("nb_bins of cqt: ", nb_bins)
-        encoder = nnAudioCQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
-        decoder = nnAudioICQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
-    elif method == "asteroid":
-        nb_bins = n_fft // 2 + 1
-        fb = torch_stft_fb.TorchSTFTFB.from_torch_args(
-            n_fft=n_fft,
-            hop_length=n_hop,
-            win_length=n_fft,
-            window=window,
-            center=center,
-            sample_rate=sample_rate,
-        )
-        encoder = AsteroidSTFT(fb)
-        decoder = AsteroidISTFT(fb)
+        encoder = nnAudioCQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
+        decoder = nnAudioICQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
     else:
         raise NotImplementedError
     return encoder, decoder, nb_bins
@@ -53,15 +32,14 @@ def make_filterbanks(
 class nnAudioCQT(nn.Module):
     def __init__(
             self,
-            n_fft: int = 4096,
             n_hop: int = 1024,
             center: bool = False,
-            window: Optional[nn.Parameter] = None,
             sample_rate: float = 44100.0
     ):
         super(nnAudioCQT, self).__init__()
 
-        self.nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        # self.nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        self.nb_bins = 84
         self.hop_length = n_hop
         self.center = center
         self.sample_rate = sample_rate
@@ -86,6 +64,7 @@ class nnAudioCQT(nn.Module):
             ch_audio = x[ch::shape[1]]
             cqt_ch = self.cqt(ch_audio)
             cqt_ch = cqt_ch.permute(0, 2, 1)
+            print(f"CQT output for channel {ch}: min={cqt_ch.min().item()}, max={cqt_ch.max().item()}, mean={cqt_ch.mean().item()}, std={cqt_ch.std().item()}")
 
             if torch.is_complex(cqt_ch):
                 cqt_ch = torch.stack([cqt_ch.real, cqt_ch.imag], dim=-1)
@@ -103,23 +82,22 @@ class nnAudioCQT(nn.Module):
 class nnAudioICQT(nn.Module):
     def __init__(
             self,
-            n_fft: int = 4096,
             n_hop: int = 1024,
             center: bool = False,
-            window: Optional[nn.Parameter] = None,
             sample_rate: float = 44100.0
     ):
         super(nnAudioICQT, self).__init__()
 
         # 保持与CQT相同的参数
-        self.n_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        # self.n_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        self.n_bins = 84
         self.hop_length = n_hop
         self.center = center
         self.sample_rate = sample_rate
 
         # 使用nnAudio的ICQT实现
         self.icqt = CQT(
-            sr=sample_rate,
+            sr=int(sample_rate),
             hop_length=n_hop,
             n_bins=self.n_bins,
             bins_per_octave=12,
@@ -269,26 +247,6 @@ class TorchISTFT(nn.Module):
         )
         y = y.reshape(shape[:-3] + y.shape[-1:])
         return y
-
-
-class AsteroidSTFT(nn.Module):
-    def __init__(self, fb):
-        super(AsteroidSTFT, self).__init__()
-        self.enc = Encoder(fb)
-
-    def forward(self, x):
-        aux = self.enc(x)
-        return to_torchaudio(aux)
-
-
-class AsteroidISTFT(nn.Module):
-    def __init__(self, fb):
-        super(AsteroidISTFT, self).__init__()
-        self.dec = Decoder(fb)
-
-    def forward(self, X: Tensor, length: Optional[int] = None) -> Tensor:
-        aux = from_torchaudio(X)
-        return self.dec(aux, length=length)
 
 
 class ComplexNorm(nn.Module):
