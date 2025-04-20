@@ -34,7 +34,7 @@ class nnAudioCQT(nn.Module):
             self,
             n_hop: int = 1024,
             center: bool = False,
-            sample_rate: float = 44100.0
+            sample_rate: int = 44100
     ):
         super(nnAudioCQT, self).__init__()
 
@@ -46,7 +46,7 @@ class nnAudioCQT(nn.Module):
 
         # 使用nnAudio的CQT实现
         self.cqt = CQT(
-            sr=int(sample_rate),
+            sr=sample_rate,
             hop_length=n_hop,
             bins_per_octave=12,
             fmin=20,
@@ -70,6 +70,9 @@ class nnAudioCQT(nn.Module):
                 cqt_ch = torch.stack([cqt_ch.real, cqt_ch.imag], dim=-1)
             else:
                 cqt_ch = torch.stack([cqt_ch, torch.zeros_like(cqt_ch)], dim=-1)
+
+            scale = torch.rand(1) * 0.4 + 0.8  # 随机缩放因子0.8-1.2
+            cqt_ch = cqt_ch * scale
 
             complex_cqt.append(cqt_ch)
 

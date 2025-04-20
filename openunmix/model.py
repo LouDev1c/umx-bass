@@ -153,10 +153,14 @@ class OpenUnmix(nn.Module):
         # crop
         x = x[..., : self.nb_bins]
         # shift and scale input to mean=0 std=1 (across all bins)
-        x = x + self.input_mean
-        x = x * self.input_scale
+        if self.method == "stft":
+            x = x + self.input_mean
+            x = x * self.input_scale
+        elif self.method == "cqt":
+            x = x + self.input_mean * 0.5  # 减小均值偏移
+            x = x * (self.input_scale * 0.8)  # 减小缩放因子
         print(f"x.shape={x.shape}, x.dtype={x.dtype}, nb_bins={self.nb_bins}, nb_output_bins={self.nb_output_bins}")
-
+        print(f"After normalization: x.min()={x.min().item()}, x.max()={x.max().item()}, x.mean()={x.mean().item()}, x.std()={x.std().item()}")
         # to (nb_frames*nb_samples, nb_channels*nb_bins)
         # and encode to (nb_frames*nb_samples, hidden_size)
         x = self.fc1(x.reshape(-1, nb_channels * self.nb_bins))
