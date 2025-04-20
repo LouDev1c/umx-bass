@@ -124,7 +124,7 @@ def main():
     parser.add_argument("--target", type=str, default="bass", help="target source (will be passed to the dataset)")
 
     # 数据集参数
-    parser.add_argument("--dataset", type=str, default=r"\umx-bass\musdb", help="Name of the dataset.")
+    parser.add_argument("--dataset", type=str, default=r"\umx-bass\musdb", help="Name of the dataset")
     parser.add_argument("--root", type=str, help="root path of dataset")
     parser.add_argument("--output", type=str, default="umx-bass-2", help="provide output path base folder name")
     parser.add_argument("--model", type=str, help="Name or path of pretrained model to fine-tune")
@@ -132,8 +132,8 @@ def main():
     parser.add_argument("--audio-backend", type=str, default="soundfile", help="Set torchaudio backend (`sox_io` or `soundfile`")
 
     # 训练参数
-    parser.add_argument("--epochs", type=int, default=1000)
-    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument("--epochs", type=int, default=1000, help="number of training epochs")
+    parser.add_argument("--batch-size", type=int, default=16, help="batch size for training")
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate, defaults to 1e-3")
     parser.add_argument("--patience", type=int, default=140, help="maximum number of train epochs (default: 140)")
     parser.add_argument("--lr-decay-patience", type=int, default=80, help="lr decay patience for plateau scheduler")
@@ -142,8 +142,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
 
     # 模型参数
-    parser.add_argument("--method", type=str, default="stft", help="Method for time/frequency domain transmission")
-    parser.add_argument("--use-cqt", type=bool, default=False, help="Whether use cqt to replace STFT")
+    parser.add_argument("--method", type=str, default="cqt", help="Method for time/frequency domain transmission")
     parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
     parser.add_argument("--unidirectional", action="store_true", default=False, help="Use unidirectional LSTM")
     parser.add_argument("--nfft", type=int, default=4096, help="STFT fft size and window size")
@@ -186,12 +185,11 @@ def main():
     )
     valid_sampler = torch.utils.data.DataLoader(valid_dataset, batch_size=1, **dataloader_kwargs)
 
-    processor, _ = transforms.make_filterbanks(
+    processor, _, nb_bins = transforms.make_filterbanks(
         n_fft=args.nfft,
         n_hop=args.nhop,
         sample_rate=train_dataset.sample_rate,
         method=args.method,
-        use_cqt=args.use_cqt,
     )
     encoder = torch.nn.Sequential(processor, model.ComplexNorm(mono=args.nb_channels == 1)).to(device)
 
@@ -212,6 +210,7 @@ def main():
         scaler_mean, scaler_std = get_statistics(args, encoder, train_dataset)
 
     max_bin = utils.bandwidth_to_max_bin(train_dataset.sample_rate, args.nfft, args.bandwidth)
+    print(f"max_bin={max_bin}")
 
     if args.model:
         # fine tune model
@@ -224,7 +223,7 @@ def main():
         unmix = model.OpenUnmix(
             input_mean=scaler_mean,
             input_scale=scaler_std,
-            nb_bins=args.nfft // 2 + 1,
+            nb_bins=nb_bins,
             nb_channels=args.nb_channels,
             hidden_size=args.hidden_size,
             max_bin=max_bin,

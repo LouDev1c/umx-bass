@@ -1,8 +1,10 @@
-from typing import Optional, Tuple
+from typing import Optional
 import torch
 import torch.nn as nn
 from torch import Tensor
 from nnAudio.features import CQT
+import torch.nn.functional as F
+import torchaudio
 import numpy as np
 
 try:
@@ -13,17 +15,26 @@ except ImportError:
     pass
 
 
-def make_filterbanks(n_fft=4096, n_hop=1024, center=False, sample_rate=44100.0, method=None, use_cqt=None):
+def make_filterbanks(
+        n_fft=4096,
+        n_hop=1024,
+        center=False,
+        sample_rate=44100.0,
+        method=None):
     window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
 
     if method == "stft":
+        nb_bins = n_fft // 2 + 1
+        print("nb_bins of stft: ", nb_bins)
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
+        nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
+        print("nb_bins of cqt: ", nb_bins)
         encoder = nnAudioCQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
         decoder = nnAudioICQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
-        use_cqt = True
     elif method == "asteroid":
+        nb_bins = n_fft // 2 + 1
         fb = torch_stft_fb.TorchSTFTFB.from_torch_args(
             n_fft=n_fft,
             hop_length=n_hop,
@@ -36,101 +47,76 @@ def make_filterbanks(n_fft=4096, n_hop=1024, center=False, sample_rate=44100.0, 
         decoder = AsteroidISTFT(fb)
     else:
         raise NotImplementedError
-    return encoder, decoder
+    return encoder, decoder, nb_bins
 
 
 class nnAudioCQT(nn.Module):
     def __init__(
-        self,
-        n_fft: int = 4096,
-        n_hop: int = 1024,
-        center: bool = False,
-        window: Optional[nn.Parameter] = None,
-        sample_rate: float = 44100.0
+            self,
+            n_fft: int = 4096,
+            n_hop: int = 1024,
+            center: bool = False,
+            window: Optional[nn.Parameter] = None,
+            sample_rate: float = 44100.0
     ):
         super(nnAudioCQT, self).__init__()
-        
-        # CQT参数设置
-        self.n_bins = int(np.ceil(np.log2(sample_rate/2 / 20) * 12))
+
+        self.nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         self.hop_length = n_hop
         self.center = center
         self.sample_rate = sample_rate
-        
+
         # 使用nnAudio的CQT实现
         self.cqt = CQT(
-            sr=sample_rate,
+            sr=int(sample_rate),
             hop_length=n_hop,
-            n_bins=self.n_bins,
-            bins_per_octave=12,  # 标准音阶
-            fmin=20,  # 最低频率设为20Hz，适合贝斯
+            bins_per_octave=12,
+            fmin=20,
             window='hann',
             center=center,
             pad_mode='reflect'
         )
-        
+
     def forward(self, x: Tensor) -> Tensor:
-        """CQT forward path
-        Args:
-            x (Tensor): audio waveform of
-                shape (nb_samples, nb_channels, nb_timesteps)
-        Returns:
-            CQT (Tensor): complex cqt of
-                shape (nb_samples, nb_channels, nb_bins, nb_frames, complex=2)
-                last axis is stacked real and imaginary
-        """
-        shape = x.size()  # (nb_samples, nb_channels, nb_timesteps)
-        
-        # pack batch
+        shape = x.size()
         x = x.view(-1, shape[-1])
-        
-        # 对每个通道分别进行CQT
+
         complex_cqt = []
         for ch in range(shape[1]):
-            # 获取当前通道的音频
             ch_audio = x[ch::shape[1]]
-            # 计算CQT
-            cqt_ch = self.cqt(ch_audio)  # 检查输出格式
-            
-            # 确保维度顺序正确
-            cqt_ch = cqt_ch.permute(0, 2, 1)  # (batch, time, freq)
-            
-            # 如果CQT输出已经是复数形式
+            cqt_ch = self.cqt(ch_audio)
+            cqt_ch = cqt_ch.permute(0, 2, 1)
+
             if torch.is_complex(cqt_ch):
-                # 直接转换为实部和虚部的堆叠
                 cqt_ch = torch.stack([cqt_ch.real, cqt_ch.imag], dim=-1)
             else:
-                # 如果输出是幅度谱，需要转换为复数形式
-                # 这里假设相位为0，可以根据需要修改
                 cqt_ch = torch.stack([cqt_ch, torch.zeros_like(cqt_ch)], dim=-1)
-            
+
             complex_cqt.append(cqt_ch)
-        
-        # 合并所有通道
-        cqt_f = torch.stack(complex_cqt, dim=1)  # (batch, channel, time, freq, complex)
-        
-        # 调整维度顺序以匹配STFT输出
-        cqt_f = cqt_f.permute(0, 1, 3, 2, 4)  # (batch, channel, freq, time, complex)
-        
+
+        cqt_f = torch.stack(complex_cqt, dim=1)
+        cqt_f = cqt_f.permute(0, 1, 3, 2, 4)
+
         return cqt_f
 
 
 class nnAudioICQT(nn.Module):
     def __init__(
-        self,
-        n_fft: int = 4096,
-        n_hop: int = 1024,
-        center: bool = False,
-        window: Optional[nn.Parameter] = None,
-        sample_rate: float = 44100.0
+            self,
+            n_fft: int = 4096,
+            n_hop: int = 1024,
+            center: bool = False,
+            window: Optional[nn.Parameter] = None,
+            sample_rate: float = 44100.0
     ):
         super(nnAudioICQT, self).__init__()
-        
+
         # 保持与CQT相同的参数
-        self.n_bins = int(np.ceil(np.log2(sample_rate/2 / 20) * 12))
+        self.n_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         self.hop_length = n_hop
         self.center = center
         self.sample_rate = sample_rate
-        
+
         # 使用nnAudio的ICQT实现
         self.icqt = CQT(
             sr=sample_rate,
@@ -142,7 +128,7 @@ class nnAudioICQT(nn.Module):
             center=center,
             pad_mode='reflect'
         )
-        
+
     def forward(self, X: Tensor, length: Optional[int] = None) -> Tensor:
         """Inverse CQT path
         Args:
@@ -155,7 +141,7 @@ class nnAudioICQT(nn.Module):
         """
         shape = X.size()
         X = X.reshape(-1, shape[-3], shape[-2], shape[-1])
-        
+
         # 对每个通道分别进行ICQT
         audio_chunks = []
         for ch in range(shape[1]):
@@ -166,17 +152,16 @@ class nnAudioICQT(nn.Module):
             # 计算ICQT
             audio_ch = self.icqt.inverse(ch_cqt)
             audio_chunks.append(audio_ch)
-            
+
         # 合并所有通道
         y = torch.stack(audio_chunks, dim=1)
-        
+
         # 裁剪到指定长度
         if length is not None:
             y = y[..., :length]
-            
+
         y = y.reshape(shape[:-3] + y.shape[-1:])
         return y
-
 
 class TorchSTFT(nn.Module):
     def __init__(

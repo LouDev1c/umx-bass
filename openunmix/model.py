@@ -31,27 +31,18 @@ class OpenUnmix(nn.Module):
 
     def __init__(
         self,
-        nb_bins: int = 4096,
+        nb_bins: int,
         nb_channels: int = 2,
         hidden_size: int = 512,
         nb_layers: int = 3,
         unidirectional: bool = False,
         input_mean: Optional[np.ndarray] = None,
         input_scale: Optional[np.ndarray] = None,
-        max_bin: Optional[int] = None,
-        use_cqt: bool = False
+        max_bin: Optional[int] = None
     ):
         super(OpenUnmix, self).__init__()
-
+        print(f"Original nb_bins={nb_bins}")
         self.nb_output_bins = nb_bins
-
-        # 根据是否使用CQT设置不同的bin数量
-        if use_cqt:
-            # CQT的bin数量是根据频率范围计算的
-            self.nb_bins = int(np.ceil(np.log2(44100 / 2 / 20) * 12))
-        else:
-            # STFT的bin数量
-            self.nb_bins = nb_bins
 
         if max_bin:
             self.nb_bins = max_bin
@@ -84,7 +75,7 @@ class OpenUnmix(nn.Module):
             Linear(hidden_size, hidden_size * 2),
             nn.Sigmoid()
         )
-        
+
         # 添加贝斯频率掩码
         self.bass_mask = nn.Parameter(
             torch.ones(self.hidden_size * 2),  # 使用hidden_size * 2作为掩码长度
@@ -129,8 +120,7 @@ class OpenUnmix(nn.Module):
         self.output_mean = Parameter(torch.ones(self.nb_output_bins).float())
 
     def freeze(self):
-        # set all parameters as not requiring gradient, more RAM-efficient
-        # at test time
+        # set all parameters as not requiring gradient, more RAM-efficient at test time
         for p in self.parameters():
             p.requires_grad = False
         self.eval()
@@ -148,8 +138,10 @@ class OpenUnmix(nn.Module):
 
         # permute so that batch is last for lstm
         x = x.permute(3, 0, 1, 2)
+        print(f"After permute: x.shape={x.shape}, x.dtype={x.dtype}")
         # get current spectrogram shape
         nb_frames, nb_samples, nb_channels, nb_bins = x.data.shape
+        print(f"Shape details: frames={nb_frames}, samples={nb_samples}, channels={nb_channels}, bins={nb_bins}")
 
         mix = x.detach().clone()
 
@@ -158,26 +150,31 @@ class OpenUnmix(nn.Module):
         # shift and scale input to mean=0 std=1 (across all bins)
         x = x + self.input_mean
         x = x * self.input_scale
+        print(f"x.shape={x.shape}, x.dtype={x.dtype}, nb_bins={self.nb_bins}, nb_output_bins={self.nb_output_bins}")
 
         # to (nb_frames*nb_samples, nb_channels*nb_bins)
         # and encode to (nb_frames*nb_samples, hidden_size)
         x = self.fc1(x.reshape(-1, nb_channels * self.nb_bins))
+        print(f"x.shape1={x.shape}")
         # normalize every instance in a batch
         x = self.bn1(x)
+        print(f"x.shape2={x.shape}")
         x = x.reshape(nb_frames, nb_samples, self.hidden_size)
+        print(f"x.shape3={x.shape}")
         # squash range ot [-1, 1]
         x = torch.tanh(x)
+        print(f"x.shape4={x.shape}")
 
         # apply 3-layers of stacked LSTM
         lstm_out = self.lstm(x)
 
         # lstm skip connection
         x = torch.cat([x, lstm_out[0]], -1)
+        print(f"x.shape5={x.shape}")
 
         # 应用频率感知注意力机制
         attention_weights = self.freq_attention(x)
         x = x * attention_weights
-        
         # 应用贝斯频率掩码
         # 保存原始形状
         original_shape = x.shape
@@ -185,12 +182,10 @@ class OpenUnmix(nn.Module):
         print(f"Original shape: {original_shape}")
         # 直接应用掩码，不需要reshape
         x = x * self.bass_mask.view(1, 1, -1)  # 广播到所有通道
-        
         # 对低频部分进行额外增强
         freqs = torch.linspace(0, 1, x.shape[-1], device=x.device)
         bass_range = (freqs < 0.1)  # 大约对应20-200Hz
         x[..., bass_range] = torch.abs(x[..., bass_range]) * 1.2  # 额外增强低频部分，确保非负
-        
         # 归一化到[0, 1]范围
         x = x / (torch.max(x) + 1e-6)
 
@@ -206,6 +201,7 @@ class OpenUnmix(nn.Module):
 
         # reshape back to original dim
         x = x.reshape(nb_frames, nb_samples, nb_channels, self.nb_output_bins)
+        print(f"Final shape: {x.shape}")
 
         # apply output scaling
         x *= self.output_scale
@@ -256,7 +252,7 @@ class Separator(nn.Module):
         n_hop: int = 1024,
         nb_channels: int = 2,
         wiener_win_len: Optional[int] = 300,
-        filterbank: str = "cqt",
+        filterbank: str = None,
     ):
         super(Separator, self).__init__()
 
@@ -266,12 +262,12 @@ class Separator(nn.Module):
         self.softmask = softmask
         self.wiener_win_len = wiener_win_len
 
-        self.stft, self.istft = make_filterbanks(
+        self.encoder, self.decoder = make_filterbanks(
             n_fft=n_fft,
             n_hop=n_hop,
             center=True,
             method=filterbank,
-            sr=sample_rate
+            sample_rate=sample_rate
         )
         self.complexnorm = ComplexNorm(mono=nb_channels == 1)
 
@@ -280,7 +276,6 @@ class Separator(nn.Module):
         # adding till https://github.com/pytorch/pytorch/issues/38963
         self.nb_targets = len(self.target_models)
         # get the sample_rate as the sample_rate of the first model
-        # (tacitly assume it's the same for all targets)
         self.register_buffer("sample_rate", torch.as_tensor(sample_rate))
 
     def freeze(self):
@@ -307,8 +302,8 @@ class Separator(nn.Module):
 
         # getting the STFT of mix:
         # (nb_samples, nb_channels, nb_bins, nb_frames, 2)
-        mix_stft = self.stft(audio)
-        X = self.complexnorm(mix_stft)
+        mix_encoder = self.encoder(audio)
+        X = self.complexnorm(mix_encoder)
 
         # initializing spectrograms variable
         spectrograms = torch.zeros(X.shape + (nb_sources,), dtype=audio.dtype, device=X.device)
@@ -323,9 +318,8 @@ class Separator(nn.Module):
         spectrograms = spectrograms.permute(0, 3, 2, 1, 4)
 
         # rearranging it into:
-        # (nb_samples, nb_frames, nb_bins, nb_channels, 2) to feed
-        # into filtering methods
-        mix_stft = mix_stft.permute(0, 3, 2, 1, 4)
+        # (nb_samples, nb_frames, nb_bins, nb_channels, 2) to feed into filtering methods
+        mix_encoder = mix_encoder.permute(0, 3, 2, 1, 4)
 
         # create an additional target if we need to build a residual
         if self.residual:
@@ -339,7 +333,7 @@ class Separator(nn.Module):
             )
 
         nb_frames = spectrograms.shape[1]
-        targets_stft = torch.zeros(mix_stft.shape + (nb_sources,), dtype=audio.dtype, device=mix_stft.device)
+        targets_encoder = torch.zeros(mix_encoder.shape + (nb_sources,), dtype=audio.dtype, device=mix_encoder.device)
         for sample in range(nb_samples):
             pos = 0
             if self.wiener_win_len:
@@ -350,19 +344,19 @@ class Separator(nn.Module):
                 cur_frame = torch.arange(pos, min(nb_frames, pos + wiener_win_len))
                 pos = int(cur_frame[-1]) + 1
 
-                targets_stft[sample, cur_frame] = wiener(
+                targets_encoder[sample, cur_frame] = wiener(
                     spectrograms[sample, cur_frame],
-                    mix_stft[sample, cur_frame],
+                    mix_encoder[sample, cur_frame],
                     self.niter,
                     softmask=self.softmask,
                     residual=self.residual,
                 )
 
         # getting to (nb_samples, nb_targets, channel, fft_size, n_frames, 2)
-        targets_stft = targets_stft.permute(0, 5, 3, 2, 1, 4).contiguous()
+        targets_encoder = targets_encoder.permute(0, 5, 3, 2, 1, 4).contiguous()
 
         # inverse STFT
-        estimates = self.istft(targets_stft, length=audio.shape[2])
+        estimates = self.decoder(targets_encoder, length=audio.shape[2])
 
         return estimates
 
