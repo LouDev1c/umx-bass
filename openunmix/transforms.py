@@ -26,7 +26,7 @@ def make_filterbanks(
         nb_bins = 84
         print("nb_bins of cqt: ", nb_bins)
         encoder = nnAudioCQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
-        decoder = nnAudioICQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
+        decoder = nnAudioICQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
     else:
         raise NotImplementedError
     return encoder, decoder, nb_bins
