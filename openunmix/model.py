@@ -143,10 +143,10 @@ class OpenUnmix(nn.Module):
 
         # permute so that batch is last for lstm
         x = x.permute(3, 0, 1, 2)
-        print(f"After permute: x.shape={x.shape}, x.dtype={x.dtype}")
+        # print(f"After permute: x.shape={x.shape}, x.dtype={x.dtype}")
         # get current spectrogram shape
         nb_frames, nb_samples, nb_channels, nb_bins = x.data.shape
-        print(f"Shape details: frames={nb_frames}, samples={nb_samples}, channels={nb_channels}, bins={nb_bins}")
+        # print(f"Shape details: frames={nb_frames}, samples={nb_samples}, channels={nb_channels}, bins={nb_bins}")
 
         mix = x.detach().clone()
 
@@ -159,27 +159,27 @@ class OpenUnmix(nn.Module):
         elif self.method == "cqt":
             x = x + self.input_mean * 0.5  # 减小均值偏移
             x = x * (self.input_scale * 0.8)  # 减小缩放因子
-        print(f"x.shape={x.shape}, x.dtype={x.dtype}, nb_bins={self.nb_bins}, nb_output_bins={self.nb_output_bins}")
-        print(f"After normalization: x.min()={x.min().item()}, x.max()={x.max().item()}, x.mean()={x.mean().item()}, x.std()={x.std().item()}")
+        # print(f"x.shape={x.shape}, x.dtype={x.dtype}, nb_bins={self.nb_bins}, nb_output_bins={self.nb_output_bins}")
+        # print(f"After normalization: x.min()={x.min().item()}, x.max()={x.max().item()}, x.mean()={x.mean().item()}, x.std()={x.std().item()}")
         # to (nb_frames*nb_samples, nb_channels*nb_bins)
         # and encode to (nb_frames*nb_samples, hidden_size)
         x = self.fc1(x.reshape(-1, nb_channels * self.nb_bins))
-        print(f"x.shape1={x.shape}")
+        # print(f"x.shape1={x.shape}")
         # normalize every instance in a batch
         x = self.bn1(x)
-        print(f"x.shape2={x.shape}")
+        # print(f"x.shape2={x.shape}")
         x = x.reshape(nb_frames, nb_samples, self.hidden_size)
-        print(f"x.shape3={x.shape}")
+        # print(f"x.shape3={x.shape}")
         # squash range ot [-1, 1]
         x = torch.tanh(x)
-        print(f"x.shape4={x.shape}")
+        # print(f"x.shape4={x.shape}")
 
         # apply 3-layers of stacked LSTM
         lstm_out = self.lstm(x)
 
         # lstm skip connection
         x = torch.cat([x, lstm_out[0]], -1)
-        print(f"x.shape5={x.shape}")
+        # print(f"x.shape5={x.shape}")
 
         # 应用频率感知注意力机制
         attention_weights = self.freq_attention(x)
@@ -188,7 +188,7 @@ class OpenUnmix(nn.Module):
         # 保存原始形状
         original_shape = x.shape
         # 打印形状以调试
-        print(f"Original shape: {original_shape}")
+        # print(f"Original shape: {original_shape}")
         # 直接应用掩码，不需要reshape
         x = x * self.bass_mask.view(1, 1, -1)  # 广播到所有通道
         # 对低频部分进行额外增强
@@ -210,7 +210,7 @@ class OpenUnmix(nn.Module):
 
         # reshape back to original dim
         x = x.reshape(nb_frames, nb_samples, nb_channels, self.nb_output_bins)
-        print(f"Final shape: {x.shape}")
+        # print(f"Final shape: {x.shape}")
 
         # apply output scaling
         x *= self.output_scale
@@ -300,7 +300,6 @@ class Separator(nn.Module):
         Args:
             audio (Tensor): [shape=(nb_samples, nb_channels, nb_timesteps)]
                 mixture audio waveform
-
         Returns:
             Tensor: stacked tensor of separated waveforms
                 shape `(nb_samples, nb_targets, nb_channels, nb_timesteps)`

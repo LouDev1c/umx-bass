@@ -3,6 +3,9 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 from nnAudio.features import CQT
+import torch.nn.functional as F
+import torchaudio
+import numpy as np
 
 
 def make_filterbanks(
@@ -18,13 +21,12 @@ def make_filterbanks(
         print("nb_bins of stft: ", nb_bins)
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
-
     elif method == "cqt":
         # nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         nb_bins = 84
         print("nb_bins of cqt: ", nb_bins)
-        encoder = nnAudioCQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
-        decoder = nnAudioICQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
+        encoder = nnAudioCQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
+        decoder = nnAudioICQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
     else:
         raise NotImplementedError
     return encoder, decoder, nb_bins
@@ -33,12 +35,15 @@ def make_filterbanks(
 class nnAudioCQT(nn.Module):
     def __init__(
             self,
+            n_fft: int = 4096,
             n_hop: int = 1024,
             center: bool = False,
-            sample_rate: int = 44100
+            window: Optional[nn.Parameter] = None,
+            sample_rate: float = 44100.0
     ):
         super(nnAudioCQT, self).__init__()
 
+        # self.nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         self.nb_bins = 84
         self.hop_length = n_hop
         self.center = center
@@ -46,7 +51,7 @@ class nnAudioCQT(nn.Module):
 
         # 使用nnAudio的CQT实现
         self.cqt = CQT(
-            sr=sample_rate,
+            sr=int(sample_rate),
             hop_length=n_hop,
             bins_per_octave=12,
             fmin=20,
@@ -65,20 +70,6 @@ class nnAudioCQT(nn.Module):
             cqt_ch = self.cqt(ch_audio)
             cqt_ch = cqt_ch.permute(0, 2, 1)
 
-            # 1. 计算幅度谱
-            cqt_ch = torch.abs(cqt_ch)
-            # 2. 添加小的常数避免log(0)
-            cqt_ch = cqt_ch + 1e-6
-            # 3. 对数压缩
-            cqt_ch = torch.log(cqt_ch)
-            # 4. 计算均值和标准差
-            mean = torch.mean(cqt_ch)
-            std = torch.std(cqt_ch)
-            # 5. 标准化
-            cqt_ch = (cqt_ch - mean) / (std + 1e-6)
-            # 6. 使用tanh激活函数将值限制在[-1, 1]范围内
-            cqt_ch = torch.tanh(cqt_ch)
-
             if torch.is_complex(cqt_ch):
                 cqt_ch = torch.stack([cqt_ch.real, cqt_ch.imag], dim=-1)
             else:
@@ -88,10 +79,7 @@ class nnAudioCQT(nn.Module):
 
         cqt_f = torch.stack(complex_cqt, dim=1)
         cqt_f = cqt_f.permute(0, 1, 3, 2, 4)
-        
-        # 打印调试信息
-        print(f"CQT output stats: min={cqt_f.min().item():.6f}, max={cqt_f.max().item():.6f}, mean={cqt_f.mean().item():.6f}, std={cqt_f.std().item():.6f}")
-        
+
         return cqt_f
 
 
@@ -113,7 +101,7 @@ class nnAudioICQT(nn.Module):
 
         # 使用nnAudio的ICQT实现
         self.icqt = CQT(
-            sr=int(sample_rate),
+            sr=sample_rate,
             hop_length=n_hop,
             n_bins=self.n_bins,
             bins_per_octave=12,
