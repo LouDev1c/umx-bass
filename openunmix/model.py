@@ -157,8 +157,8 @@ class OpenUnmix(nn.Module):
             x = x + self.input_mean
             x = x * self.input_scale
         elif self.method == "cqt":
-            x = x + self.input_mean * 0.5  # 减小均值偏移
-            x = x * (self.input_scale * 0.8)  # 减小缩放因子
+            x = x + self.input_mean * 0.3  # 减小均值偏移
+            x = x * (self.input_scale * 0.6)  # 减小缩放因子
         # print(f"x.shape={x.shape}, x.dtype={x.dtype}, nb_bins={self.nb_bins}, nb_output_bins={self.nb_output_bins}")
         # print(f"After normalization: x.min()={x.min().item()}, x.max()={x.max().item()}, x.mean()={x.mean().item()}, x.std()={x.std().item()}")
         # to (nb_frames*nb_samples, nb_channels*nb_bins)

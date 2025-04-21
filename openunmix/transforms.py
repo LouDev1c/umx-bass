@@ -3,9 +3,6 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 from nnAudio.features import CQT
-import torch.nn.functional as F
-import torchaudio
-import numpy as np
 
 
 def make_filterbanks(
