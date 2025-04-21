@@ -142,7 +142,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
 
     # 模型参数
-    parser.add_argument("--method", type=str, default="stft", help="Method for time/frequency domain transmission")
+    parser.add_argument("--method", type=str, default="cqt", help="Method for time/frequency domain transmission")
     parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
     parser.add_argument("--unidirectional", action="store_true", default=False, help="Use unidirectional LSTM")
     parser.add_argument("--nfft", type=int, default=4096, help="fft size and window size")
