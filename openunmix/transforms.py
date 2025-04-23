@@ -2,7 +2,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 from torch import Tensor
-from nnAudio.features import CQT
+from nnAudio.Spectrogram import CQT
 
 
 def make_filterbanks(
