@@ -133,7 +133,7 @@ def main():
 
     # 训练参数
     parser.add_argument("--epochs", type=int, default=1000, help="number of training epochs")
-    parser.add_argument("--batch-size", type=int, default=16, help="batch size for training")
+    parser.add_argument("--batch-size", type=int, default=32, help="batch size for training")
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate, defaults to 1e-3")
     parser.add_argument("--patience", type=int, default=140, help="maximum number of train epochs (default: 140)")
     parser.add_argument("--lr-decay-patience", type=int, default=80, help="lr decay patience for plateau scheduler")
@@ -162,7 +162,12 @@ def main():
     torchaudio.set_audio_backend(args.audio_backend)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     print("Using GPU:", use_cuda)
-    dataloader_kwargs = {"num_workers": args.nb_workers, "pin_memory": True} if use_cuda else {}
+    dataloader_kwargs = {
+        "num_workers": 4,  # 增加worker数量
+        "pin_memory": True,
+        "prefetch_factor": 2,  # 预加载因子
+        "persistent_workers": True  # 保持worker进程
+    } if use_cuda else {}
 
     repo_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     repo = Repo(repo_dir)
