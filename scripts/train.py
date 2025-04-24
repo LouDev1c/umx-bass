@@ -163,9 +163,9 @@ def main():
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     print("Using GPU:", use_cuda)
     dataloader_kwargs = {
-        "num_workers": 4,  # 增加worker数量
+        "num_workers": 16,  # 增加worker数量
         "pin_memory": True,
-        "prefetch_factor": 2,  # 预加载因子
+        "prefetch_factor": 8,  # 预加载因子
         "persistent_workers": True  # 保持worker进程
     } if use_cuda else {}
 
