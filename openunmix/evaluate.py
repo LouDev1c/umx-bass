@@ -262,9 +262,9 @@ if __name__ == "__main__":
                If none, all available targets will be computed",
     )
     parser.add_argument(
-        "--model", 
+        "--model",
         default="umx-bass-1",
-        type=str, 
+        type=str,
         help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)"
     )
     parser.add_argument(
