@@ -39,7 +39,7 @@ class OpenUnmix(nn.Module):
         input_mean: Optional[np.ndarray] = None,
         input_scale: Optional[np.ndarray] = None,
         max_bin: Optional[int] = None,
-        method: str = None
+        method: str = "stft"
     ):
         super(OpenUnmix, self).__init__()
         print(f"Original nb_bins={nb_bins}")
@@ -53,7 +53,9 @@ class OpenUnmix(nn.Module):
             else:
                 self.nb_bins = self.nb_output_bins
         elif method == "cqt":
-            self.nb_bins = nb_bins
+            self.nb_bins = 84  # CQT固定使用84个bin
+        else:
+            self.nb_bins = self.nb_output_bins
 
         self.hidden_size = hidden_size
 
