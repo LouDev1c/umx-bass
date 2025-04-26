@@ -6,6 +6,7 @@ from typing import Optional, Union
 import numpy as np
 import librosa
 from sklearn.metrics import f1_score
+import os
 
 import musdb
 import museval
@@ -200,7 +201,7 @@ def separate_and_evaluate(
         aggregate_dict: dict = None,
         device: Union[str, torch.device] = "cpu",
         wiener_win_len: Optional[int] = None,
-        filterbank="stft"
+        filterbank: str = None,
 ) -> str:
     separator = utils.load_separator(
         model_str_or_path=model_str_or_path,
@@ -260,7 +261,19 @@ if __name__ == "__main__":
         help="provide targets to be processed. \
                If none, all available targets will be computed",
     )
-    parser.add_argument("--model", default="umx", type=str, help="path to mode base directory of pretrained models")
+    parser.add_argument(
+        "--model", 
+        default="umx-bass-1",
+        type=str, 
+        help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)"
+    )
+    parser.add_argument(
+        "--method",
+        type=str,
+        default="stft",
+        choices=["stft", "cqt"],
+        help="filterbank implementation method (stft or cqt)",
+    )
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")
     parser.add_argument("--root", type=str, help="Path to MUSDB18")
@@ -289,6 +302,14 @@ if __name__ == "__main__":
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
+    # Check if model is a custom bass model
+    if args.model in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+        model_str_or_path = "umx_bass"
+        bass_model_path = args.model
+    else:
+        model_str_or_path = args.model
+        bass_model_path = None
+
     mus = musdb.DB(
         root=args.root,
         download=args.root is None,
@@ -305,7 +326,7 @@ if __name__ == "__main__":
                 func=functools.partial(
                     separate_and_evaluate,
                     targets=args.targets,
-                    model_str_or_path=args.model,
+                    model_str_or_path=model_str_or_path,
                     niter=args.niter,
                     residual=args.residual,
                     mus=mus,
@@ -313,6 +334,8 @@ if __name__ == "__main__":
                     output_dir=args.outdir,
                     eval_dir=args.evaldir,
                     device=device,
+                    bass_model_path=bass_model_path,
+                    filterbank=args.method,
                 ),
                 iterable=mus.tracks,
                 chunksize=1,
@@ -329,7 +352,7 @@ if __name__ == "__main__":
             scores = separate_and_evaluate(
                 track,
                 targets=args.targets,
-                model_str_or_path=args.model,
+                model_str_or_path=model_str_or_path,
                 niter=args.niter,
                 residual=args.residual,
                 mus=mus,
@@ -337,6 +360,7 @@ if __name__ == "__main__":
                 output_dir=args.outdir,
                 eval_dir=args.evaldir,
                 device=device,
+                filterbank=args.method,
             )
             print(track, "\n", scores)
             results.add_track(scores)

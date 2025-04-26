@@ -169,7 +169,8 @@ def load_separator(
     wiener_win_len: Optional[int] = 300,
     device: Union[str, torch.device] = "cpu",
     pretrained: bool = True,
-    filterbank: str = "torch",
+    filterbank: str = "stft",
+    bass_model_path: Optional[str] = None,
 ):
     """Separator loader
 
@@ -204,6 +205,7 @@ def load_separator(
             compared to `asteroid` on large FFT sizes such as 4096. However,
             asteroids stft can be exported to onnx, which makes is practical
             for deployment.
+        bass_model_path (str, optional): path to custom bass model directory
     """
     model_path = Path(model_str_or_path).expanduser()
 
@@ -231,16 +233,29 @@ def load_separator(
 
     # otherwise we load the separator from torchhub
     else:
-        hub_loader = getattr(openunmix, model_str_or_path)
-        separator = hub_loader(
-            targets=targets,
-            device=device,
-            pretrained=True,
-            niter=niter,
-            residual=residual,
-            wiener_win_len=wiener_win_len,
-            filterbank=filterbank,
-        )
+        if model_str_or_path == "umx_bass" and bass_model_path is not None:
+            hub_loader = getattr(openunmix, model_str_or_path)
+            separator = hub_loader(
+                targets=targets,
+                device=device,
+                pretrained=True,
+                niter=niter,
+                residual=residual,
+                wiener_win_len=wiener_win_len,
+                filterbank="cqt",
+                bass_model_path=bass_model_path,
+            )
+        else:
+            hub_loader = getattr(openunmix, model_str_or_path)
+            separator = hub_loader(
+                targets=targets,
+                device=device,
+                pretrained=True,
+                niter=niter,
+                residual=residual,
+                wiener_win_len=wiener_win_len,
+                filterbank="stft",
+            )
 
     return separator
 

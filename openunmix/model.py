@@ -217,6 +217,9 @@ class OpenUnmix(nn.Module):
         x += self.output_mean
 
         # since our output is non-negative, we can apply RELU
+        # 确保mix的维度与x匹配
+        if self.method == "cqt":
+            mix = mix[..., :84]  # 对于CQT方法，只取前84个bin
         x = f.relu(x) * mix
         # permute back to (nb_samples, nb_channels, nb_bins, nb_frames)
         return x.permute(1, 2, 3, 0)
@@ -271,7 +274,7 @@ class Separator(nn.Module):
         self.softmask = softmask
         self.wiener_win_len = wiener_win_len
 
-        self.encoder, self.decoder = make_filterbanks(
+        self.encoder, self.decoder, _ = make_filterbanks(
             n_fft=n_fft,
             n_hop=n_hop,
             center=True,
@@ -307,18 +310,35 @@ class Separator(nn.Module):
 
         nb_sources = self.nb_targets
         nb_samples = audio.shape[0]
+        nb_channels = audio.shape[1]
 
         # getting the STFT of mix:
         # (nb_samples, nb_channels, nb_bins, nb_frames, 2)
         mix_encoder = self.encoder(audio)
         X = self.complexnorm(mix_encoder)
 
+        # 获取最大的bin数量
+        max_bins = max([model.nb_output_bins for model in self.target_models.values()])
+
         # initializing spectrograms variable
-        spectrograms = torch.zeros(X.shape + (nb_sources,), dtype=audio.dtype, device=X.device)
+        spectrograms = torch.zeros(nb_samples, nb_channels, max_bins, X.shape[3], nb_sources, dtype=audio.dtype, device=X.device)
 
         for j, (target_name, target_module) in enumerate(self.target_models.items()):
             # apply current model to get the source spectrogram
             target_spectrogram = target_module(X.detach().clone())
+            
+            # 如果模型的输出维度小于最大维度，进行填充
+            if target_spectrogram.shape[2] < max_bins:
+                padding = torch.zeros(
+                    target_spectrogram.shape[0],
+                    target_spectrogram.shape[1],
+                    max_bins - target_spectrogram.shape[2],
+                    target_spectrogram.shape[3],
+                    dtype=target_spectrogram.dtype,
+                    device=target_spectrogram.device
+                )
+                target_spectrogram = torch.cat([target_spectrogram, padding], dim=2)
+            
             spectrograms[..., j] = target_spectrogram
 
         # transposing it as

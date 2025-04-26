@@ -5,7 +5,7 @@ Open-Unmix is a deep neural network reference implementation for music source se
 This is the python package API documentation. 
 Please check out [the open-unmix website](https://sigsep.github.io/open-unmix) for more information.
 """
-
+import os
 from openunmix import utils
 import torch.hub
 
@@ -117,7 +117,13 @@ def umx_spec(targets=None, device="cpu", pretrained=True):
     target_models = {}
     for target in targets:
         # load open unmix model
-        target_unmix = OpenUnmix(nb_bins=4096 // 2 + 1, nb_channels=2, hidden_size=512, max_bin=max_bin)
+        target_unmix = OpenUnmix(
+            nb_bins=4096 // 2 + 1, 
+            nb_channels=2, 
+            hidden_size=512, 
+            max_bin=max_bin,
+            method="stft"
+        )
 
         # enable centering of stft to minimize reconstruction error
         if pretrained:
@@ -258,6 +264,119 @@ def umxl(
     from .model import Separator
 
     target_models = umxl_spec(targets=targets, device=device, pretrained=pretrained)
+    separator = Separator(
+        target_models=target_models,
+        niter=niter,
+        residual=residual,
+        n_fft=4096,
+        n_hop=1024,
+        nb_channels=2,
+        sample_rate=44100.0,
+        wiener_win_len=wiener_win_len,
+        filterbank=filterbank,
+    ).to(device)
+
+    return separator
+
+
+def umx_bass_spec(targets=None, device="cpu", pretrained=True, bass_model_path="umx-bass-1"):
+    from .model import OpenUnmix
+
+    # set urls for weights
+    target_urls = {
+        "bass": None,  # Will be loaded from local path
+        "drums": "https://zenodo.org/records/3370489/files/drums-9619578f.pth",
+        "other": "https://zenodo.org/records/3370489/files/other-b52fbbf7.pth",
+        "vocals": "https://zenodo.org/records/3370489/files/vocals-b62c91ce.pth",
+    }
+
+    if targets is None:
+        targets = ["vocals", "drums", "bass", "other"]
+
+    target_models = {}
+    for target in targets:
+        # load open unmix model
+        if target == "bass":
+            # 对于bass使用CQT方法，固定使用84个bin
+            target_unmix = OpenUnmix(
+                nb_bins=84,  # CQT固定使用84个bin
+                nb_channels=2, 
+                hidden_size=512, 
+                max_bin=84,  # 对于CQT，max_bin也是84
+                method="cqt"
+            )
+        else:
+            # 对于其他音轨使用STFT方法
+            max_bin = utils.bandwidth_to_max_bin(rate=44100.0, n_fft=4096, bandwidth=16000)
+            target_unmix = OpenUnmix(
+                nb_bins=4096 // 2 + 1, 
+                nb_channels=2, 
+                hidden_size=512, 
+                max_bin=max_bin,
+                method="stft"
+            )
+
+        # enable centering of stft to minimize reconstruction error
+        if pretrained:
+            if target == "bass":
+                # Load bass model from local path
+                current_dir = os.path.dirname(os.path.abspath(__file__))
+                bass_path = os.path.join(current_dir, bass_model_path, "bass.pth")
+                print(f"Loading bass model from: {bass_path}")  # 添加调试信息
+                state_dict = torch.load(bass_path, map_location=device)
+            else:
+                # Load other targets from umxhq pretrained weights
+                state_dict = torch.hub.load_state_dict_from_url(target_urls[target], map_location=device)
+            
+            target_unmix.load_state_dict(state_dict, strict=False)
+            target_unmix.eval()
+
+        target_unmix.to(device)
+        target_models[target] = target_unmix
+    return target_models
+
+
+def umx_bass(
+    targets=None,
+    residual=False,
+    niter=1,
+    device="cpu",
+    pretrained=True,
+    wiener_win_len=300,
+    filterbank="stft",
+    bass_model_path="umx-bass-1"
+):
+    """
+    Open Unmix 2-channel/stereo BiLSTM Model with custom bass model
+
+    Args:
+        targets (str): select the targets for the source to be separated.
+                a list including: ['vocals', 'drums', 'bass', 'other'].
+                If you don't pick them all, you probably want to
+                activate the `residual=True` option.
+                Defaults to all available targets per model.
+        pretrained (bool): If True, returns a model pre-trained on MUSDB18-HQ
+        residual (bool): if True, a "garbage" target is created
+        niter (int): the number of post-processingiterations, defaults to 0
+        device (str): selects device to be used for inference
+        wiener_win_len (int or None): The size of the excerpts
+            (number of frames) on which to apply filtering
+            independently. This means assuming time varying stereo models and
+            localization of sources.
+            None means not batching but using the whole signal. It comes at the
+            price of a much larger memory usage.
+        filterbank (str): filterbank implementation method.
+            Supported are `['torch', 'asteroid']`. `torch` is about 30% faster
+            compared to `asteroid` on large FFT sizes such as 4096. However,
+            asteroids stft can be exported to onnx, which makes is practical
+            for deployment.
+        bass_model_path (str): path to the custom bass model directory
+    """
+
+    from .model import Separator
+
+    target_models = umx_bass_spec(targets=targets, device=device, pretrained=pretrained, bass_model_path=bass_model_path)
+
     separator = Separator(
         target_models=target_models,
         niter=niter,
