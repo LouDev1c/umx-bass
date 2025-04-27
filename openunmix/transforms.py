@@ -21,7 +21,7 @@ def make_filterbanks(
     elif method == "cqt":
         nb_bins = 84
         print("nb_bins of cqt: ", nb_bins)
-        encoder = nnAudioCQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
+        encoder = nnAudioCQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
         decoder = nnAudioICQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
     else:
         raise NotImplementedError
@@ -31,10 +31,8 @@ def make_filterbanks(
 class nnAudioCQT(nn.Module):
     def __init__(
             self,
-            n_fft: int = 4096,
             n_hop: int = 1024,
             center: bool = False,
-            window: Optional[nn.Parameter] = None,
             sample_rate: float = 44100.0
     ):
         super(nnAudioCQT, self).__init__()
@@ -95,7 +93,7 @@ class nnAudioICQT(nn.Module):
 
         # 使用nnAudio的ICQT实现
         self.icqt = CQT(
-            sr=sample_rate,
+            sr=int(sample_rate),
             hop_length=n_hop,
             n_bins=self.n_bins,
             bins_per_octave=12,
@@ -167,12 +165,9 @@ class TorchSTFT(nn.Module):
                 shape (nb_samples, nb_channels, nb_bins, nb_frames, complex=2)
                 last axis is stacked real and imaginary
         """
-
         shape = x.size()
-
         # pack batch
         x = x.view(-1, shape[-1])
-
         complex_stft = torch.stft(
             x,
             n_fft=self.n_fft,

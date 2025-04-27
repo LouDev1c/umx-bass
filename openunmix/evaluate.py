@@ -192,7 +192,7 @@ def calculate_f1_score(original_audio, estimated_audio, sr=44100):
 def separate_and_evaluate(
         track: musdb.MultiTrack,
         targets: list,
-        model_str_or_path: str,
+        model_name: str,
         niter: int,
         output_dir: str,
         eval_dir: str,
@@ -205,7 +205,7 @@ def separate_and_evaluate(
         bass_model_path: Optional[str] = None,
 ) -> str:
     separator = utils.load_separator(
-        model_str_or_path=model_str_or_path,
+        model_name=model_name,
         targets=targets,
         niter=niter,
         residual=residual,
@@ -220,6 +220,9 @@ def separate_and_evaluate(
 
     audio = torch.as_tensor(track.audio, dtype=torch.float32, device=device)
     audio = utils.preprocess(audio, track.rate, separator.sample_rate)
+
+    # 打印输入音频的形状
+    print(f"Input audio shape: {audio.shape}")
 
     estimates = separator(audio)
     estimates = separator.to_dict(estimates, aggregate_dict=aggregate_dict)
@@ -256,7 +259,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--targets", nargs="+", default=["vocals", "drums", "bass", "other"], type=str,
                         help="provide targets to be processed. If none, all available targets will be computed")
-    parser.add_argument("--model", default="umx-bass-2", type=str,
+    parser.add_argument("--model", default="umxhq", type=str,
                         help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)")
     parser.add_argument("--method", type=str, default="cqt", choices=["stft", "cqt"],
                         help="filterbank implementation method (stft or cqt)",)
@@ -288,23 +291,15 @@ if __name__ == "__main__":
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    # 保存原始model参数用于后续判断
-    original_model = args.model
-    
-    # 如果是umx-bass模型，使用umxhq进行评估
-    if original_model in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
-        model_str_or_path = "umx_bass"
-        bass_model_path = original_model  # 使用原始模型名称作为bass_model_path
-    else:
-        model_str_or_path = args.model
-        bass_model_path = None
-
     mus = musdb.DB(
         root=args.root,
         download=args.root is None,
         subsets=args.subset,
         is_wav=args.is_wav,
     )
+    model_name = args.model
+    if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+        model_name = "umxhq"
     aggregate_dict = None if args.aggregate is None else json.loads(args.aggregate)
 
     if args.cores > 1:
@@ -315,7 +310,7 @@ if __name__ == "__main__":
                 func=functools.partial(
                     separate_and_evaluate,
                     targets=args.targets,
-                    model_str_or_path=model_str_or_path,
+                    model_name=model_name,
                     niter=args.niter,
                     residual=args.residual,
                     mus=mus,
@@ -325,7 +320,6 @@ if __name__ == "__main__":
                     device=device,
                     wiener_win_len=args.wiener_win_len,
                     filterbank=args.method,
-                    bass_model_path=bass_model_path,  # 添加bass_model_path参数
                 ),
                 iterable=mus.tracks,
                 chunksize=1,
@@ -335,14 +329,13 @@ if __name__ == "__main__":
         pool.join()
         for scores in scores_list:
             results.add_track(scores)
-
     else:
         results = museval.EvalStore()
         for track in tqdm.tqdm(mus.tracks):
             scores = separate_and_evaluate(
                 track,
                 targets=args.targets,
-                model_str_or_path=model_str_or_path,
+                model_name=model_name,
                 niter=args.niter,
                 residual=args.residual,
                 mus=mus,
@@ -352,12 +345,11 @@ if __name__ == "__main__":
                 device=device,
                 wiener_win_len=args.wiener_win_len,
                 filterbank=args.method,
-                bass_model_path=bass_model_path,  # 添加bass_model_path参数
             )
             print(track, "\n", scores)
             results.add_track(scores)
 
     print(results)
     method = museval.MethodStore()
-    method.add_evalstore(results, original_model)  # 使用原始model名称保存结果
-    method.save(original_model + ".pandas")
+    method.add_evalstore(results, model_name)  # 使用原始model名称保存结果
+    method.save(model_name + ".pandas")

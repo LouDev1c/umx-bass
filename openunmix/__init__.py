@@ -273,7 +273,7 @@ def umxl(
     return separator
 
 
-def umx_bass_spec(targets=None, device="cpu", pretrained=True, bass_model_path=None):
+def umx_bass_spec(targets=None, device="cpu", pretrained=True, model_name=None):
     from .model import OpenUnmix
 
     # set urls for weights
@@ -315,11 +315,11 @@ def umx_bass_spec(targets=None, device="cpu", pretrained=True, bass_model_path=N
             if target == "bass":
                 # Load bass model from local path
                 current_dir = os.path.dirname(os.path.abspath(__file__))
-                # 根据bass_model_path构建正确的模型路径
-                if bass_model_path in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
-                    bass_path = os.path.join(current_dir, bass_model_path, "bass.pth")
+                # 根据model_name构建正确的模型路径
+                if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+                    bass_path = f"openunmix/{model_name}/bass.pth"
                 else:
-                    # 如果bass_model_path不是预期的值，使用默认路径
+                    # 如果model_name不是预期的值，使用默认路径
                     bass_path = os.path.join(current_dir, "umx-bass-1", "bass.pth")
                 print(f"Loading bass model from: {bass_path}")  # 添加调试信息
                 if not os.path.exists(bass_path):
@@ -345,7 +345,7 @@ def umx_bass(
     pretrained=True,
     wiener_win_len=300,
     filterbank="stft",
-    bass_model_path=None
+    model_name=None
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model with custom bass model
@@ -376,7 +376,7 @@ def umx_bass(
 
     from .model import Separator
 
-    target_models = umx_bass_spec(targets=targets, device=device, pretrained=pretrained, bass_model_path=bass_model_path)
+    target_models = umx_bass_spec(targets=targets, device=device, pretrained=pretrained, model_name=model_name)
 
     separator = Separator(
         target_models=target_models,

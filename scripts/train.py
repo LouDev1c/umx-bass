@@ -221,7 +221,7 @@ def main():
         # fine tune model
         print(f"Fine-tuning model from {args.model}")
         unmix = utils.load_target_models(
-            args.target, model_str_or_path=args.model, device=device, pretrained=True
+            args.target, model_name=args.model, device=device, pretrained=True
         )[args.target]
         unmix = unmix.to(device)
     else:

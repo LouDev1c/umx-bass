@@ -112,7 +112,7 @@ class EarlyStopping(object):
             self.is_better = lambda a, best: a > best + min_delta
 
 
-def load_target_models(targets, model_str_or_path=None, device="cpu", pretrained=True):
+def load_target_models(targets, model_name=None, device="cpu", pretrained=True):
     """Core model loader
 
     target model path can be either <target>.pth, or <target>-sha256.pth
@@ -123,19 +123,21 @@ def load_target_models(targets, model_str_or_path=None, device="cpu", pretrained
     """
     if isinstance(targets, str):
         targets = [targets]
+    if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+        model_name = "umxhq"
+    model_path = Path(model_name).expanduser()
 
-    model_path = Path(model_str_or_path).expanduser()
     if not model_path.exists():
         # model path does not exist, use pretrained models
         try:
             # disable progress bar
-            hub_loader = getattr(openunmix, model_str_or_path + "_spec")
+            hub_loader = getattr(openunmix, model_name + "_spec")
             err = io.StringIO()
             with redirect_stderr(err):
                 return hub_loader(targets=targets, device=device, pretrained=pretrained)
             print(err.getvalue())
         except AttributeError:
-            raise NameError("Model does not exist on torchhub")
+            raise NameError("Model does not exist")
             # assume model is a path to a local model_str_or_path directory
     else:
         models = {}
@@ -162,7 +164,7 @@ def load_target_models(targets, model_str_or_path=None, device="cpu", pretrained
 
 
 def load_separator(
-    model_str_or_path: str = None,
+    model_name: str = "umxhq",
     targets: Optional[list] = None,
     niter: int = 1,
     residual: bool = False,
@@ -170,7 +172,6 @@ def load_separator(
     device: Union[str, torch.device] = "cpu",
     pretrained: bool = True,
     filterbank: str = None,
-    bass_model_path: Optional[str] = None,
 ):
     """Separator loader
 
@@ -207,14 +208,17 @@ def load_separator(
             for deployment.
         bass_model_path (str, optional): path to custom bass model directory
     """
-    model_path = Path(model_str_or_path).expanduser()
+    # 如果是umx-bass模型，直接使用hub_loader
+    if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+        model_name = "umxhq"
+    model_path = Path(model_name).expanduser()
 
     # when path exists, we assume its a custom model saved locally
     if model_path.exists():
         if targets is None:
             raise UserWarning("For custom models, please specify the targets")
 
-        target_models = load_target_models(targets=targets, model_str_or_path=model_path, pretrained=pretrained)
+        target_models = load_target_models(targets=targets, model_name=model_path, pretrained=pretrained)
 
         with open(Path(model_path, "separator.json"), "r") as stream:
             enc_conf = json.load(stream)
@@ -233,29 +237,16 @@ def load_separator(
 
     # otherwise we load the separator from torchhub
     else:
-        if model_str_or_path == "umx_bass" and bass_model_path is not None:
-            hub_loader = getattr(openunmix, model_str_or_path)
-            separator = hub_loader(
-                targets=targets,
-                device=device,
-                pretrained=True,
-                niter=niter,
-                residual=residual,
-                wiener_win_len=wiener_win_len,
-                filterbank="cqt",
-                bass_model_path=bass_model_path,
-            )
-        else:
-            hub_loader = getattr(openunmix, model_str_or_path)
-            separator = hub_loader(
-                targets=targets,
-                device=device,
-                pretrained=True,
-                niter=niter,
-                residual=residual,
-                wiener_win_len=wiener_win_len,
-                filterbank="stft",
-            )
+        hub_loader = getattr(openunmix, model_name)
+        separator = hub_loader(
+            targets=targets,
+            device=device,
+            pretrained=True,
+            niter=niter,
+            residual=residual,
+            wiener_win_len=wiener_win_len,
+            filterbank=filterbank,
+        )
 
     return separator
 
@@ -316,4 +307,7 @@ def preprocess(
             orig_freq=rate, new_freq=model_rate, resampling_method="sinc_interpolation"
         ).to(audio.device)
         audio = resampler(audio)
+
+    # 打印处理后的音频形状
+    print(f"Preprocessed audio shape: {audio.shape}")
     return audio
