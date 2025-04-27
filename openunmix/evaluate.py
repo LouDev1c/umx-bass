@@ -202,7 +202,6 @@ def separate_and_evaluate(
         device: Union[str, torch.device] = "cpu",
         wiener_win_len: Optional[int] = None,
         filterbank: str = None,
-        bass_model_path: Optional[str] = None,
 ) -> str:
     separator = utils.load_separator(
         model_name=model_name,

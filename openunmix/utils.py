@@ -112,7 +112,7 @@ class EarlyStopping(object):
             self.is_better = lambda a, best: a > best + min_delta
 
 
-def load_target_models(targets, model_name=None, device="cpu", pretrained=True):
+def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=True):
     """Core model loader
 
     target model path can be either <target>.pth, or <target>-sha256.pth
@@ -137,7 +137,7 @@ def load_target_models(targets, model_name=None, device="cpu", pretrained=True):
                 return hub_loader(targets=targets, device=device, pretrained=pretrained)
             print(err.getvalue())
         except AttributeError:
-            raise NameError("Model does not exist")
+            raise NameError("Model does not exist on torchhub")
             # assume model is a path to a local model_str_or_path directory
     else:
         models = {}
@@ -208,7 +208,7 @@ def load_separator(
             for deployment.
         bass_model_path (str, optional): path to custom bass model directory
     """
-    # 如果是umx-bass模型，直接使用hub_loader
+
     if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
         model_name = "umxhq"
     model_path = Path(model_name).expanduser()
