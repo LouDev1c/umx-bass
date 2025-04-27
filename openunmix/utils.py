@@ -124,7 +124,11 @@ def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=Tru
     if isinstance(targets, str):
         targets = [targets]
     if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
-        model_name = "umxhq"
+        hub_loader = getattr(openunmix, model_name.replace("-", "_") + "_spec")
+        err = io.StringIO()
+        with redirect_stderr(err):
+            return hub_loader(targets=targets, device=device, pretrained=pretrained)
+        print(err.getvalue())
     model_path = Path(model_name).expanduser()
 
     if not model_path.exists():
@@ -210,7 +214,18 @@ def load_separator(
     """
 
     if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
-        model_name = "umxhq"
+        hub_loader = getattr(openunmix, model_name.replace("-", "_"))
+        separator = hub_loader(
+            targets=targets,
+            device=device,
+            pretrained=pretrained,
+            niter=niter,
+            residual=residual,
+            wiener_win_len=wiener_win_len,
+            filterbank=filterbank,
+        )
+        return separator
+
     model_path = Path(model_name).expanduser()
 
     # when path exists, we assume its a custom model saved locally

@@ -39,7 +39,7 @@ class OpenUnmix(nn.Module):
         input_mean: Optional[np.ndarray] = None,
         input_scale: Optional[np.ndarray] = None,
         max_bin: Optional[int] = None,
-        method: str = "stft"
+        method: str = None
     ):
         super(OpenUnmix, self).__init__()
 
@@ -144,13 +144,9 @@ class OpenUnmix(nn.Module):
 
         # permute so that batch is last for lstm
         x = x.permute(3, 0, 1, 2)
-        print(f"After permute: x.shape={x.shape}, x.dtype={x.dtype}")
         # get current spectrogram shape
         nb_frames, nb_samples, nb_channels, nb_bins = x.data.shape
-        print(f"Shape details: frames={nb_frames}, samples={nb_samples}, channels={nb_channels}, bins={nb_bins}")
-
         mix = x.detach().clone()
-
         # crop
         x = x[..., : self.nb_bins]
         # shift and scale input to mean=0 std=1 (across all bins)
@@ -160,20 +156,14 @@ class OpenUnmix(nn.Module):
         elif self.method == "cqt":
             x = x + self.input_mean * 0.3  # 减小均值偏移
             x = x * (self.input_scale * 0.6)  # 减小缩放因子
-        print(f"x.shape={x.shape}, x.dtype={x.dtype}, nb_bins={self.nb_bins}, nb_output_bins={self.nb_output_bins}")
-        print(f"After normalization: x.min()={x.min().item()}, x.max()={x.max().item()}, x.mean()={x.mean().item()}, x.std()={x.std().item()}")
         # to (nb_frames*nb_samples, nb_channels*nb_bins)
         # and encode to (nb_frames*nb_samples, hidden_size)
         x = self.fc1(x.reshape(-1, nb_channels * self.nb_bins))
-        print(f"x.shape1={x.shape}")
         # normalize every instance in a batch
         x = self.bn1(x)
-        print(f"x.shape2={x.shape}")
         x = x.reshape(nb_frames, nb_samples, self.hidden_size)
-        print(f"x.shape3={x.shape}")
         # squash range ot [-1, 1]
         x = torch.tanh(x)
-        print(f"x.shape4={x.shape}")
 
         # apply 3-layers of stacked LSTM
         lstm_out = self.lstm(x)

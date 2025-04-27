@@ -181,7 +181,6 @@ def calculate_f1_score(original_audio, estimated_audio, sr=44100):
                 # 如果检测到音符但F1为0，可能是时间对齐问题
                 # 使用更宽松的匹配标准
                 f1 = f1_score(original_labels, estimated_labels, average='weighted', zero_division=0.1)
-
         return f1
 
     except Exception as e:
@@ -258,10 +257,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--targets", nargs="+", default=["vocals", "drums", "bass", "other"], type=str,
                         help="provide targets to be processed. If none, all available targets will be computed")
-    parser.add_argument("--model", default="umxhq", type=str,
+    parser.add_argument("--model", default="umx-bass-1", type=str,
                         help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)")
-    parser.add_argument("--method", type=str, default="cqt", choices=["stft", "cqt"],
-                        help="filterbank implementation method (stft or cqt)",)
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")
     parser.add_argument("--root", type=str, help="Path to MUSDB18")
@@ -297,8 +294,22 @@ if __name__ == "__main__":
         is_wav=args.is_wav,
     )
     model_name = args.model
-    if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+
+    # 根据模型名称设置正确的filterbank
+    if model_name == "umx-bass-1":
         model_name = "umxhq"
+        # method_name = "cqt"
+        method_name = "stft"
+    elif model_name == "umx-bass-2":
+        model_name = "umxhq"
+        # method_name = "cqt"
+        method_name = "stft"
+    elif model_name == "umx-bass-3":
+        model_name = "umxhq"
+        method_name = "stft"
+    else:
+        method_name = "stft"
+
     aggregate_dict = None if args.aggregate is None else json.loads(args.aggregate)
 
     if args.cores > 1:
@@ -318,7 +329,7 @@ if __name__ == "__main__":
                     eval_dir=args.evaldir,
                     device=device,
                     wiener_win_len=args.wiener_win_len,
-                    filterbank=args.method,
+                    filterbank=method_name,
                 ),
                 iterable=mus.tracks,
                 chunksize=1,
@@ -343,12 +354,12 @@ if __name__ == "__main__":
                 eval_dir=args.evaldir,
                 device=device,
                 wiener_win_len=args.wiener_win_len,
-                filterbank=args.method,
+                filterbank=method_name,
             )
             print(track, "\n", scores)
             results.add_track(scores)
 
     print(results)
-    method = museval.MethodStore()
-    method.add_evalstore(results, model_name)  # 使用原始model名称保存结果
-    method.save(model_name + ".pandas")
+    met = museval.MethodStore()
+    met.add_evalstore(results, model_name)  # 使用原始model名称保存结果
+    met.save(model_name + ".pandas")
