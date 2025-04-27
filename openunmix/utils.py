@@ -112,7 +112,7 @@ class EarlyStopping(object):
             self.is_better = lambda a, best: a > best + min_delta
 
 
-def load_target_models(targets, model_str_or_path="umxl", device="cpu", pretrained=True):
+def load_target_models(targets, model_str_or_path=None, device="cpu", pretrained=True):
     """Core model loader
 
     target model path can be either <target>.pth, or <target>-sha256.pth
@@ -162,14 +162,14 @@ def load_target_models(targets, model_str_or_path="umxl", device="cpu", pretrain
 
 
 def load_separator(
-    model_str_or_path: str = "umxl",
+    model_str_or_path: str = None,
     targets: Optional[list] = None,
     niter: int = 1,
     residual: bool = False,
     wiener_win_len: Optional[int] = 300,
     device: Union[str, torch.device] = "cpu",
     pretrained: bool = True,
-    filterbank: str = "stft",
+    filterbank: str = None,
     bass_model_path: Optional[str] = None,
 ):
     """Separator loader

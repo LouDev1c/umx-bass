@@ -202,6 +202,7 @@ def separate_and_evaluate(
         device: Union[str, torch.device] = "cpu",
         wiener_win_len: Optional[int] = None,
         filterbank: str = None,
+        bass_model_path: Optional[str] = None,
 ) -> str:
     separator = utils.load_separator(
         model_str_or_path=model_str_or_path,
@@ -255,9 +256,10 @@ if __name__ == "__main__":
 
     parser.add_argument("--targets", nargs="+", default=["vocals", "drums", "bass", "other"], type=str,
                         help="provide targets to be processed. If none, all available targets will be computed")
-    parser.add_argument("--model", default="umxhq", type=str,
+    parser.add_argument("--model", default="umx-bass-2", type=str,
                         help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)")
-    parser.add_argument("--method", type=str, default="stft", choices=["stft", "cqt"],help="filterbank implementation method (stft or cqt)")
+    parser.add_argument("--method", type=str, default="cqt", choices=["stft", "cqt"],
+                        help="filterbank implementation method (stft or cqt)",)
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")
     parser.add_argument("--root", type=str, help="Path to MUSDB18")
@@ -265,27 +267,34 @@ if __name__ == "__main__":
     parser.add_argument("--cores", type=int, default=1)
     parser.add_argument("--no-cuda", action="store_true", default=False, help="disables CUDA inference")
     parser.add_argument("--is-wav", action="store_true", default=False, help="flags wav version of the dataset")
-    parser.add_argument("--niter", type=int, default=1, help="number of iterations for refining results.")
+    parser.add_argument("--niter", type=int, default=1, help="number of iterations for refining results.", )
     parser.add_argument("--wiener-win-len", type=int, default=300,
-                        help="Number of frames on which to apply filtering independently")
+                        help="Number of frames on which to apply filtering independently", )
     parser.add_argument("--residual", type=str, default=None,
-                        help="if provided, build a source with given name" "for the mix minus all estimated targets")
-    parser.add_argument("--aggregate", type=str, default=None,
-                        help="if provided, must be a string containing a valid expression for "
-                             "a dictionary, with keys as output target names, and values "
-                             "a list of targets that are used to build it. For instance: "
-                             '\'{"vocals":["vocals"], "accompaniment":["drums",'
-                             '"bass","other"]}\'')
+                        help="if provided, build a source with given name" "for the mix minus all estimated targets", )
+    parser.add_argument(
+        "--aggregate",
+        type=str,
+        default=None,
+        help="if provided, must be a string containing a valid expression for "
+             "a dictionary, with keys as output target names, and values "
+             "a list of targets that are used to build it. For instance: "
+             '\'{"vocals":["vocals"], "accompaniment":["drums",'
+             '"bass","other"]}\'',
+    )
 
     args = parser.parse_args()
 
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    # Check if model is a custom bass model
-    if args.model in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+    # 保存原始model参数用于后续判断
+    original_model = args.model
+    
+    # 如果是umx-bass模型，使用umxhq进行评估
+    if original_model in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
         model_str_or_path = "umx_bass"
-        bass_model_path = args.model
+        bass_model_path = original_model  # 使用原始模型名称作为bass_model_path
     else:
         model_str_or_path = args.model
         bass_model_path = None
@@ -314,8 +323,9 @@ if __name__ == "__main__":
                     output_dir=args.outdir,
                     eval_dir=args.evaldir,
                     device=device,
-                    bass_model_path=bass_model_path,
+                    wiener_win_len=args.wiener_win_len,
                     filterbank=args.method,
+                    bass_model_path=bass_model_path,  # 添加bass_model_path参数
                 ),
                 iterable=mus.tracks,
                 chunksize=1,
@@ -340,12 +350,14 @@ if __name__ == "__main__":
                 output_dir=args.outdir,
                 eval_dir=args.evaldir,
                 device=device,
+                wiener_win_len=args.wiener_win_len,
                 filterbank=args.method,
+                bass_model_path=bass_model_path,  # 添加bass_model_path参数
             )
             print(track, "\n", scores)
             results.add_track(scores)
 
     print(results)
     method = museval.MethodStore()
-    method.add_evalstore(results, args.model)
-    method.save(args.model + ".pandas")
+    method.add_evalstore(results, original_model)  # 使用原始model名称保存结果
+    method.save(original_model + ".pandas")

@@ -50,7 +50,7 @@ def umxhq(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="torch",
+    filterbank="stft",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model trained on MUSDB18-HQ
@@ -137,7 +137,7 @@ def umx(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="torch",
+    filterbank="stft",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model trained on MUSDB18
@@ -224,7 +224,7 @@ def umxl(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="torch",
+    filterbank="stft",
 ):
     """
     Open Unmix Extra (UMX-L), 2-channel/stereo BLSTM Model trained on a private dataset
@@ -273,7 +273,7 @@ def umxl(
     return separator
 
 
-def umx_bass_spec(targets=None, device="cpu", pretrained=True, bass_model_path="umx-bass-1"):
+def umx_bass_spec(targets=None, device="cpu", pretrained=True, bass_model_path=None):
     from .model import OpenUnmix
 
     # set urls for weights
@@ -315,8 +315,15 @@ def umx_bass_spec(targets=None, device="cpu", pretrained=True, bass_model_path="
             if target == "bass":
                 # Load bass model from local path
                 current_dir = os.path.dirname(os.path.abspath(__file__))
-                bass_path = os.path.join(current_dir, bass_model_path, "bass.pth")
+                # 根据bass_model_path构建正确的模型路径
+                if bass_model_path in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+                    bass_path = os.path.join(current_dir, bass_model_path, "bass.pth")
+                else:
+                    # 如果bass_model_path不是预期的值，使用默认路径
+                    bass_path = os.path.join(current_dir, "umx-bass-1", "bass.pth")
                 print(f"Loading bass model from: {bass_path}")  # 添加调试信息
+                if not os.path.exists(bass_path):
+                    raise FileNotFoundError(f"Bass model not found at: {bass_path}")
                 state_dict = torch.load(bass_path, map_location=device)
             else:
                 # Load other targets from umxhq pretrained weights
@@ -338,7 +345,7 @@ def umx_bass(
     pretrained=True,
     wiener_win_len=300,
     filterbank="stft",
-    bass_model_path="umx-bass-1"
+    bass_model_path=None
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model with custom bass model
