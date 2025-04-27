@@ -297,17 +297,13 @@ if __name__ == "__main__":
 
     # 根据模型名称设置正确的filterbank
     if model_name == "umx-bass-1":
-        model_name = "umxhq"
-        # method_name = "cqt"
-        method_name = "stft"
+        method_name = "cqt"
     elif model_name == "umx-bass-2":
-        model_name = "umxhq"
-        # method_name = "cqt"
-        method_name = "stft"
+        method_name = "cqt"
     elif model_name == "umx-bass-3":
-        model_name = "umxhq"
         method_name = "stft"
     else:
+        model_name = "umxhq"
         method_name = "stft"
 
     aggregate_dict = None if args.aggregate is None else json.loads(args.aggregate)
