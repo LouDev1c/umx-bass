@@ -50,7 +50,7 @@ def umxhq(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="stft",
+    filterbank="torch",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model trained on MUSDB18-HQ
@@ -117,13 +117,7 @@ def umx_spec(targets=None, device="cpu", pretrained=True):
     target_models = {}
     for target in targets:
         # load open unmix model
-        target_unmix = OpenUnmix(
-            nb_bins=4096 // 2 + 1, 
-            nb_channels=2, 
-            hidden_size=512, 
-            max_bin=max_bin,
-            method="stft"
-        )
+        target_unmix = OpenUnmix(nb_bins=4096 // 2 + 1, nb_channels=2, hidden_size=512, max_bin=max_bin)
 
         # enable centering of stft to minimize reconstruction error
         if pretrained:
@@ -143,7 +137,7 @@ def umx(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="stft",
+    filterbank="torch",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model trained on MUSDB18
@@ -230,7 +224,7 @@ def umxl(
     device="cpu",
     pretrained=True,
     wiener_win_len=300,
-    filterbank="stft",
+    filterbank="torch",
 ):
     """
     Open Unmix Extra (UMX-L), 2-channel/stereo BLSTM Model trained on a private dataset

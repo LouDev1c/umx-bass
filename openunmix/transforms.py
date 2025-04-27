@@ -19,7 +19,6 @@ def make_filterbanks(
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
-        # nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         nb_bins = 84
         print("nb_bins of cqt: ", nb_bins)
         encoder = nnAudioCQT(n_fft=n_fft, n_hop=n_hop, center=center, window=window, sample_rate=sample_rate)
@@ -40,7 +39,6 @@ class nnAudioCQT(nn.Module):
     ):
         super(nnAudioCQT, self).__init__()
 
-        # self.nb_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         self.nb_bins = 84
         self.hop_length = n_hop
         self.center = center
@@ -90,7 +88,6 @@ class nnAudioICQT(nn.Module):
         super(nnAudioICQT, self).__init__()
 
         # 保持与CQT相同的参数
-        # self.n_bins = int(np.ceil(np.log2(sample_rate / 2 / 20) * 12))
         self.n_bins = 84
         self.hop_length = n_hop
         self.center = center
