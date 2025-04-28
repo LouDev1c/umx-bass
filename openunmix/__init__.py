@@ -322,7 +322,6 @@ def umx_bass_1_spec(targets=None, device="cpu", pretrained=True):
                 # Load bass model from local path
                 current_dir = os.path.dirname(os.path.abspath(__file__))
                 bass_path = os.path.join(current_dir, "umx-bass-1", "bass.pth")
-                print(f"Loading bass model from: {bass_path}")
                 state_dict = torch.load(bass_path, map_location=device)
             else:
                 # Load other targets from umxhq pretrained weights
@@ -433,7 +432,6 @@ def umx_bass_2_spec(targets=None, device="cpu", pretrained=True):
                 # Load bass model from local path
                 current_dir = os.path.dirname(os.path.abspath(__file__))
                 bass_path = os.path.join(current_dir, "umx-bass-2", "bass.pth")
-                print(f"Loading bass model from: {bass_path}")
                 state_dict = torch.load(bass_path, map_location=device)
             else:
                 # Load other targets from umxhq pretrained weights
@@ -495,7 +493,6 @@ def umx_bass_2(
         nb_channels=2,
         sample_rate=44100.0,
         wiener_win_len=wiener_win_len,
-        filterbank=filterbank,
     ).to(device)
 
     return separator
@@ -526,7 +523,6 @@ def umx_bass_3_spec(targets=None, device="cpu", pretrained=True):
                 # Load bass model from local path
                 current_dir = os.path.dirname(os.path.abspath(__file__))
                 bass_path = os.path.join(current_dir, "umx-bass-3", "bass.pth")
-                print(f"Loading bass model from: {bass_path}")
                 state_dict = torch.load(bass_path, map_location=device)
             else:
                 # Load other targets from umxhq pretrained weights

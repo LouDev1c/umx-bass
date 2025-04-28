@@ -15,12 +15,10 @@ def make_filterbanks(
 
     if method == "stft":
         nb_bins = n_fft // 2 + 1
-        print("nb_bins of stft: ", nb_bins)
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
     elif method == "cqt":
         nb_bins = 84
-        print("nb_bins of cqt: ", nb_bins)
         encoder = nnAudioCQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
         decoder = nnAudioICQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
     else:
