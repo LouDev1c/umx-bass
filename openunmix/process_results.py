@@ -33,39 +33,27 @@ def extract_f1_scores_from_log(log_file, tracks):
     return f1_scores
 
 
-def process_results_to_excel(pandas_file, log_file, output_excel):
-    # 读取.pandas文件获取所有track名称
-    df = pd.read_pickle(pandas_file)
-    unique_tracks = df['track'].unique()
-
+def process_results_to_excel(log_file, output_excel):
     # 从日志文件提取F1 scores
-    f1_scores = extract_f1_scores_from_log(log_file, unique_tracks)
+    tracks = [f"track_{i+1}" for i in range(50)]  # 假设有50个track
+    f1_scores = extract_f1_scores_from_log(log_file, tracks)
 
     # 创建结果DataFrame
-    results = pd.DataFrame(columns=['编号', 'vocals', 'drums', 'bass', 'other', 'F1 score'])
+    results = pd.DataFrame(columns=['编号', 'F1 score'])
 
     # 处理每个track
-    for i, track_name in enumerate(unique_tracks):
-        track_data = df[df['track'] == track_name]
-
-        # 填充基本信息
+    for i, track_name in enumerate(tracks):
         results.at[i, '编号'] = i + 1
-
-        # 提取各音轨SDR值
-        for target in ['vocals', 'drums', 'bass', 'other']:
-            sdr_values = track_data[(track_data['target'] == target) &
-                                    (track_data['metric'] == 'SDR')]['score']
-            results.at[i, target] = sdr_values.median() if not sdr_values.empty else np.nan
-
-        # 从日志中获取F1 score
         results.at[i, 'F1 score'] = f1_scores.get(track_name, np.nan)
 
-    # 添加统计行（平均值和中位数）
-    results.loc[len(unique_tracks), '编号'] = '平均值'
-    results.loc[len(unique_tracks) + 1, '编号'] = '中位数'
-    for col in ['vocals', 'drums', 'bass', 'other', 'F1 score']:
-        results.loc[len(unique_tracks), col] = results[col].mean()
-        results.loc[len(unique_tracks) + 1, col] = results[col].median()
+    # 添加统计行（平均值、中位数和方差）
+    results.loc[len(tracks), '编号'] = '平均值'
+    results.loc[len(tracks) + 1, '编号'] = '中位数'
+    results.loc[len(tracks) + 2, '编号'] = '方差'
+
+    results.loc[len(tracks), 'F1 score'] = results['F1 score'].mean()
+    results.loc[len(tracks) + 1, 'F1 score'] = results['F1 score'].median()
+    results.loc[len(tracks) + 2, 'F1 score'] = results['F1 score'].var()
 
     # 保存结果
     results.to_excel(output_excel, index=False)
@@ -73,8 +61,7 @@ def process_results_to_excel(pandas_file, log_file, output_excel):
 
 
 if __name__ == "__main__":
-    pandas_file = "umxhq.pandas"
-    log_file = r"E:\open-unmix\umx-bass\umxhq_evaluation"
-    output_excel = "umxhq_evaluation_results.xlsx"
+    log_file = r"E:\open-unmix\umx-bass\umx-bass-1_evaluation"
+    output_excel = "umx-bass-1_evaluation_results.xlsx"
 
-    process_results_to_excel(pandas_file, log_file, output_excel)
+    process_results_to_excel(log_file, output_excel)

@@ -1,0 +1,449 @@
+  0%|          | 0/50 [00:00<?, ?it/s]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8436
+AM Contra - Heart Peripheral
+ vocals          ==> SDR:   0.028  SIR: -21.773  ISR:  -0.050  SAR:   0.007
+drums           ==> SDR:   1.041  SIR:  -5.646  ISR:  11.895  SAR:   2.421
+bass            ==> SDR:   0.001  SIR: -15.979  ISR:   0.002  SAR:  -2.622
+other           ==> SDR:  -4.540  SIR: -15.336  ISR:   0.676  SAR:   0.653
+
+  2%|▏         | 1/50 [00:16<13:44, 16.82s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8963
+Al James - Schoolboy Facination
+ vocals          ==> SDR:   0.478  SIR:  -5.826  ISR:  -6.483  SAR:   0.006
+drums           ==> SDR:  -1.181  SIR: -17.568  ISR:   6.787  SAR:   0.268
+bass            ==> SDR:   0.005  SIR:  -7.608  ISR:   0.006  SAR:  -1.638
+other           ==> SDR:  -3.378  SIR: -14.448  ISR:  -2.852  SAR:   0.161
+
+  4%|▍         | 2/50 [00:28<11:02, 13.80s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9320
+Angels In Amplifiers - I'm Alright
+ vocals          ==> SDR:   0.004  SIR:  -4.169  ISR:  -1.244  SAR:   0.005
+drums           ==> SDR:   2.459  SIR: -11.949  ISR:   8.284  SAR:   0.384
+bass            ==> SDR:   0.008  SIR: -11.826  ISR:   0.011  SAR:  -2.589
+other           ==> SDR:  -0.616  SIR: -11.687  ISR:  10.666  SAR:   0.795
+
+  6%|▌         | 3/50 [00:39<09:45, 12.45s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8665
+Arise - Run Run Run
+ vocals          ==> SDR:   0.007  SIR: -14.623  ISR:  -0.093  SAR:   0.022
+drums           ==> SDR:  -4.378  SIR:  -7.606  ISR:  13.990  SAR:   5.644
+bass            ==> SDR:   0.001  SIR: -11.618  ISR:   0.003  SAR:  -2.357
+other           ==> SDR:   1.250  SIR:  -2.616  ISR:   2.819  SAR:   2.488
+
+  8%|▊         | 4/50 [00:50<09:05, 11.85s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9515
+BKS - Bulldozer
+ vocals          ==> SDR:   0.046  SIR:   1.267  ISR:  -3.892  SAR:   0.002
+drums           ==> SDR:   5.578  SIR:  -9.253  ISR:  10.329  SAR:   0.630
+bass            ==> SDR:   0.001  SIR: -26.594  ISR:   0.001  SAR:  -0.621
+other           ==> SDR:   0.012  SIR: -13.458  ISR:   7.274  SAR:   0.369
+
+ 10%|█         | 5/50 [01:01<08:43, 11.63s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9145
+BKS - Too Much
+ vocals          ==> SDR:   0.040  SIR:   4.864  ISR:  -8.397  SAR:   0.007
+drums           ==> SDR:   1.525  SIR:  -3.794  ISR:   3.434  SAR:   1.630
+bass            ==> SDR:   0.002  SIR: -17.521  ISR:   0.003  SAR:  -0.334
+other           ==> SDR:  -3.968  SIR:  -9.687  ISR:  -1.919  SAR:   0.664
+
+ 12%|█▏        | 6/50 [01:12<08:24, 11.47s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8535
+ 14%|█▍        | 7/50 [01:22<07:55, 11.06s/it]Ben Carrigan - We'll Talk About It All Tonight
+ vocals          ==> SDR:   0.088  SIR:  -6.201  ISR:  -0.607  SAR:   0.042
+drums           ==> SDR:   1.427  SIR:  -3.568  ISR:   9.038  SAR:   4.524
+bass            ==> SDR:   0.001  SIR: -22.349  ISR:   0.002  SAR:  -2.302
+other           ==> SDR:   0.019  SIR:  -6.222  ISR:   3.379  SAR:   1.464
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8635
+Bobby Nobody - Stitch Up
+ vocals          ==> SDR:   0.271  SIR:   3.284  ISR: -12.151  SAR:   0.006
+drums           ==> SDR:   0.728  SIR: -12.147  ISR:   8.421  SAR:   0.541
+bass            ==> SDR:   0.001  SIR:  -7.407  ISR:   0.001  SAR:  -1.199
+other           ==> SDR:   1.811  SIR: -10.203  ISR:   3.337  SAR:   0.295
+
+ 16%|█▌        | 8/50 [01:33<07:32, 10.77s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8901
+Buitraker - Revo X
+ vocals          ==> SDR:   0.097  SIR: -12.636  ISR:  -3.019  SAR:   0.002
+drums           ==> SDR:   6.622  SIR:  -5.516  ISR:  11.305  SAR:   1.137
+bass            ==> SDR:   0.000  SIR: -16.851  ISR:   0.001  SAR:  -0.370
+other           ==> SDR:   1.795  SIR:  -5.258  ISR:  -6.007  SAR:   0.194
+
+ 18%|█▊        | 9/50 [01:43<07:11, 10.52s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8580
+Carlos Gonzalez - A Place For Us
+ vocals          ==> SDR:   0.032  SIR: -12.528  ISR:  -0.587  SAR:   0.002
+drums           ==> SDR:   4.406  SIR:  -3.686  ISR:   7.913  SAR:   1.689
+bass            ==> SDR:   0.000  SIR: -27.340  ISR:   0.001  SAR:  -1.516
+other           ==> SDR:  -1.885  SIR: -12.359  ISR:  10.013  SAR:   0.849
+
+ 20%|██        | 10/50 [01:53<06:54, 10.36s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8899
+Cristina Vane - So Easy
+ vocals          ==> SDR:   0.027  SIR: -19.228  ISR:  -0.147  SAR:   0.001
+drums           ==> SDR:   9.193  SIR:  -4.093  ISR:  15.517  SAR:   0.974
+bass            ==> SDR:   0.000  SIR: -15.587  ISR:   0.000  SAR:  -1.320
+other           ==> SDR:  -3.718  SIR: -17.514  ISR:   6.054  SAR:   0.313
+
+ 22%|██▏       | 11/50 [02:03<06:40, 10.26s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9116
+Detsky Sad - Walkie Talkie
+ vocals          ==> SDR:   0.006  SIR:  -6.269  ISR:  -0.622  SAR:   0.035
+drums           ==> SDR:   6.059  SIR:   2.090  ISR:   7.358  SAR:   3.999
+bass            ==> SDR:   0.000  SIR: -26.892  ISR:   0.000  SAR:  -5.758
+other           ==> SDR:  -7.239  SIR: -11.070  ISR:   6.148  SAR:   2.035
+
+ 24%|██▍       | 12/50 [02:13<06:27, 10.19s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9166
+Enda Reilly - Cur An Long Ag Seol
+ vocals          ==> SDR:   0.076  SIR:   0.817  ISR:  -3.862  SAR:   0.019
+drums           ==> SDR:   5.378  SIR:  -2.137  ISR:  14.192  SAR:   2.927
+bass            ==> SDR:   0.002  SIR: -11.050  ISR:   0.001  SAR:  -2.311
+other           ==> SDR:  -2.505  SIR:  -8.173  ISR:   3.734  SAR:   2.026
+
+ 26%|██▌       | 13/50 [02:23<06:15, 10.14s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8868
+Forkupines - Semantics
+ vocals          ==> SDR:   0.087  SIR:  -7.605  ISR:  -7.500  SAR:   0.001
+drums           ==> SDR:   4.432  SIR:  -5.459  ISR:   8.622  SAR:   1.364
+bass            ==> SDR:  -0.000  SIR: -23.906  ISR:   0.000  SAR:  -0.256
+other           ==> SDR:  -0.462  SIR:  -1.222  ISR: -12.297  SAR:   0.125
+
+ 28%|██▊       | 14/50 [02:33<06:03, 10.11s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8709
+Georgia Wonder - Siren
+ vocals          ==> SDR:   0.141  SIR: -16.151  ISR:  -0.380  SAR:   0.006
+drums           ==> SDR:   3.050  SIR:  -5.161  ISR:   8.783  SAR:   1.683
+bass            ==> SDR:   0.000  SIR: -15.803  ISR:   0.001  SAR:  -1.225
+other           ==> SDR:  -1.011  SIR:  -6.195  ISR:  -9.325  SAR:   0.287
+
+ 30%|███       | 15/50 [02:44<06:06, 10.46s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8811
+Girls Under Glass - We Feel Alright
+ vocals          ==> SDR:   0.228  SIR:   5.084  ISR: -11.428  SAR:   0.002
+drums           ==> SDR:   5.056  SIR:  -4.419  ISR:  11.977  SAR:   1.679
+bass            ==> SDR:   0.000  SIR: -14.515  ISR:   0.000  SAR:  -0.657
+other           ==> SDR:  -0.132  SIR:  -9.360  ISR:  -3.720  SAR:   0.251
+
+ 32%|███▏      | 16/50 [02:56<06:15, 11.04s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9544
+ 34%|███▍      | 17/50 [03:07<06:00, 10.93s/it]Hollow Ground - Ill Fate
+ vocals          ==> SDR:   0.030  SIR: -15.158  ISR:  -1.595  SAR:   0.001
+drums           ==> SDR:   1.192  SIR:  -5.926  ISR:   6.341  SAR:   1.628
+bass            ==> SDR:   0.001  SIR: -10.619  ISR:   0.002  SAR:  -0.727
+other           ==> SDR:   1.130  SIR: -11.170  ISR:   5.234  SAR:   0.585
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8874
+James Elder & Mark M Thompson - The English Actor
+ vocals          ==> SDR:   0.001  SIR: -15.433  ISR:  -0.911  SAR:   0.006
+drums           ==> SDR:  -0.692  SIR:  -9.151  ISR:   6.078  SAR:   1.425
+bass            ==> SDR:   0.001  SIR: -19.847  ISR:   0.001  SAR:  -3.325
+other           ==> SDR:   0.852  SIR:  -9.349  ISR:   7.811  SAR:   0.764
+
+ 36%|███▌      | 18/50 [03:17<05:45, 10.80s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8835
+Juliet's Rescue - Heartbeats
+ vocals          ==> SDR:   0.236  SIR:  -6.019  ISR:  -7.720  SAR:   0.003
+drums           ==> SDR:   8.428  SIR:   1.401  ISR:  17.117  SAR:   4.174
+bass            ==> SDR:   0.001  SIR: -17.319  ISR:   0.002  SAR:  -3.356
+other           ==> SDR:   1.349  SIR: -17.176  ISR:   8.866  SAR:   0.170
+
+ 38%|███▊      | 19/50 [03:28<05:33, 10.74s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9166
+Little Chicago's Finest - My Own
+ vocals          ==> SDR:   0.011  SIR:  -4.981  ISR:  -4.634  SAR:   0.003
+drums           ==> SDR:   4.085  SIR:   0.022  ISR:   7.871  SAR:   4.083
+bass            ==> SDR:  -0.001  SIR: -19.659  ISR:   0.000  SAR:  -0.840
+other           ==> SDR:  -2.908  SIR: -12.229  ISR:   4.865  SAR:   0.396
+
+ 40%|████      | 20/50 [03:39<05:19, 10.66s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9408
+Louis Cressy Band - Good Time
+ vocals          ==> SDR:   0.062  SIR: -16.194  ISR:  -0.550  SAR:   0.005
+drums           ==> SDR:   3.157  SIR: -10.154  ISR:   7.934  SAR:   0.534
+bass            ==> SDR:   0.001  SIR: -19.152  ISR:   0.001  SAR:  -0.237
+other           ==> SDR:   1.345  SIR:  -7.736  ISR:   1.063  SAR:   0.843
+
+ 42%|████▏     | 21/50 [03:49<05:08, 10.63s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8932
+Lyndsey Ollard - Catching Up
+ vocals          ==> SDR:   0.107  SIR: -12.655  ISR:  -0.909  SAR:   0.018
+drums           ==> SDR:   3.217  SIR:   0.285  ISR:   6.935  SAR:   4.939
+bass            ==> SDR:   0.001  SIR: -17.485  ISR:   0.001  SAR:  -3.561
+other           ==> SDR:  -3.253  SIR:  -8.200  ISR:  -1.605  SAR:   0.987
+
+ 44%|████▍     | 22/50 [03:59<04:55, 10.55s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9275
+M.E.R.C. Music - Knockout
+ vocals          ==> SDR:   0.013  SIR: -21.406  ISR:  -0.155  SAR:   0.004
+drums           ==> SDR:   2.154  SIR: -12.166  ISR:   7.136  SAR:   0.394
+bass            ==> SDR:  -0.000  SIR: -12.899  ISR:   0.000  SAR:  -0.327
+other           ==> SDR:  -1.920  SIR:  -3.466  ISR:  -9.909  SAR:   0.392
+
+ 46%|████▌     | 23/50 [04:10<04:45, 10.56s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8965
+ 48%|████▊     | 24/50 [04:20<04:32, 10.48s/it]Moosmusic - Big Dummy Shake
+ vocals          ==> SDR:   0.224  SIR: -13.024  ISR:  -3.149  SAR:   0.002
+drums           ==> SDR:   2.245  SIR:  -2.760  ISR:  11.084  SAR:   3.264
+bass            ==> SDR:   0.001  SIR: -22.955  ISR:   0.002  SAR:  -2.176
+other           ==> SDR:  -6.391  SIR: -22.636  ISR:   6.996  SAR:   0.168
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8779
+Motor Tapes - Shore
+ vocals          ==> SDR:  -0.040  SIR: -13.853  ISR:  -0.092  SAR:   0.053
+drums           ==> SDR:   3.794  SIR:  -1.248  ISR:  11.786  SAR:   4.206
+bass            ==> SDR:   0.001  SIR:  -5.669  ISR:   0.002  SAR:  -1.953
+other           ==> SDR:   8.910  SIR:   4.748  ISR:  16.004  SAR:   8.076
+
+ 50%|█████     | 25/50 [04:31<04:20, 10.43s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9377
+Mu - Too Bright
+ vocals          ==> SDR:   0.532  SIR:   8.680  ISR: -17.348  SAR:   0.003
+ 52%|█████▏    | 26/50 [04:41<04:10, 10.43s/it]drums           ==> SDR:   8.150  SIR:   1.130  ISR:  17.735  SAR:   3.855
+bass            ==> SDR:   0.001  SIR: -16.753  ISR:   0.001  SAR:  -1.352
+other           ==> SDR:  -3.387  SIR: -23.077  ISR:   5.116  SAR:   0.062
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9029
+Nerve 9 - Pray For The Rain
+ vocals          ==> SDR:   0.091  SIR:  -4.173  ISR:  -3.890  SAR:   0.002
+drums           ==> SDR:   5.984  SIR:  -3.942  ISR:  13.833  SAR:   1.726
+bass            ==> SDR:   0.004  SIR: -12.671  ISR:   0.004  SAR:  -0.940
+other           ==> SDR:  -2.965  SIR: -14.689  ISR:  11.789  SAR:   0.431
+
+ 54%|█████▍    | 27/50 [04:51<03:59, 10.40s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9044
+ 56%|█████▌    | 28/50 [05:02<03:47, 10.35s/it]PR - Happy Daze
+ vocals          ==> SDR: -18.081  SIR: -30.578  ISR:  -3.961  SAR:   0.172
+drums           ==> SDR:   7.114  SIR:   6.410  ISR:  17.360  SAR:  14.925
+bass            ==> SDR:   0.000  SIR:  -5.989  ISR:   0.000  SAR:  -2.750
+other           ==> SDR:   0.844  SIR:  -6.580  ISR:   3.027  SAR:   1.165
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8817
+ 58%|█████▊    | 29/50 [05:12<03:37, 10.38s/it]PR - Oh No
+ vocals          ==> SDR: -10.930  SIR: -24.063  ISR:  -1.627  SAR:   0.342
+drums           ==> SDR:   5.449  SIR:  -1.345  ISR:   7.208  SAR:   2.877
+bass            ==> SDR:   0.000  SIR: -16.554  ISR:   0.001  SAR:  -1.047
+other           ==> SDR:   1.699  SIR:  -7.089  ISR:   4.765  SAR:   1.312
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8954
+ 60%|██████    | 30/50 [05:22<03:27, 10.36s/it]Punkdisco - Oral Hygiene
+ vocals          ==> SDR:   0.183  SIR: -16.181  ISR:  -1.090  SAR:   0.004
+drums           ==> SDR:  -0.107  SIR:  -2.339  ISR:  12.373  SAR:   7.802
+bass            ==> SDR:   0.009  SIR:  -3.269  ISR:   0.010  SAR:  -1.569
+other           ==> SDR:  -6.579  SIR: -11.967  ISR:  -5.322  SAR:   0.154
+
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8972
+Raft Monk - Tiring
+ vocals          ==> SDR:   0.062  SIR: -18.246  ISR:  -0.977  SAR:   0.001
+drums           ==> SDR:   1.870  SIR:  -8.899  ISR:  13.245  SAR:   0.953
+bass            ==> SDR:   0.001  SIR: -19.416  ISR:   0.001  SAR:  -0.277
+other           ==> SDR:   0.157  SIR:  -9.107  ISR:  -2.499  SAR:   0.151
+
+ 62%|██████▏   | 31/50 [05:34<03:25, 10.82s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9241
+Sambasevam Shanmugam - Kaathaadi
+ vocals          ==> SDR:   0.003  SIR: -15.438  ISR:  -0.008  SAR:   0.005
+drums           ==> SDR:  -3.441  SIR:  -8.308  ISR:  11.962  SAR:   1.811
+bass            ==> SDR:   0.000  SIR:  -5.277  ISR:   0.001  SAR:  -1.479
+other           ==> SDR:  -2.049  SIR:  -7.970  ISR:   4.193  SAR:   1.459
+
+ 64%|██████▍   | 32/50 [05:46<03:18, 11.00s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9282
+Secretariat - Borderline
+ vocals          ==> SDR:   0.230  SIR:  -3.515  ISR:  -6.820  SAR:   0.012
+drums           ==> SDR:  -1.539  SIR:  -9.250  ISR:   5.189  SAR:   1.574
+bass            ==> SDR:  -0.000  SIR: -17.832  ISR:   0.000  SAR:  -3.236
+other           ==> SDR:   0.032  SIR: -11.237  ISR:   5.925  SAR:   0.572
+
+ 66%|██████▌   | 33/50 [05:57<03:09, 11.17s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8884
+Secretariat - Over The Top
+ vocals          ==> SDR:   0.520  SIR:   0.309  ISR:  -4.131  SAR:   0.076
+drums           ==> SDR:  -0.983  SIR:  -6.271  ISR:   9.198  SAR:   2.636
+bass            ==> SDR:  -0.000  SIR: -12.881  ISR:   0.000  SAR:  -1.496
+other           ==> SDR:  -2.199  SIR: -10.541  ISR:   9.392  SAR:   1.134
+
+ 68%|██████▊   | 34/50 [06:09<03:00, 11.30s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8972
+Side Effects Project - Sing With Me
+ vocals          ==> SDR:   0.510  SIR: -19.562  ISR:   0.363  SAR:   0.029
+drums           ==> SDR:   7.034  SIR:   4.871  ISR:  11.627  SAR:   6.139
+bass            ==> SDR:   0.002  SIR:   0.991  ISR:   0.003  SAR:  -1.651
+other           ==> SDR: -10.188  SIR: -13.969  ISR:  -1.696  SAR:   0.608
+
+ 70%|███████   | 35/50 [06:21<02:51, 11.40s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9071
+Signe Jakobsen - What Have You Done To Me
+ vocals          ==> SDR:   0.056  SIR: -10.448  ISR:  -1.663  SAR:   0.006
+drums           ==> SDR:  -2.702  SIR: -12.656  ISR:   5.891  SAR:   0.716
+bass            ==> SDR:  -0.000  SIR: -32.819  ISR:   0.000  SAR:  -0.267
+other           ==> SDR:   0.822  SIR:  -7.114  ISR:   7.812  SAR:   1.459
+
+ 72%|███████▏  | 36/50 [06:32<02:41, 11.54s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9312
+Skelpolu - Resurrection
+ vocals          ==> SDR:  -0.002  SIR: -20.102  ISR:  -0.035  SAR:   0.006
+drums           ==> SDR:  -2.389  SIR:  -9.106  ISR:  -1.000  SAR:   0.515
+bass            ==> SDR:  -0.000  SIR: -32.752  ISR:   0.001  SAR:  -0.280
+other           ==> SDR:  -3.263  SIR: -12.845  ISR:  -6.310  SAR:   0.200
+
+ 74%|███████▍  | 37/50 [06:44<02:29, 11.48s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9312
+Speak Softly - Broken Man
+ vocals          ==> SDR:   0.217  SIR:  -2.959  ISR: -15.532  SAR:   0.001
+drums           ==> SDR:  -4.671  SIR: -10.570  ISR:   8.394  SAR:   2.339
+bass            ==> SDR:   0.001  SIR:  -8.395  ISR:   0.003  SAR:  -0.508
+other           ==> SDR:   2.110  SIR: -13.940  ISR:   5.915  SAR:   0.225
+
+ 76%|███████▌  | 38/50 [06:55<02:17, 11.48s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9275
+Speak Softly - Like Horses
+ vocals          ==> SDR:   0.004  SIR: -33.577  ISR:   0.007  SAR:   0.002
+drums           ==> SDR:  -8.645  SIR: -17.414  ISR:   4.037  SAR:   0.882
+bass            ==> SDR:   0.003  SIR:   4.519  ISR:   0.003  SAR:  -0.918
+other           ==> SDR:   0.624  SIR: -12.586  ISR:   8.670  SAR:   0.406
+
+ 78%|███████▊  | 39/50 [07:06<02:03, 11.21s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8872
+The Doppler Shift - Atrophy
+ vocals          ==> SDR:   0.316  SIR:  -1.700  ISR:  -2.397  SAR:   0.010
+drums           ==> SDR:   4.787  SIR:  -4.568  ISR:  14.152  SAR:   1.767
+bass            ==> SDR:  -0.000  SIR: -14.206  ISR:   0.000  SAR:  -1.766
+other           ==> SDR:   0.144  SIR: -10.110  ISR:   7.771  SAR:   0.906
+
+ 80%|████████  | 40/50 [07:17<01:51, 11.15s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8570
+The Easton Ellises (Baumi) - SDRNR
+ vocals          ==> SDR:   0.455  SIR:  -2.425  ISR:  -7.305  SAR:   0.003
+drums           ==> SDR:   3.423  SIR:  -7.283  ISR:  13.188  SAR:   1.092
+bass            ==> SDR:   0.005  SIR:  -8.721  ISR:   0.005  SAR:  -2.369
+other           ==> SDR:  -2.707  SIR: -14.167  ISR:  -3.021  SAR:   0.135
+
+ 82%|████████▏ | 41/50 [07:28<01:39, 11.08s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8780
+The Easton Ellises - Falcon 69
+ vocals          ==> SDR:   0.012  SIR: -10.667  ISR:  -0.393  SAR:   0.009
+drums           ==> SDR:   3.585  SIR:  -2.269  ISR:  10.582  SAR:   3.105
+bass            ==> SDR:   0.002  SIR: -25.084  ISR:   0.003  SAR:  -1.083
+other           ==> SDR:  -1.641  SIR:  -6.750  ISR:   7.085  SAR:   2.044
+
+ 84%|████████▍ | 42/50 [07:39<01:28, 11.12s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8761
+The Long Wait - Dark Horses
+ vocals          ==> SDR:   0.175  SIR:   0.419  ISR: -11.745  SAR:   0.001
+drums           ==> SDR:  -2.035  SIR: -13.477  ISR:   8.749  SAR:   0.440
+bass            ==> SDR:   0.001  SIR:  -8.196  ISR:   0.002  SAR:  -2.141
+other           ==> SDR:  -0.974  SIR: -16.578  ISR:  -0.375  SAR:   0.099
+
+ 86%|████████▌ | 43/50 [07:50<01:16, 10.99s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9275
+The Mountaineering Club - Mallory
+ vocals          ==> SDR:   0.002  SIR:  -8.456  ISR:  -2.024  SAR:   0.005
+drums           ==> SDR:  -0.733  SIR:  -3.843  ISR:  13.474  SAR:   5.896
+bass            ==> SDR:   0.002  SIR: -12.527  ISR:   0.002  SAR:  -0.786
+other           ==> SDR:  -3.140  SIR: -13.412  ISR:   8.427  SAR:   0.607
+
+ 88%|████████▊ | 44/50 [08:02<01:08, 11.38s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9075
+The Sunshine Garcia Band - For I Am The Moon
+ vocals          ==> SDR:   0.154  SIR:  -1.759  ISR: -11.823  SAR:   0.005
+drums           ==> SDR:   2.482  SIR:  -8.219  ISR:  14.170  SAR:   1.263
+bass            ==> SDR:   0.006  SIR:  -8.227  ISR:   0.006  SAR:  -1.241
+other           ==> SDR:  -3.236  SIR: -14.882  ISR:   8.633  SAR:   0.365
+
+ 90%|█████████ | 45/50 [08:14<00:57, 11.47s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8771
+Timboz - Pony
+ vocals          ==> SDR:  -0.038  SIR:  -7.660  ISR:  -2.026  SAR:   0.004
+drums           ==> SDR:   2.250  SIR:  -3.902  ISR:   5.758  SAR:   2.299
+bass            ==> SDR:   0.000  SIR: -20.878  ISR:   0.000  SAR:  -0.990
+other           ==> SDR:   5.242  SIR:  -2.310  ISR:   9.706  SAR:   2.041
+
+ 92%|█████████▏| 46/50 [08:25<00:45, 11.36s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9044
+Tom McKenzie - Directions
+ vocals          ==> SDR:   0.520  SIR:  -8.678  ISR:  -9.030  SAR:   0.001
+drums           ==> SDR:   8.981  SIR:  -0.632  ISR:  21.330  SAR:   2.979
+bass            ==> SDR:   0.013  SIR:  -7.503  ISR:   0.011  SAR:  -0.855
+other           ==> SDR:  -3.585  SIR: -16.217  ISR:  -1.388  SAR:   0.123
+
+ 94%|█████████▍| 47/50 [08:37<00:34, 11.63s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9233
+Triviul feat. The Fiend - Widow
+ vocals          ==> SDR:   0.307  SIR:   9.484  ISR: -11.625  SAR:   0.004
+drums           ==> SDR:  -3.528  SIR:  -9.619  ISR:   5.358  SAR:   3.156
+bass            ==> SDR:   0.004  SIR: -13.858  ISR:   0.006  SAR:  -1.336
+other           ==> SDR:  -6.415  SIR: -10.201  ISR:  -7.931  SAR:   0.232
+
+ 96%|█████████▌| 48/50 [08:50<00:24, 12.07s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9275
+We Fell From The Sky - Not You
+ vocals          ==> SDR:   0.127  SIR: -11.856  ISR:  -1.913  SAR:   0.006
+drums           ==> SDR:   6.422  SIR:  -9.312  ISR:  13.487  SAR:   0.585
+bass            ==> SDR:   0.000  SIR: -20.210  ISR:   0.000  SAR:  -4.529
+other           ==> SDR:   2.858  SIR:  -3.128  ISR:  -0.171  SAR:   0.709
+
+ 98%|█████████▊| 49/50 [09:01<00:11, 11.84s/it]
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8971
+Zeno - Signs
+ vocals          ==> SDR:   0.011  SIR:  -8.676  ISR:  -1.061  SAR:   0.005
+drums           ==> SDR:   4.397  SIR:  -8.151  ISR:   9.983  SAR:   0.689
+bass            ==> SDR:   0.001  SIR: -24.747  ISR:   0.001  SAR:  -2.094
+other           ==> SDR:  -0.521  SIR:  -6.995  ISR:  10.207  SAR:   1.523
+
+100%|██████████| 50/50 [09:13<00:00, 11.07s/it]
+Aggrated Scores (median over frames, median over tracks)
+vocals          ==> SDR:   0.069  SIR:  -8.677  ISR:  -1.969  SAR:   0.005
+drums           ==> SDR:   2.766  SIR:  -5.488  ISR:   9.590  SAR:   1.707
+bass            ==> SDR:   0.001  SIR: -15.695  ISR:   0.001  SAR:  -1.344
+other           ==> SDR:  -0.992  SIR: -10.372  ISR:   4.479  SAR:   0.578

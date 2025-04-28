@@ -1,0 +1,456 @@
+  0%|          | 0/50 [00:00<?, ?it/s]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8508
+AM Contra - Heart Peripheral
+ vocals          ==> SDR:   0.029  SIR: -21.760  ISR:  -0.050  SAR:   0.007
+drums           ==> SDR:   3.339  SIR:  -5.859  ISR:   9.323  SAR:   1.506
+bass            ==> SDR:   1.741  SIR: -15.525  ISR:   4.053  SAR:   0.120
+other           ==> SDR:  -4.601  SIR: -14.030  ISR:  -0.511  SAR:   0.665
+
+  2%|▏         | 1/50 [00:15<12:39, 15.50s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9650
+Al James - Schoolboy Facination
+ vocals          ==> SDR:   0.477  SIR:  -5.844  ISR:  -6.441  SAR:   0.006
+drums           ==> SDR:   2.546  SIR: -17.530  ISR:   6.335  SAR:   0.096
+bass            ==> SDR:   4.741  SIR:   3.176  ISR:   0.466  SAR:   1.070
+other           ==> SDR:  -3.217  SIR: -14.754  ISR:  -2.399  SAR:   0.155
+
+  4%|▍         | 2/50 [00:29<11:28, 14.34s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9320
+Angels In Amplifiers - I'm Alright
+ vocals          ==> SDR:   0.004  SIR:  -4.110  ISR:  -1.243  SAR:   0.005
+drums           ==> SDR:   4.107  SIR: -11.269  ISR:   8.030  SAR:   0.340
+bass            ==> SDR:   2.027  SIR:  -2.914  ISR:   3.732  SAR:   0.794
+other           ==> SDR:  -0.553  SIR: -11.681  ISR:   9.654  SAR:   0.812
+
+  6%|▌         | 3/50 [00:39<09:56, 12.69s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9021
+Arise - Run Run Run
+ vocals          ==> SDR:   0.007  SIR: -14.686  ISR:  -0.093  SAR:   0.023
+drums           ==> SDR:  -0.583  SIR:  -2.412  ISR:  12.770  SAR:   5.116
+bass            ==> SDR:   5.667  SIR:  -1.522  ISR:  10.528  SAR:   2.231
+other           ==> SDR:   1.654  SIR:  -2.231  ISR:   1.928  SAR:   1.665
+
+  8%|▊         | 4/50 [00:51<09:20, 12.19s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9512
+BKS - Bulldozer
+ vocals          ==> SDR:   0.046  SIR:   1.329  ISR:  -3.873  SAR:   0.002
+drums           ==> SDR:   6.676  SIR:  -9.081  ISR:  10.240  SAR:   0.528
+bass            ==> SDR:   2.425  SIR:  -1.419  ISR:   3.084  SAR:   1.032
+other           ==> SDR:   0.470  SIR: -13.558  ISR:   7.765  SAR:   0.338
+
+ 10%|█         | 5/50 [01:01<08:42, 11.61s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9476
+BKS - Too Much
+ vocals          ==> SDR:   0.040  SIR:   4.871  ISR:  -8.279  SAR:   0.007
+drums           ==> SDR:   5.458  SIR:  -0.847  ISR:   1.373  SAR:   1.655
+bass            ==> SDR:   6.973  SIR:  -1.102  ISR:   1.172  SAR:   0.742
+other           ==> SDR:  -3.706  SIR: -11.346  ISR:   0.346  SAR:   0.673
+
+ 12%|█▏        | 6/50 [01:13<08:26, 11.52s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9044
+Ben Carrigan - We'll Talk About It All Tonight
+ vocals          ==> SDR:   0.088  SIR:  -6.140  ISR:  -0.594  SAR:   0.042
+drums           ==> SDR:   5.273  SIR:  -1.811  ISR:   7.972  SAR:   2.505
+bass            ==> SDR:   6.957  SIR:   0.243  ISR:   9.550  SAR:   2.890
+other           ==> SDR:   0.674  SIR:  -5.794  ISR:   3.820  SAR:   1.624
+
+ 14%|█▍        | 7/50 [01:23<08:01, 11.20s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8757
+Bobby Nobody - Stitch Up
+ vocals          ==> SDR:   0.274  SIR:   3.287  ISR: -12.138  SAR:   0.006
+drums           ==> SDR:   2.520  SIR: -13.000  ISR:   6.531  SAR:   0.286
+bass            ==> SDR:   2.758  SIR: -10.328  ISR:   2.717  SAR:   0.337
+other           ==> SDR:   1.593  SIR:  -7.625  ISR:  -2.159  SAR:   0.170
+
+ 16%|█▌        | 8/50 [01:35<07:54, 11.29s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8880
+Buitraker - Revo X
+ vocals          ==> SDR:   0.096  SIR: -12.640  ISR:  -3.066  SAR:   0.002
+drums           ==> SDR:   8.527  SIR:  -4.837  ISR:  11.144  SAR:   1.248
+bass            ==> SDR:   5.479  SIR:  -6.698  ISR:   1.209  SAR:   0.475
+other           ==> SDR:   2.566  SIR:  -5.147  ISR:  -4.223  SAR:   0.202
+
+ 18%|█▊        | 9/50 [01:46<07:45, 11.34s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8791
+Carlos Gonzalez - A Place For Us
+ vocals          ==> SDR:   0.032  SIR: -12.490  ISR:  -0.602  SAR:   0.002
+drums           ==> SDR:   4.203  SIR:  -3.739  ISR:   7.469  SAR:   1.592
+bass            ==> SDR:  -0.270  SIR: -12.583  ISR:   0.834  SAR:  -0.328
+other           ==> SDR:  -1.798  SIR: -12.390  ISR:   9.848  SAR:   0.854
+
+ 20%|██        | 10/50 [02:01<08:12, 12.31s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9155
+Cristina Vane - So Easy
+ vocals          ==> SDR:   0.027  SIR: -19.232  ISR:  -0.145  SAR:   0.001
+drums           ==> SDR:   9.680  SIR:  -3.635  ISR:  14.637  SAR:   1.028
+bass            ==> SDR:   0.940  SIR:  -5.161  ISR:   0.493  SAR:   0.074
+other           ==> SDR:  -3.260  SIR: -17.500  ISR:   4.131  SAR:   0.319
+
+ 22%|██▏       | 11/50 [02:14<08:18, 12.77s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8972
+Detsky Sad - Walkie Talkie
+ vocals          ==> SDR:   0.006  SIR:  -6.277  ISR:  -0.605  SAR:   0.036
+drums           ==> SDR:   6.016  SIR:   1.951  ISR:   7.272  SAR:   3.904
+bass            ==> SDR:   0.014  SIR: -15.648  ISR:   0.063  SAR:  -1.753
+other           ==> SDR:  -7.254  SIR: -11.144  ISR:   6.246  SAR:   2.078
+
+ 24%|██▍       | 12/50 [02:27<08:06, 12.80s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9294
+Enda Reilly - Cur An Long Ag Seol
+ vocals          ==> SDR:   0.076  SIR:   0.817  ISR:  -3.847  SAR:   0.019
+drums           ==> SDR:   7.297  SIR:  -1.991  ISR:  12.316  SAR:   2.528
+bass            ==> SDR:   1.804  SIR:  -3.962  ISR:   2.653  SAR:   0.251
+other           ==> SDR:  -2.277  SIR:  -8.432  ISR:   3.963  SAR:   2.090
+
+ 26%|██▌       | 13/50 [02:39<07:41, 12.48s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9053
+Forkupines - Semantics
+ vocals          ==> SDR:   0.087  SIR:  -7.554  ISR:  -7.367  SAR:   0.001
+drums           ==> SDR:   5.314  SIR:  -5.531  ISR:   8.555  SAR:   1.146
+bass            ==> SDR:   4.273  SIR:  -2.909  ISR:   1.898  SAR:   0.486
+other           ==> SDR:  -0.170  SIR:  -1.985  ISR: -11.531  SAR:   0.125
+
+ 28%|██▊       | 14/50 [02:50<07:10, 11.95s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8893
+Georgia Wonder - Siren
+ vocals          ==> SDR:   0.144  SIR: -16.150  ISR:  -0.360  SAR:   0.006
+drums           ==> SDR:   4.690  SIR:  -4.817  ISR:   8.223  SAR:   1.483
+bass            ==> SDR:   3.128  SIR:  -0.599  ISR:   2.345  SAR:   0.646
+other           ==> SDR:  -0.456  SIR:  -8.118  ISR:  -6.708  SAR:   0.242
+
+ 30%|███       | 15/50 [02:59<06:33, 11.24s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8708
+Girls Under Glass - We Feel Alright
+ vocals          ==> SDR:   0.227  SIR:   5.154  ISR: -11.498  SAR:   0.002
+drums           ==> SDR:   5.177  SIR:  -5.518  ISR:   9.478  SAR:   1.162
+bass            ==> SDR:   0.466  SIR:  -6.800  ISR:   1.058  SAR:   0.327
+other           ==> SDR:   0.014  SIR:  -9.503  ISR:  -3.209  SAR:   0.261
+
+ 32%|███▏      | 16/50 [03:10<06:16, 11.06s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9770
+Hollow Ground - Ill Fate
+ vocals          ==> SDR:   0.030  SIR: -15.236  ISR:  -1.618  SAR:   0.001
+drums           ==> SDR:   3.239  SIR:  -5.145  ISR:   6.306  SAR:   1.436
+bass            ==> SDR:   1.942  SIR: -13.515  ISR:   3.709  SAR:   0.302
+other           ==> SDR:   0.596  SIR:  -8.912  ISR:   3.209  SAR:   1.027
+
+ 34%|███▍      | 17/50 [03:20<05:58, 10.86s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8861
+James Elder & Mark M Thompson - The English Actor
+ vocals          ==> SDR:   0.002  SIR: -15.449  ISR:  -0.888  SAR:   0.006
+drums           ==> SDR:   2.373  SIR:  -9.208  ISR:   5.877  SAR:   0.516
+bass            ==> SDR:   5.017  SIR:   3.177  ISR:   4.834  SAR:   2.934
+other           ==> SDR:   0.988  SIR:  -9.449  ISR:   7.623  SAR:   0.750
+
+ 36%|███▌      | 18/50 [03:31<05:41, 10.67s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9186
+Juliet's Rescue - Heartbeats
+ vocals          ==> SDR:   0.239  SIR:  -6.042  ISR:  -7.770  SAR:   0.003
+drums           ==> SDR:   9.831  SIR:   2.060  ISR:  16.603  SAR:   4.151
+bass            ==> SDR:  -2.289  SIR: -18.987  ISR:   2.355  SAR:   0.173
+other           ==> SDR:   0.910  SIR: -18.301  ISR:   5.718  SAR:   0.143
+
+ 38%|███▊      | 19/50 [03:41<05:27, 10.55s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9263
+Little Chicago's Finest - My Own
+ vocals          ==> SDR:   0.011  SIR:  -5.007  ISR:  -4.653  SAR:   0.003
+drums           ==> SDR:   5.967  SIR:   0.728  ISR:   7.829  SAR:   3.401
+bass            ==> SDR:   5.541  SIR:  -1.509  ISR:   7.660  SAR:   2.003
+other           ==> SDR:  -2.265  SIR: -11.592  ISR:   4.949  SAR:   0.421
+
+ 40%|████      | 20/50 [03:51<05:14, 10.49s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9258
+Louis Cressy Band - Good Time
+ vocals          ==> SDR:   0.061  SIR: -16.190  ISR:  -0.583  SAR:   0.005
+drums           ==> SDR:   5.371  SIR:  -8.337  ISR:   7.868  SAR:   0.572
+bass            ==> SDR:   4.839  SIR:   2.854  ISR:  -0.488  SAR:   0.509
+other           ==> SDR:   1.797  SIR:  -7.969  ISR:   0.633  SAR:   0.668
+
+ 42%|████▏     | 21/50 [04:01<05:02, 10.42s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9241
+Lyndsey Ollard - Catching Up
+ vocals          ==> SDR:   0.105  SIR: -12.660  ISR:  -0.877  SAR:   0.018
+drums           ==> SDR:   5.182  SIR:   2.219  ISR:   7.155  SAR:   4.107
+bass            ==> SDR:   4.696  SIR:   2.629  ISR:   6.624  SAR:   2.922
+other           ==> SDR:  -3.154  SIR:  -8.787  ISR:  -1.117  SAR:   0.897
+
+ 44%|████▍     | 22/50 [04:13<04:58, 10.66s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9375
+M.E.R.C. Music - Knockout
+ vocals          ==> SDR:   0.012  SIR: -21.504  ISR:  -0.151  SAR:   0.004
+drums           ==> SDR:   3.989  SIR: -14.748  ISR:   5.719  SAR:   0.155
+bass            ==> SDR:   7.080  SIR:   1.316  ISR:   2.503  SAR:   1.410
+other           ==> SDR:  -1.737  SIR:  -3.554  ISR:  -9.478  SAR:   0.409
+
+ 46%|████▌     | 23/50 [04:24<04:51, 10.80s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9317
+Moosmusic - Big Dummy Shake
+ vocals          ==> SDR:   0.222  SIR: -13.036  ISR:  -3.105  SAR:   0.002
+drums           ==> SDR:   5.259  SIR:  -1.839  ISR:  10.838  SAR:   2.319
+bass            ==> SDR:   4.079  SIR:  -5.997  ISR:   3.924  SAR:   0.337
+other           ==> SDR:  -6.077  SIR: -22.363  ISR:   2.800  SAR:   0.158
+
+ 48%|████▊     | 24/50 [04:35<04:40, 10.79s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9196
+Motor Tapes - Shore
+ vocals          ==> SDR:  -0.042  SIR: -13.974  ISR:  -0.095  SAR:   0.053
+drums           ==> SDR:   5.243  SIR:  -2.514  ISR:   7.164  SAR:   1.647
+bass            ==> SDR:   4.970  SIR:  -1.150  ISR:   8.143  SAR:   2.619
+other           ==> SDR:   9.874  SIR:   6.560  ISR:  15.739  SAR:  10.234
+
+ 50%|█████     | 25/50 [04:46<04:32, 10.91s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9498
+Mu - Too Bright
+ vocals          ==> SDR:   0.534  SIR:   8.644  ISR: -17.403  SAR:   0.003
+drums           ==> SDR:  10.163  SIR:   0.636  ISR:  17.420  SAR:   3.410
+bass            ==> SDR:   4.368  SIR:  -2.728  ISR:   5.599  SAR:   0.985
+other           ==> SDR:  -3.247  SIR: -23.149  ISR:   3.369  SAR:   0.056
+
+ 52%|█████▏    | 26/50 [04:56<04:20, 10.85s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9364
+Nerve 9 - Pray For The Rain
+ vocals          ==> SDR:   0.090  SIR:  -4.158  ISR:  -3.863  SAR:   0.002
+drums           ==> SDR:   9.066  SIR:  -2.660  ISR:  13.068  SAR:   1.801
+bass            ==> SDR:   4.269  SIR:  -3.893  ISR:   5.675  SAR:   1.269
+other           ==> SDR:  -2.887  SIR: -15.077  ISR:   9.871  SAR:   0.423
+
+ 54%|█████▍    | 27/50 [05:08<04:17, 11.20s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9108
+PR - Happy Daze
+ vocals          ==> SDR: -18.094  SIR: -30.595  ISR:  -3.903  SAR:   0.171
+drums           ==> SDR:   7.695  SIR:   7.054  ISR:  17.166  SAR:  14.941
+bass            ==> SDR:   0.682  SIR:   2.042  ISR:   0.719  SAR:  -0.368
+other           ==> SDR:   0.882  SIR:  -6.731  ISR:   3.176  SAR:   1.194
+
+ 56%|█████▌    | 28/50 [05:20<04:07, 11.25s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8840
+PR - Oh No
+ vocals          ==> SDR: -10.991  SIR: -24.182  ISR:  -1.639  SAR:   0.339
+drums           ==> SDR:   5.776  SIR:   1.996  ISR:   7.113  SAR:   4.487
+bass            ==> SDR:   0.766  SIR:   3.546  ISR:   0.427  SAR:  -0.057
+other           ==> SDR:   1.585  SIR:  -6.907  ISR:   5.258  SAR:   1.665
+
+ 58%|█████▊    | 29/50 [05:30<03:51, 11.00s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8849
+Punkdisco - Oral Hygiene
+ vocals          ==> SDR:   0.181  SIR: -16.262  ISR:  -1.079  SAR:   0.004
+drums           ==> SDR:   2.151  SIR:  -1.826  ISR:  11.918  SAR:   5.397
+bass            ==> SDR:   2.143  SIR:   2.725  ISR:   2.316  SAR:   1.257
+other           ==> SDR:  -6.499  SIR: -11.935  ISR:  -5.240  SAR:   0.155
+
+ 60%|██████    | 30/50 [05:41<03:41, 11.06s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9174
+Raft Monk - Tiring
+ vocals          ==> SDR:   0.063  SIR: -18.212  ISR:  -0.997  SAR:   0.001
+drums           ==> SDR:   3.868  SIR:  -7.119  ISR:   8.944  SAR:   0.895
+bass            ==> SDR:   2.488  SIR:  -1.569  ISR:  -2.059  SAR:   0.478
+other           ==> SDR:   0.323  SIR: -11.205  ISR:  -0.563  SAR:   0.133
+
+ 62%|██████▏   | 31/50 [05:52<03:25, 10.82s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9315
+Sambasevam Shanmugam - Kaathaadi
+ vocals          ==> SDR:   0.003  SIR: -15.466  ISR:  -0.009  SAR:   0.005
+drums           ==> SDR:  -0.995  SIR:  -7.306  ISR:  11.942  SAR:   1.284
+bass            ==> SDR:   2.014  SIR:   2.394  ISR:   2.997  SAR:   1.417
+other           ==> SDR:  -2.003  SIR:  -8.476  ISR:   4.060  SAR:   1.409
+
+ 64%|██████▍   | 32/50 [06:02<03:12, 10.68s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9246
+Secretariat - Borderline
+ vocals          ==> SDR:   0.231  SIR:  -3.548  ISR:  -7.002  SAR:   0.012
+drums           ==> SDR:   1.154  SIR:  -6.219  ISR:   4.836  SAR:   1.649
+bass            ==> SDR:   2.983  SIR:   1.526  ISR:   1.842  SAR:   1.314
+other           ==> SDR:   0.148  SIR: -11.810  ISR:   5.841  SAR:   0.526
+
+ 66%|██████▌   | 33/50 [06:12<02:59, 10.53s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9352
+Secretariat - Over The Top
+ vocals          ==> SDR:   0.522  SIR:   0.322  ISR:  -4.134  SAR:   0.075
+drums           ==> SDR:   4.855  SIR:  -0.041  ISR:   7.909  SAR:   3.000
+bass            ==> SDR:   8.267  SIR:   5.890  ISR:   7.211  SAR:   2.166
+other           ==> SDR:  -1.535  SIR: -11.472  ISR:   9.394  SAR:   0.823
+
+ 68%|██████▊   | 34/50 [06:23<02:49, 10.59s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9325
+Side Effects Project - Sing With Me
+ vocals          ==> SDR:   0.506  SIR: -19.618  ISR:   0.363  SAR:   0.029
+drums           ==> SDR:   8.410  SIR:   9.237  ISR:  11.581  SAR:   8.925
+bass            ==> SDR:   4.241  SIR:   9.516  ISR:   1.024  SAR:   1.013
+other           ==> SDR:  -9.924  SIR: -14.258  ISR:  -1.445  SAR:   0.523
+
+ 70%|███████   | 35/50 [06:34<02:40, 10.68s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8798
+Signe Jakobsen - What Have You Done To Me
+ vocals          ==> SDR:   0.056  SIR: -10.551  ISR:  -1.664  SAR:   0.006
+drums           ==> SDR:   0.845  SIR:  -9.246  ISR:   5.194  SAR:   0.560
+bass            ==> SDR:  -0.418  SIR: -17.482  ISR:   5.240  SAR:   0.133
+other           ==> SDR:   0.214  SIR:  -6.592  ISR:   4.407  SAR:   1.112
+
+ 72%|███████▏  | 36/50 [06:45<02:32, 10.88s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9661
+Skelpolu - Resurrection
+ vocals          ==> SDR:  -0.003  SIR: -20.090  ISR:  -0.043  SAR:   0.006
+drums           ==> SDR:   4.142  SIR:  -8.276  ISR:  -1.836  SAR:   0.160
+bass            ==> SDR:   7.048  SIR:  -5.001  ISR:   9.445  SAR:   1.065
+other           ==> SDR:  -1.993  SIR: -12.901  ISR:  -5.309  SAR:   0.192
+
+ 74%|███████▍  | 37/50 [06:57<02:24, 11.08s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9512
+Speak Softly - Broken Man
+ vocals          ==> SDR:   0.216  SIR:  -2.967  ISR: -15.523  SAR:   0.001
+drums           ==> SDR:   1.261  SIR:  -2.835  ISR:   7.289  SAR:   3.652
+bass            ==> SDR:   8.910  SIR:   1.380  ISR:   8.137  SAR:   2.367
+other           ==> SDR:   2.613  SIR: -14.455  ISR:   5.933  SAR:   0.194
+
+ 76%|███████▌  | 38/50 [07:09<02:16, 11.36s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9525
+Speak Softly - Like Horses
+ vocals          ==> SDR:   0.004  SIR: -33.541  ISR:   0.007  SAR:   0.002
+drums           ==> SDR:   1.129  SIR: -10.863  ISR:   4.098  SAR:   0.705
+bass            ==> SDR:  11.614  SIR:   8.695  ISR:  -2.040  SAR:   0.936
+other           ==> SDR:   0.715  SIR: -11.701  ISR:   6.570  SAR:   0.427
+
+ 78%|███████▊  | 39/50 [07:19<02:02, 11.14s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9044
+The Doppler Shift - Atrophy
+ vocals          ==> SDR:   0.315  SIR:  -1.777  ISR:  -2.340  SAR:   0.010
+drums           ==> SDR:   6.051  SIR:  -3.947  ISR:  12.958  SAR:   1.621
+bass            ==> SDR:   2.617  SIR: -13.066  ISR:   3.616  SAR:   0.105
+other           ==> SDR:   0.361  SIR: -10.075  ISR:   7.246  SAR:   0.999
+
+ 80%|████████  | 40/50 [07:30<01:48, 10.86s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8498
+The Easton Ellises (Baumi) - SDRNR
+ vocals          ==> SDR:   0.458  SIR:  -2.453  ISR:  -7.348  SAR:   0.003
+drums           ==> SDR:   6.247  SIR:  -7.495  ISR:  11.544  SAR:   0.708
+bass            ==> SDR:   3.735  SIR:   7.598  ISR:  -3.360  SAR:   0.695
+other           ==> SDR:  -2.245  SIR: -14.266  ISR:  -2.739  SAR:   0.125
+
+ 82%|████████▏ | 41/50 [07:40<01:36, 10.71s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9024
+The Easton Ellises - Falcon 69
+ vocals          ==> SDR:   0.012  SIR: -10.696  ISR:  -0.396  SAR:   0.009
+drums           ==> SDR:   6.505  SIR:   0.992  ISR:   9.930  SAR:   3.408
+bass            ==> SDR:   5.432  SIR:  -3.995  ISR:   7.231  SAR:   1.216
+other           ==> SDR:  -1.039  SIR:  -7.842  ISR:   7.017  SAR:   2.045
+
+ 84%|████████▍ | 42/50 [07:49<01:22, 10.28s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9191
+The Long Wait - Dark Horses
+ vocals          ==> SDR:   0.176  SIR:   0.426  ISR: -11.836  SAR:   0.001
+drums           ==> SDR:   2.768  SIR:  -8.649  ISR:   8.596  SAR:   0.698
+bass            ==> SDR:   5.224  SIR:   8.255  ISR:  -3.657  SAR:   0.707
+other           ==> SDR:  -0.912  SIR: -17.309  ISR:  -0.108  SAR:   0.082
+
+ 86%|████████▌ | 43/50 [07:59<01:10, 10.08s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9638
+The Mountaineering Club - Mallory
+ vocals          ==> SDR:   0.001  SIR:  -8.460  ISR:  -2.073  SAR:   0.005
+drums           ==> SDR:   6.074  SIR:   3.338  ISR:   9.916  SAR:   5.551
+bass            ==> SDR:   6.427  SIR:   1.779  ISR:   5.335  SAR:   2.310
+other           ==> SDR:  -2.612  SIR: -14.568  ISR:   7.294  SAR:   0.444
+
+ 88%|████████▊ | 44/50 [08:09<01:00, 10.08s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9144
+The Sunshine Garcia Band - For I Am The Moon
+ vocals          ==> SDR:   0.153  SIR:  -1.724  ISR: -11.774  SAR:   0.005
+drums           ==> SDR:   2.826  SIR:  -3.992  ISR:   5.413  SAR:   1.346
+bass            ==> SDR:   3.466  SIR:   6.426  ISR:  -1.468  SAR:   1.287
+other           ==> SDR:  -2.418  SIR: -14.203  ISR:   8.850  SAR:   0.385
+
+ 90%|█████████ | 45/50 [08:19<00:49, 10.00s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8771
+Timboz - Pony
+ vocals          ==> SDR:  -0.037  SIR:  -7.734  ISR:  -1.941  SAR:   0.004
+drums           ==> SDR:   2.430  SIR:  -4.725  ISR:   4.752  SAR:   1.920
+bass            ==> SDR:  -0.291  SIR: -14.621  ISR:   2.536  SAR:   0.210
+other           ==> SDR:   4.525  SIR:  -2.464  ISR:   9.715  SAR:   2.372
+
+ 92%|█████████▏| 46/50 [08:29<00:39,  9.96s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9004
+Tom McKenzie - Directions
+ vocals          ==> SDR:   0.516  SIR:  -8.678  ISR:  -8.920  SAR:   0.001
+drums           ==> SDR:  10.169  SIR:   2.245  ISR:  20.716  SAR:   4.524
+bass            ==> SDR:   1.507  SIR:  -8.886  ISR:   0.699  SAR:   0.057
+other           ==> SDR:  -2.516  SIR: -16.750  ISR:  -1.048  SAR:   0.105
+
+ 94%|█████████▍| 47/50 [08:39<00:30, 10.05s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9420
+Triviul feat. The Fiend - Widow
+ vocals          ==> SDR:   0.304  SIR:   9.476  ISR: -11.546  SAR:   0.004
+drums           ==> SDR:   1.697  SIR:  -8.076  ISR:   4.155  SAR:   0.807
+bass            ==> SDR:   8.072  SIR:   5.115  ISR:   7.896  SAR:   5.155
+other           ==> SDR:  -6.291  SIR: -10.467  ISR:  -7.306  SAR:   0.242
+
+ 96%|█████████▌| 48/50 [08:53<00:22, 11.38s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.9202
+We Fell From The Sky - Not You
+ vocals          ==> SDR:   0.126  SIR: -11.906  ISR:  -1.846  SAR:   0.006
+drums           ==> SDR:   7.798  SIR:  -7.346  ISR:  13.286  SAR:   0.799
+bass            ==> SDR:   0.688  SIR: -17.463  ISR:   3.172  SAR:   0.093
+other           ==> SDR:   2.723  SIR:  -1.824  ISR:  -2.156  SAR:   0.597
+
+ 98%|█████████▊| 49/50 [09:06<00:11, 11.68s/it]E:\open-unmix\umx-bass\openunmix\__init__.py:526:   state_dict = torch.load(bass_path, map_location=device)
+  mel_basis = filters.mel(sr=sr, n_fft=n_fft, **kwargs)
+Bass F1 Score: 0.8944
+Zeno - Signs
+ vocals          ==> SDR:   0.010  SIR:  -8.663  ISR:  -1.061  SAR:   0.005
+drums           ==> SDR:   5.566  SIR:  -5.053  ISR:   9.808  SAR:   1.202
+bass            ==> SDR:   2.504  SIR: -12.711  ISR:   3.038  SAR:   0.126
+other           ==> SDR:  -0.308  SIR:  -6.367  ISR:   7.192  SAR:   1.335
+
+100%|██████████| 50/50 [09:18<00:00, 11.18s/it]
+Aggrated Scores (median over frames, median over tracks)
+vocals          ==> SDR:   0.070  SIR:  -8.671  ISR:  -1.893  SAR:   0.005
+drums           ==> SDR:   5.213  SIR:  -4.358  ISR:   8.389  SAR:   1.549
+bass            ==> SDR:   3.601  SIR:  -1.516  ISR:   2.685  SAR:   0.725
+other           ==> SDR:  -0.732  SIR: -11.174  ISR:   3.595  SAR:   0.484
