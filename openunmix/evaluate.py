@@ -202,25 +202,15 @@ def separate_and_evaluate(
         wiener_win_len: Optional[int] = None,
         filterbank: str = None,
 ) -> str:
-    separator = utils.load_separator(
-        model_name=model_name,
-        targets=targets,
-        niter=niter,
-        residual=residual,
-        wiener_win_len=wiener_win_len,
-        device=device,
-        pretrained=True,
-        filterbank=filterbank,
-    )
+    separator = utils.load_separator(model_name=model_name, targets=targets, niter=niter, residual=residual,
+                                     wiener_win_len=wiener_win_len, device=device, pretrained=True,
+                                     filterbank=filterbank)
 
     separator.freeze()
     separator.to(device)
 
     audio = torch.as_tensor(track.audio, dtype=torch.float32, device=device)
     audio = utils.preprocess(audio, track.rate, separator.sample_rate)
-
-    # 打印输入音频的形状
-    print(f"Input audio shape: {audio.shape}")
 
     estimates = separator(audio)
     estimates = separator.to_dict(estimates, aggregate_dict=aggregate_dict)
@@ -257,7 +247,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--targets", nargs="+", default=["vocals", "drums", "bass", "other"], type=str,
                         help="provide targets to be processed. If none, all available targets will be computed")
-    parser.add_argument("--model", default="umxhq", type=str,
+    parser.add_argument("--model", default="umx-bass-3", type=str,
                         help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)")
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")
@@ -302,8 +292,7 @@ if __name__ == "__main__":
         method_name = "cqt"
     elif model_name == "umx-bass-3":
         method_name = "stft"
-    else:
-        model_name = "umxhq"
+    elif model_name == "umxhq":
         method_name = "stft"
 
     aggregate_dict = None if args.aggregate is None else json.loads(args.aggregate)

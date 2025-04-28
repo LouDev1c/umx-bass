@@ -45,13 +45,14 @@ class OpenUnmix(nn.Module):
 
         self.nb_output_bins = nb_bins
         self.method = method
+        print("method:", method)
 
-        if method == "stft":
+        if self.method == "stft":
             if max_bin:
                 self.nb_bins = max_bin
             else:
                 self.nb_bins = self.nb_output_bins
-        elif method == "cqt":
+        elif self.method == "cqt":
             self.nb_bins = 84  # CQT固定使用84个bin
         else:
             self.nb_bins = self.nb_output_bins
@@ -141,7 +142,6 @@ class OpenUnmix(nn.Module):
             Tensor: filtered spectrogram of shape
                 `(nb_samples, nb_channels, nb_bins, nb_frames)`
         """
-
         # permute so that batch is last for lstm
         x = x.permute(3, 0, 1, 2)
         # get current spectrogram shape
@@ -274,8 +274,7 @@ class Separator(nn.Module):
         self.register_buffer("sample_rate", torch.as_tensor(sample_rate))
 
     def freeze(self):
-        # set all parameters as not requiring gradient, more RAM-efficient
-        # at test time
+        # set all parameters as not requiring gradient, more RAM-efficient at test time
         for p in self.parameters():
             p.requires_grad = False
         self.eval()
@@ -290,7 +289,8 @@ class Separator(nn.Module):
             Tensor: stacked tensor of separated waveforms
                 shape `(nb_samples, nb_targets, nb_channels, nb_timesteps)`
         """
-
+        print("Separator forward: target_models methods:",
+              {name: model.method for name, model in self.target_models.items()})
         nb_sources = self.nb_targets
         nb_samples = audio.shape[0]
         nb_channels = audio.shape[1]
@@ -307,9 +307,10 @@ class Separator(nn.Module):
         spectrograms = torch.zeros(nb_samples, nb_channels, max_bins, X.shape[3], nb_sources, dtype=audio.dtype, device=X.device)
 
         for j, (target_name, target_module) in enumerate(self.target_models.items()):
+            print(f"Processing target: {target_name}, method: {target_module.method}")
             # apply current model to get the source spectrogram
             target_spectrogram = target_module(X.detach().clone())
-            
+
             # 如果模型的输出维度小于最大维度，进行填充
             if target_spectrogram.shape[2] < max_bins:
                 padding = torch.zeros(
@@ -321,7 +322,7 @@ class Separator(nn.Module):
                     device=target_spectrogram.device
                 )
                 target_spectrogram = torch.cat([target_spectrogram, padding], dim=2)
-            
+
             spectrograms[..., j] = target_spectrogram
 
         # transposing it as

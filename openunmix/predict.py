@@ -4,7 +4,7 @@ from openunmix import utils
 def separate(
     audio,
     rate=None,
-    model_str_or_path="umxl",
+    model_name: str = None,
     targets=None,
     niter=1,
     residual=False,
@@ -12,7 +12,7 @@ def separate(
     aggregate_dict=None,
     separator=None,
     device=None,
-    filterbank="torch",
+    filterbank: str = None,
 ):
     """
     Open Unmix functional interface
@@ -53,16 +53,8 @@ def separate(
             for deployment.
     """
     if separator is None:
-        separator = utils.load_separator(
-            model_str_or_path=model_str_or_path,
-            targets=targets,
-            niter=niter,
-            residual=residual,
-            wiener_win_len=wiener_win_len,
-            device=device,
-            pretrained=True,
-            filterbank=filterbank,
-        )
+        separator = utils.load_separator(model_name=model_name, targets=targets, niter=niter, residual=residual, wiener_win_len=wiener_win_len,
+                                         device=device, pretrained=True, filterbank=filterbank)
         separator.freeze()
         if device:
             separator.to(device)

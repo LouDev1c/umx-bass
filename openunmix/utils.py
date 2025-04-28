@@ -112,7 +112,7 @@ class EarlyStopping(object):
             self.is_better = lambda a, best: a > best + min_delta
 
 
-def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=True):
+def load_target_models(targets, model_name=None, device="cpu", pretrained=True):
     """Core model loader
 
     target model path can be either <target>.pth, or <target>-sha256.pth
@@ -128,7 +128,6 @@ def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=Tru
         err = io.StringIO()
         with redirect_stderr(err):
             return hub_loader(targets=targets, device=device, pretrained=pretrained)
-        print(err.getvalue())
     model_path = Path(model_name).expanduser()
 
     if not model_path.exists():
@@ -139,7 +138,6 @@ def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=Tru
             err = io.StringIO()
             with redirect_stderr(err):
                 return hub_loader(targets=targets, device=device, pretrained=pretrained)
-            print(err.getvalue())
         except AttributeError:
             raise NameError("Model does not exist on torchhub")
             # assume model is a path to a local model_str_or_path directory
@@ -152,12 +150,18 @@ def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=Tru
 
             target_model_path = next(Path(model_path).glob("%s*.pth" % target))
             state = torch.load(target_model_path, map_location=device)
-
+            if model_name in ["umx-bass-1", "umx-bass-2"]:
+                method = "cqt"
+                nb_bins = 84
+            else:
+                method = "stft"
+                nb_bins = results["args"]["nfft"] // 2 + 1
             models[target] = model.OpenUnmix(
-                nb_bins=results["args"]["nfft"] // 2 + 1,
+                nb_bins=nb_bins,
                 nb_channels=results["args"]["nb_channels"],
                 hidden_size=results["args"]["hidden_size"],
                 max_bin=state["input_mean"].shape[0],
+                method=method,
             )
 
             if pretrained:
@@ -168,7 +172,7 @@ def load_target_models(targets, model_name="umxhq", device="cpu", pretrained=Tru
 
 
 def load_separator(
-    model_name: str = "umxhq",
+    model_name: str = None,
     targets: Optional[list] = None,
     niter: int = 1,
     residual: bool = False,
@@ -323,6 +327,4 @@ def preprocess(
         ).to(audio.device)
         audio = resampler(audio)
 
-    # 打印处理后的音频形状
-    print(f"Preprocessed audio shape: {audio.shape}")
     return audio

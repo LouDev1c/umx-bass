@@ -128,16 +128,9 @@ def separate():
 
     # create separator only once to reduce model loading
     # when using multiple files
-    separator = utils.load_separator(
-        model_str_or_path=args.model,
-        targets=args.targets,
-        niter=args.niter,
-        residual=args.residual,
-        wiener_win_len=args.wiener_win_len,
-        device=device,
-        pretrained=True,
-        filterbank=args.filterbank,
-    )
+    separator = utils.load_separator(model_name=args.model, targets=args.targets, niter=args.niter, residual=args.residual,
+                                     wiener_win_len=args.wiener_win_len, device=device, pretrained=True,
+                                     filterbank=args.filterbank)
 
     separator.freeze()
     separator.to(device)
