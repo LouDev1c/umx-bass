@@ -45,7 +45,6 @@ class OpenUnmix(nn.Module):
 
         self.nb_output_bins = nb_bins
         self.method = method
-        print("method:", method)
 
         if self.method == "stft":
             if max_bin:
@@ -170,7 +169,6 @@ class OpenUnmix(nn.Module):
 
         # lstm skip connection
         x = torch.cat([x, lstm_out[0]], -1)
-        # print(f"x.shape5={x.shape}")
 
         # 应用频率感知注意力机制
         attention_weights = self.freq_attention(x)
@@ -194,7 +192,6 @@ class OpenUnmix(nn.Module):
 
         # reshape back to original dim
         x = x.reshape(nb_frames, nb_samples, nb_channels, self.nb_output_bins)
-        # print(f"Final shape: {x.shape}")
 
         # apply output scaling
         x *= self.output_scale
@@ -262,15 +259,11 @@ class Separator(nn.Module):
         self.decoders = nn.ModuleDict()
         self.complexnorms = nn.ModuleDict()
 
-        print("Separator init: target_models methods:",
-              {name: model.method for name, model in self.target_models.items()})
         # registering the targets models
         # 遍历target_models，为每个目标创建对应的encoder和decoder
         for target_name, model in self.target_models.items():
             # 使用模型自身的method参数
             method = model.method
-            print(f"Creating {method} encoder/decoder for {target_name}")
-
             # 创建对应的encoder和decoder
             encoder, decoder, _ = make_filterbanks(
                 n_fft=n_fft,
@@ -302,8 +295,6 @@ class Separator(nn.Module):
             Tensor: stacked tensor of separated waveforms
                 shape `(nb_samples, nb_targets, nb_channels, nb_timesteps)`
         """
-        print("Separator forward: target_models methods:",
-              {name: model.method for name, model in self.target_models.items()})
         nb_sources = self.nb_targets
         nb_samples = audio.shape[0]
         nb_channels = audio.shape[1]
@@ -318,8 +309,6 @@ class Separator(nn.Module):
 
         # 对每个目标分别处理
         for j, (target_name, target_module) in enumerate(self.target_models.items()):
-            print(f"Processing target: {target_name}, method: {target_module.method}")
-
             # 使用对应的encoder处理输入
             mix_encoder = self.encoders[target_name](audio)
             X = self.complexnorms[target_name](mix_encoder)
