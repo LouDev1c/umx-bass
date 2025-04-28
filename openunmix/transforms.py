@@ -81,15 +81,17 @@ class nnAudioICQT(nn.Module):
             self,
             n_hop: int = 1024,
             center: bool = False,
-            sample_rate: float = 44100.0
+            sample_rate: float = 44100.0,
     ):
         super(nnAudioICQT, self).__init__()
 
         # 保持与CQT相同的参数
+        self.n_fft = 4096
         self.n_bins = 84
         self.hop_length = n_hop
         self.center = center
         self.sample_rate = sample_rate
+        self.window = nn.Parameter(torch.hann_window(self.n_fft), requires_grad=False)
 
         # 使用nnAudio的ICQT实现
         self.icqt = CQT(
@@ -124,7 +126,15 @@ class nnAudioICQT(nn.Module):
             # 转换为复数形式
             ch_cqt = torch.view_as_complex(ch_cqt)
             # 计算ICQT
-            audio_ch = self.icqt.inverse(ch_cqt)
+            # 使用ISTFT进行逆变换
+            audio_ch = torch.istft(
+                ch_cqt,
+                n_fft=self.n_fft,
+                hop_length=self.hop_length,
+                window=self.window,
+                center=self.center,
+                length=length
+            )
             audio_chunks.append(audio_ch)
 
         # 合并所有通道

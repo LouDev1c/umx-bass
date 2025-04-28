@@ -247,7 +247,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--targets", nargs="+", default=["vocals", "drums", "bass", "other"], type=str,
                         help="provide targets to be processed. If none, all available targets will be computed")
-    parser.add_argument("--model", default="umx-bass-3", type=str,
+    parser.add_argument("--model", default="umx-bass-2", type=str,
                         help="path to mode base directory of pretrained models or model name (umx, umxl, umxhq, umx-bass-1, umx-bass-2, umx-bass-3)")
     parser.add_argument("--outdir", type=str, help="Results path where audio evaluation results are stored")
     parser.add_argument("--evaldir", type=str, help="Results path for museval estimates")

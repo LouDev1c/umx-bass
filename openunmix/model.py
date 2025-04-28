@@ -257,20 +257,33 @@ class Separator(nn.Module):
         self.softmask = softmask
         self.wiener_win_len = wiener_win_len
 
-        self.encoder, self.decoder, _ = make_filterbanks(
-            n_fft=n_fft,
-            n_hop=n_hop,
-            center=True,
-            method=filterbank,
-            sample_rate=sample_rate
-        )
-        self.complexnorm = ComplexNorm(mono=nb_channels == 1)
-
-        # registering the targets models
         self.target_models = nn.ModuleDict(target_models)
-        # adding till https://github.com/pytorch/pytorch/issues/38963
+        self.encoders = nn.ModuleDict()
+        self.decoders = nn.ModuleDict()
+        self.complexnorms = nn.ModuleDict()
+
+        print("Separator init: target_models methods:",
+              {name: model.method for name, model in self.target_models.items()})
+        # registering the targets models
+        # 遍历target_models，为每个目标创建对应的encoder和decoder
+        for target_name, model in self.target_models.items():
+            # 使用模型自身的method参数
+            method = model.method
+            print(f"Creating {method} encoder/decoder for {target_name}")
+
+            # 创建对应的encoder和decoder
+            encoder, decoder, _ = make_filterbanks(
+                n_fft=n_fft,
+                n_hop=n_hop,
+                center=True,
+                method=method,
+                sample_rate=sample_rate
+            )
+            self.encoders[target_name] = encoder
+            self.decoders[target_name] = decoder
+            self.complexnorms[target_name] = ComplexNorm(mono=nb_channels == 1)
+
         self.nb_targets = len(self.target_models)
-        # get the sample_rate as the sample_rate of the first model
         self.register_buffer("sample_rate", torch.as_tensor(sample_rate))
 
     def freeze(self):
@@ -295,20 +308,24 @@ class Separator(nn.Module):
         nb_samples = audio.shape[0]
         nb_channels = audio.shape[1]
 
-        # getting the STFT of mix:
-        # (nb_samples, nb_channels, nb_bins, nb_frames, 2)
-        mix_encoder = self.encoder(audio)
-        X = self.complexnorm(mix_encoder)
-
         # 获取最大的bin数量
         max_bins = max([model.nb_output_bins for model in self.target_models.values()])
 
-        # initializing spectrograms variable
-        spectrograms = torch.zeros(nb_samples, nb_channels, max_bins, X.shape[3], nb_sources, dtype=audio.dtype, device=X.device)
+        # 初始化结果张量
+        spectrograms = torch.zeros(nb_samples, nb_channels, max_bins, 0, nb_sources, dtype=audio.dtype,
+                                   device=audio.device)
+        mix_encoders = {}
 
+        # 对每个目标分别处理
         for j, (target_name, target_module) in enumerate(self.target_models.items()):
             print(f"Processing target: {target_name}, method: {target_module.method}")
-            # apply current model to get the source spectrogram
+
+            # 使用对应的encoder处理输入
+            mix_encoder = self.encoders[target_name](audio)
+            X = self.complexnorms[target_name](mix_encoder)
+            mix_encoders[target_name] = mix_encoder
+
+            # 应用目标模型
             target_spectrogram = target_module(X.detach().clone())
 
             # 如果模型的输出维度小于最大维度，进行填充
@@ -323,15 +340,22 @@ class Separator(nn.Module):
                 )
                 target_spectrogram = torch.cat([target_spectrogram, padding], dim=2)
 
+            # 更新spectrograms的第三个维度（时间帧数）
+            if spectrograms.shape[3] == 0:
+                spectrograms = torch.zeros(nb_samples, nb_channels, max_bins, target_spectrogram.shape[3], nb_sources,
+                                           dtype=audio.dtype, device=audio.device)
+
             spectrograms[..., j] = target_spectrogram
 
         # transposing it as
         # (nb_samples, nb_frames, nb_bins,{1,nb_channels}, nb_sources)
         spectrograms = spectrograms.permute(0, 3, 2, 1, 4)
 
+        # 选择第一个encoder的输出作为参考
+        reference_mix = mix_encoders[list(mix_encoders.keys())[0]]
         # rearranging it into:
         # (nb_samples, nb_frames, nb_bins, nb_channels, 2) to feed into filtering methods
-        mix_encoder = mix_encoder.permute(0, 3, 2, 1, 4)
+        mix_encoder = reference_mix.permute(0, 3, 2, 1, 4)
 
         # create an additional target if we need to build a residual
         if self.residual:
@@ -367,8 +391,10 @@ class Separator(nn.Module):
         # getting to (nb_samples, nb_targets, channel, fft_size, n_frames, 2)
         targets_encoder = targets_encoder.permute(0, 5, 3, 2, 1, 4).contiguous()
 
-        # inverse STFT
-        estimates = self.decoder(targets_encoder, length=audio.shape[2])
+        # 使用对应的decoder进行逆变换
+        estimates = torch.zeros(nb_samples, nb_sources, nb_channels, audio.shape[2], device=audio.device)
+        for j, (target_name, _) in enumerate(self.target_models.items()):
+            estimates[:, j] = self.decoders[target_name](targets_encoder[:, j], length=audio.shape[2])
 
         return estimates
 
