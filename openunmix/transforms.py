@@ -2,148 +2,211 @@ from typing import Optional
 import torch
 import torch.nn as nn
 from torch import Tensor
-from nnAudio.Spectrogram import CQT
+from nnAudio.Spectrogram import CQT2010v2
+import torch.nn.functional as F
 
 
 def make_filterbanks(
-        n_fft=4096,
-        n_hop=1024,
-        center=False,
-        sample_rate=44100.0,
-        method=None):
+        n_fft: int = 4096,
+        n_hop: int = 1024,
+        center: bool = False,
+        sample_rate: float = 44100.0,
+        method: str = None,
+):
     window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
-
     if method == "stft":
-        nb_bins = n_fft // 2 + 1
         encoder = TorchSTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
         decoder = TorchISTFT(n_fft=n_fft, n_hop=n_hop, window=window, center=center)
-    elif method == "cqt":
-        nb_bins = 84
-        encoder = nnAudioCQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
-        decoder = nnAudioICQT(n_hop=n_hop, center=center, sample_rate=sample_rate)
+    elif method == "hybrid":
+        encoder = Hybrid(n_fft=n_fft, n_hop=n_hop, window=window, center=center, sample_rate=sample_rate)
+        decoder = Hybrid_Inv(n_fft=n_fft, hop_length=n_hop, window=window, center=center, sample_rate=sample_rate)
     else:
-        raise NotImplementedError
-    return encoder, decoder, nb_bins
+        raise NotImplementedError(f"Unknown method: {method}")
+    return encoder, decoder
 
 
-class nnAudioCQT(nn.Module):
+class Hybrid(nn.Module):
     def __init__(
             self,
+            n_fft: int = 4096,
             n_hop: int = 1024,
             center: bool = False,
-            sample_rate: float = 44100.0
-    ):
-        super(nnAudioCQT, self).__init__()
-
-        self.nb_bins = 84
-        self.hop_length = n_hop
-        self.center = center
-        self.sample_rate = sample_rate
-
-        # 使用nnAudio的CQT实现
-        self.cqt = CQT(
-            sr=int(sample_rate),
-            hop_length=n_hop,
-            bins_per_octave=12,
-            fmin=20,
-            window='hann',
-            center=center,
-            pad_mode='reflect'
-        )
-
-    def forward(self, x: Tensor) -> Tensor:
-        shape = x.size()
-        x = x.view(-1, shape[-1])
-
-        complex_cqt = []
-        for ch in range(shape[1]):
-            ch_audio = x[ch::shape[1]]
-            cqt_ch = self.cqt(ch_audio)
-            cqt_ch = cqt_ch.permute(0, 2, 1)
-
-            if torch.is_complex(cqt_ch):
-                cqt_ch = torch.stack([cqt_ch.real, cqt_ch.imag], dim=-1)
-            else:
-                cqt_ch = torch.stack([cqt_ch, torch.zeros_like(cqt_ch)], dim=-1)
-
-            complex_cqt.append(cqt_ch)
-
-        cqt_f = torch.stack(complex_cqt, dim=1)
-        cqt_f = cqt_f.permute(0, 1, 3, 2, 4)
-
-        return cqt_f
-
-
-class nnAudioICQT(nn.Module):
-    def __init__(
-            self,
-            n_hop: int = 1024,
-            center: bool = False,
+            window: Optional[nn.Parameter] = None,
             sample_rate: float = 44100.0,
     ):
-        super(nnAudioICQT, self).__init__()
+        super(Hybrid, self).__init__()
+        if window is None:
+            self.window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
+        else:
+            self.window = window
 
-        # 保持与CQT相同的参数
-        self.n_fft = 4096
-        self.n_bins = 84
-        self.hop_length = n_hop
+        self.n_fft = n_fft
+        self.n_hop = n_hop
         self.center = center
         self.sample_rate = sample_rate
-        self.window = nn.Parameter(torch.hann_window(self.n_fft), requires_grad=False)
 
-        # 使用nnAudio的ICQT实现
-        self.icqt = CQT(
+        # 计算STFT的频带数
+        self.stft_bins = n_fft // 2 + 1
+
+        # 设置CQT参数
+        self.cqt_bins = 84  # 7个八度，每个八度12个音符
+        self.cqt = CQT2010v2(
             sr=int(sample_rate),
             hop_length=n_hop,
-            n_bins=self.n_bins,
+            fmin=27.5,
+            n_bins=self.cqt_bins,
             bins_per_octave=12,
-            fmin=20,
-            window='hann',
-            center=center,
-            pad_mode='reflect'
+            verbose=False,
         )
 
-    def forward(self, X: Tensor, length: Optional[int] = None) -> Tensor:
-        """Inverse CQT path
+        # 计算STFT和CQT的分界频率
+        self.crossover_freq = 200  # 200Hz作为分界点
+        self.crossover_bin = int(self.crossover_freq * n_fft / sample_rate)
+
+        # 计算STFT部分需要保留的频带数
+        self.stft_keep_bins = self.stft_bins - self.crossover_bin
+
+    def forward(self, x: Tensor) -> Tensor:
+        """Hybrid forward path
         Args:
-            X (Tensor): complex cqt of
+            x (Tensor): audio waveform of
+                shape (nb_samples, nb_channels, nb_timesteps)
+        Returns:
+            Tensor: complex hybrid transform of
+                shape (nb_samples, nb_channels, nb_bins, nb_frames, complex=2)
+        """
+        shape = x.size()
+        # pack batch
+        x = x.view(-1, shape[-1])
+        
+        # 计算STFT
+        stft = torch.stft(
+            x,
+            n_fft=self.n_fft,
+            hop_length=self.n_hop,
+            window=self.window,
+            center=self.center,
+            normalized=False,
+            onesided=True,
+            pad_mode="reflect",
+            return_complex=True,
+        )
+        stft = torch.view_as_real(stft)
+        
+        # 计算CQT
+        cqt = self.cqt(x)  # CQT输出已经是复数形式
+        
+        # 计算STFT的时间帧数
+        stft_frames = stft.shape[-2]
+        
+        # 将CQT转换为与STFT相同的形状
+        cqt_resized = F.interpolate(
+            torch.abs(cqt).unsqueeze(1),  # [batch, 1, bins, time]
+            size=(self.crossover_bin, stft_frames),  # 使用STFT的时间帧数
+            mode='bilinear',
+            align_corners=False
+        ).squeeze(1)  # [batch, bins, time]
+        
+        # 将CQT转换为复数形式
+        cqt_complex = torch.stack([cqt_resized, torch.zeros_like(cqt_resized)], dim=-1)
+        
+        # 取STFT的高频部分
+        stft_high = stft[:, self.crossover_bin:, :, :]
+        
+        # 拼接CQT和STFT
+        hybrid = torch.cat([cqt_complex, stft_high], dim=1)
+        
+        # 重塑为正确的形状
+        # 从 [batch, bins, time, 2] 转换为 [batch, channels, bins, time, 2]
+        hybrid = hybrid.view(shape[0], shape[1], -1, hybrid.shape[2], 2)
+        
+        return hybrid
+
+
+class Hybrid_Inv(nn.Module):
+    def __init__(
+        self,
+        n_fft: int = 4096,
+        hop_length: int = 1024,
+        center: bool = False,
+        sample_rate: float = 44100.0,
+        window: Optional[nn.Parameter] = None,
+    ):
+        super(Hybrid_Inv, self).__init__()
+        if window is None:
+            self.window = nn.Parameter(torch.hann_window(n_fft), requires_grad=False)
+        else:
+            self.window = window
+
+        self.n_fft = n_fft
+        self.hop_length = hop_length
+        self.center = center
+        self.sample_rate = sample_rate
+        
+        # 计算STFT的频带数
+        self.stft_bins = n_fft // 2 + 1
+        
+        # 设置CQT参数
+        self.cqt_bins = 84  # 7个八度，每个八度12个音符
+        self.cqt = CQT2010v2(
+            sr=sample_rate,
+            hop_length=hop_length,
+            n_bins=self.cqt_bins,
+            bins_per_octave=12,
+            verbose=False
+        )
+        
+        # 计算STFT和CQT的分界频率
+        self.crossover_freq = 200  # 200Hz作为分界点
+        self.crossover_bin = int(self.crossover_freq * n_fft / sample_rate)
+
+    def forward(self, X: Tensor, length: Optional[int] = None) -> Tensor:
+        """Hybrid inverse transform
+        Args:
+            X (Tensor): complex hybrid transform of
                 shape (nb_samples, nb_channels, nb_bins, nb_frames, complex=2)
             length (int, optional): audio signal length to crop the signal
         Returns:
-            x (Tensor): audio waveform of
+            Tensor: audio waveform of
                 shape (nb_samples, nb_channels, nb_timesteps)
         """
         shape = X.size()
         X = X.reshape(-1, shape[-3], shape[-2], shape[-1])
-
-        # 对每个通道分别进行ICQT
-        audio_chunks = []
-        for ch in range(shape[1]):
-            # 获取当前通道的CQT
-            ch_cqt = X[ch::shape[1]]
-            # 转换为复数形式
-            ch_cqt = torch.view_as_complex(ch_cqt)
-            # 计算ICQT
-            # 使用ISTFT进行逆变换
-            audio_ch = torch.istft(
-                ch_cqt,
-                n_fft=self.n_fft,
-                hop_length=self.hop_length,
-                window=self.window,
-                center=self.center,
-                length=length
-            )
-            audio_chunks.append(audio_ch)
-
-        # 合并所有通道
-        y = torch.stack(audio_chunks, dim=1)
-
-        # 裁剪到指定长度
-        if length is not None:
-            y = y[..., :length]
-
+        
+        # 分离低频和高频部分
+        cqt_part = X[:, :self.crossover_bin, :, :]
+        stft_part = X[:, self.crossover_bin:, :, :]
+        
+        # 将CQT部分转换为原始CQT形状
+        cqt_original = F.interpolate(
+            cqt_part.permute(0, 3, 1, 2),  # [batch, 2, bins, time]
+            size=(self.cqt_bins, cqt_part.shape[-2]),
+            mode='bilinear',
+            align_corners=False
+        ).permute(0, 2, 3, 1)  # [batch, bins, time, 2]
+        
+        # 重建STFT
+        stft_full = torch.zeros(
+            X.shape[0], self.stft_bins, X.shape[2], 2,
+            device=X.device
+        )
+        stft_full[:, self.crossover_bin:, :, :] = stft_part
+        
+        # 使用ISTFT重建信号
+        y = torch.istft(
+            torch.view_as_complex(stft_full),
+            n_fft=self.n_fft,
+            hop_length=self.hop_length,
+            window=self.window,
+            center=self.center,
+            normalized=False,
+            onesided=True,
+            length=length,
+        )
+        
         y = y.reshape(shape[:-3] + y.shape[-1:])
         return y
+
 
 class TorchSTFT(nn.Module):
     def __init__(
