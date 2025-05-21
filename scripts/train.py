@@ -30,9 +30,14 @@ def train(args, unmix, encoder, device, train_sampler, optimizer):
         pbar.set_description("Training batch")
         x, y = x.to(device), y.to(device)
         optimizer.zero_grad()
+        
+        # 先进行时频变换
         X = encoder(x)
-        Y_hat = unmix(X)
         Y = encoder(y)
+        
+        # 使用unmix进行前向传播
+        Y_hat = unmix(X)
+        
         loss = torch.nn.functional.mse_loss(Y_hat, Y)
         loss.backward()
         optimizer.step()
@@ -76,7 +81,7 @@ def get_statistics(args, encoder, dataset):
     for ind in pbar:
         x, y = dataset_scaler[ind]
         pbar.set_description("Compute dataset statistics")
-        # 降为单通道
+        # 使用unmix的encoder进行变换
         X = encoder(x[None, ...]).mean(1, keepdim=False).permute(0, 2, 1)
         scaler.partial_fit(np.squeeze(X))
 
@@ -95,19 +100,21 @@ def plot_loss_history(train_losses, valid_losses, output_path, batch_size=None):
         batch_size: 每个epoch的batch数量，用于计算x轴刻度
     """
     plt.figure(figsize=(12, 6))
-    
-    # 绘制训练loss
-    if batch_size is not None:
-        # 计算每个batch的x轴位置
-        x_train = np.arange(len(train_losses)) / batch_size
-        plt.plot(x_train, train_losses, label='Training Loss (per batch)', alpha=0.5)
-    else:
-        plt.plot(train_losses, label='Training Loss (per batch)', alpha=0.5)
-    
+
+    # 计算每个epoch的平均训练loss
+    if batch_size is not None and len(train_losses) > 0:
+        # 将batch losses分组为epoch
+        epoch_train_losses = []
+        for i in range(0, len(train_losses), batch_size):
+            epoch_batches = train_losses[i:i + batch_size]
+            epoch_train_losses.append(np.mean(epoch_batches))
+
+        # 绘制训练loss (每个epoch的平均值)
+        plt.plot(epoch_train_losses, label='Training Loss', alpha=0.7, linewidth=2)
+
     # 绘制验证loss
-    x_valid = np.arange(len(valid_losses))
-    plt.plot(x_valid, valid_losses, label='Validation Loss (per epoch)', linewidth=2)
-    
+    plt.plot(valid_losses, label='Validation Loss', linewidth=2)
+
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training and Validation Loss History')
@@ -142,7 +149,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42, metavar="S", help="random seed (default: 42)")
 
     # 模型参数
-    parser.add_argument("--method", type=str, default="cqt", help="Method for time/frequency domain transmission")
+    parser.add_argument("--method", type=str, default="stft", help="Method for time/frequency domain transmission")
     parser.add_argument("--seq-dur", type=float, default=6.0, help="Sequence duration in seconds" "value of <=0.0 will use full/variable length")
     parser.add_argument("--unidirectional", action="store_true", default=False, help="Use unidirectional LSTM")
     parser.add_argument("--nfft", type=int, default=4096, help="fft size and window size")
@@ -190,7 +197,8 @@ def main():
     )
     valid_sampler = torch.utils.data.DataLoader(valid_dataset, batch_size=1, **dataloader_kwargs)
 
-    processor, _, nb_bins = transforms.make_filterbanks(
+    # 创建encoder和decoder
+    processor, _= transforms.make_filterbanks(
         n_fft=args.nfft,
         n_hop=args.nhop,
         sample_rate=train_dataset.sample_rate,
@@ -203,6 +211,7 @@ def main():
         "nhop": args.nhop,
         "sample_rate": train_dataset.sample_rate,
         "nb_channels": args.nb_channels,
+        "method": args.method,
     }
 
     with open(Path(target_path, "separator.json"), "w") as outfile:
@@ -228,12 +237,11 @@ def main():
         unmix = model.OpenUnmix(
             input_mean=scaler_mean,
             input_scale=scaler_std,
-            nb_bins=nb_bins,
+            nb_bins=args.nfft // 2 + 1,
             nb_channels=args.nb_channels,
             hidden_size=args.hidden_size,
             max_bin=max_bin,
-            unidirectional=args.unidirectional,
-            method=args.method
+            unidirectional=args.unidirectional
         ).to(device)
 
     optimizer = torch.optim.Adam(unmix.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -299,15 +307,6 @@ def main():
         t.set_postfix(train_loss=train_loss, val_loss=valid_loss)
 
         stop = es.step(valid_loss)
-        
-        # 每10个epoch保存一次loss图
-        if epoch % 10 == 0:
-            plot_loss_history(
-                train_loss_history, 
-                valid_loss_history,
-                Path(target_path, f"{args.output}_loss_history_epoch_{epoch}.png"),
-                batch_size
-            )
 
         if valid_loss == es.best:
             best_epoch = epoch
