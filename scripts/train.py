@@ -131,9 +131,9 @@ def main():
     parser.add_argument("--target", type=str, default="bass", help="target source (will be passed to the dataset)")
 
     # 数据集参数
-    parser.add_argument("--dataset", type=str, default=r"\umx-bass\musdb", help="Name of the dataset")
+    parser.add_argument("--dataset", type=str, default=r"\umx-bass\musdb18HQ", help="Name of the dataset")
     parser.add_argument("--root", type=str, help="root path of dataset")
-    parser.add_argument("--output", type=str, default="umx-bass-2", help="provide output path base folder name")
+    parser.add_argument("--output", type=str, default="umx-bass", help="provide output path base folder name")
     parser.add_argument("--model", type=str, help="Name or path of pretrained model to fine-tune")
     parser.add_argument("--checkpoint", type=str, help="Path of checkpoint to resume training")
     parser.add_argument("--audio-backend", type=str, default="soundfile", help="Set torchaudio backend (`sox_io` or `soundfile`")
@@ -224,11 +224,9 @@ def main():
         scaler_mean, scaler_std = get_statistics(args, encoder, train_dataset)
 
     max_bin = utils.bandwidth_to_max_bin(train_dataset.sample_rate, args.nfft, args.bandwidth)
-    print(f"max_bin={max_bin}")
 
     if args.model:
         # fine tune model
-        print(f"Fine-tuning model from {args.model}")
         unmix = utils.load_target_models(
             args.target, model_name=args.model, device=device, pretrained=True
         )[args.target]

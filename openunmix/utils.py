@@ -150,9 +150,9 @@ def load_target_models(targets, model_name=None, device="cpu", pretrained=True):
 
             target_model_path = next(Path(model_path).glob("%s*.pth" % target))
             state = torch.load(target_model_path, map_location=device)
-            if model_name in ["umx-bass-1", "umx-bass-2"]:
-                method = "cqt"
-                nb_bins = 84
+            if model_name in ["umx-bass-1", "umx-bass-2", "umx-bass-3"]:
+                method = "hybrid"
+                nb_bins = 2049  # STFT的bin数
             else:
                 method = "stft"
                 nb_bins = results["args"]["nfft"] // 2 + 1

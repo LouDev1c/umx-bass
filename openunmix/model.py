@@ -31,7 +31,7 @@ class OpenUnmix(nn.Module):
 
     def __init__(
         self,
-        nb_bins: int,
+        nb_bins: int = 4096,
         nb_channels: int = 2,
         hidden_size: int = 512,
         nb_layers: int = 3,
@@ -46,13 +46,7 @@ class OpenUnmix(nn.Module):
         self.nb_output_bins = nb_bins
         self.method = method
 
-        if self.method == "stft":
-            if max_bin:
-                self.nb_bins = max_bin
-            else:
-                self.nb_bins = self.nb_output_bins
-        elif self.method == "hybrid":
-            self.nb_bins = self.nb_output_bins
+        self.nb_bins = max_bin if max_bin else nb_bins
 
         self.hidden_size = hidden_size
 
@@ -147,10 +141,8 @@ class OpenUnmix(nn.Module):
         # crop
         x = x[..., : self.nb_bins]
         # shift and scale input to mean=0 std=1 (across all bins)
-
         x = x + self.input_mean
         x = x * self.input_scale
-
         # to (nb_frames*nb_samples, nb_channels*nb_bins)
         # and encode to (nb_frames*nb_samples, hidden_size)
         x = self.fc1(x.reshape(-1, nb_channels * self.nb_bins))
@@ -258,7 +250,7 @@ class Separator(nn.Module):
             # 使用模型自身的method参数
             method = model.method
             # 创建对应的encoder和decoder
-            encoder, decoder, _ = make_filterbanks(
+            encoder, decoder = make_filterbanks(
                 n_fft=n_fft,
                 n_hop=n_hop,
                 center=True,
