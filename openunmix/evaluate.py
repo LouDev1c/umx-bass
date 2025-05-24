@@ -6,7 +6,7 @@ from typing import Optional, Union
 import numpy as np
 import librosa
 from sklearn.metrics import f1_score
-import os
+import pandas as pd
 
 import musdb
 import museval
@@ -228,7 +228,6 @@ def separate_and_evaluate(
             track.targets["bass"].audio.mean(axis=1),  # 转换为单声道
             estimates["bass"].mean(axis=1)  # 转换为单声道
         )
-        print(f"Bass F1 Score: {bass_f1:.4f}")
 
         # 将F1分数添加到scores中
         if isinstance(scores, str):
@@ -239,6 +238,26 @@ def separate_and_evaluate(
             scores.bass_f1 = bass_f1
 
     return scores
+
+
+def methodstore_to_dataframe(met, model_name):
+    """将MethodStore转换为DataFrame"""
+    # 获取所有track数据
+    tracks_data = []
+    for eval_item in met.methods[model_name]:  # 通过methods字典访问数据
+        track_name = eval_item.track_name
+        # 提取SDR/SIR/SAR（取所有target的平均值）
+        sdr = np.mean([v['SDR'] for v in eval_item.targets.values()])
+        sir = np.mean([v['SIR'] for v in eval_item.targets.values()])
+        sar = np.mean([v['SAR'] for v in eval_item.targets.values()])
+        # 获取F1分数（如果存在）
+        f1 = getattr(eval_item, 'bass_f1', np.nan)
+        tracks_data.append([track_name, sdr, sir, sar, f1])
+
+    # 创建DataFrame
+    df = pd.DataFrame(tracks_data, columns=['Track', 'SDR', 'SIR', 'SAR', 'F1 Score'])
+    df.insert(0, 'Model', model_name)
+    return df
 
 
 if __name__ == "__main__":
@@ -341,10 +360,32 @@ if __name__ == "__main__":
                 wiener_win_len=args.wiener_win_len,
                 filterbank=method_name,
             )
-            print(track, "\n", scores)
             results.add_track(scores)
 
-    print(results)
     met = museval.MethodStore()
-    met.add_evalstore(results, model_name)  # 使用原始model名称保存结果
-    met.save(model_name + ".pandas")
+
+    # 转换数据并保存Excel
+    try:
+        df = methodstore_to_dataframe(met, model_name)
+
+        # 按照要求的格式重构表格
+        final_df = pd.DataFrame()
+        final_df['A'] = [model_name] + list(range(1, 51))  # A列：模型名 + 1-50
+
+        # 填充数据（不足50行用NaN填充）
+        max_rows = min(50, len(df))
+        final_df['B'] = ['SDR'] + df['SDR'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
+        final_df['C'] = ['SIR'] + df['SIR'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
+        final_df['D'] = ['SAR'] + df['SAR'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
+        final_df['E'] = ['F1 Score'] + df['F1 Score'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
+
+        # 保存Excel文件
+        excel_path = f"{model_name}_results.xlsx"
+        final_df.to_excel(excel_path, index=False, header=False)
+        print(f"结果已保存到: {excel_path}")
+
+    except Exception as e:
+        print(f"保存Excel时出错: {str(e)}")
+        # 保留原始.pandas备份
+        met.save(model_name + ".pandas")
+        print("已生成原始.pandas备份文件")

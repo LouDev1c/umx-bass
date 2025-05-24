@@ -23,7 +23,7 @@ def separate():
 
     parser.add_argument(
         "--model",
-        default="umxl",
+        default="umxhq",
         type=str,
         help="path to mode base directory of pretrained models, defaults to UMX-L",
     )
@@ -101,12 +101,10 @@ def separate():
     parser.add_argument(
         "--filterbank",
         type=str,
-        default="torch",
+        default="stft",
         help="filterbank implementation method. "
-        "Supported: `['torch', 'asteroid']`. `torch` is ~30%% faster "
-        "compared to `asteroid` on large FFT sizes such as 4096. However "
-        "asteroids stft can be exported to onnx, which makes is practical "
-        "for deployment.",
+        "Supported: `['stft', 'hybrid']`."
+        ,
     )
     parser.add_argument(
         "--verbose",

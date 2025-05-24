@@ -342,7 +342,7 @@ def umx_bass_1(
         device="cpu",
         pretrained=True,
         wiener_win_len=300,
-        filterbank="cqt",
+        filterbank="hybrid",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model with custom bass model 1
@@ -452,7 +452,7 @@ def umx_bass_2(
         device="cpu",
         pretrained=True,
         wiener_win_len=300,
-        filterbank="cqt",
+        filterbank="hybrid",
 ):
     """
     Open Unmix 2-channel/stereo BiLSTM Model with custom bass model 2
@@ -516,13 +516,13 @@ def umx_bass_3_spec(targets=None, device="cpu", pretrained=True):
     for target in targets:
         # load open unmix model
         if target == "bass":
-            # 对于bass使用Hybrid方法
+            # 对于bass使用stft方法
             target_unmix = OpenUnmix(
                 nb_bins=2049,  # STFT的bin数
                 nb_channels=2,
                 hidden_size=512,
                 max_bin=2049,
-                method="hybrid"
+                method="stft"
             )
         else:
             # 对于其他音轨使用STFT方法
