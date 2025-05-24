@@ -804,7 +804,7 @@ class MUSDBDataset(UnmixDataset):
         seed : int
             control randomness of dataset iterations
         args, kwargs : additional keyword arguments
-            used to add further control for the musdb dataset
+            used to add further control for the musdb18HQ dataset
             initialization function.
 
         """
@@ -829,7 +829,7 @@ class MUSDBDataset(UnmixDataset):
             *args,
             **kwargs,
         )
-        self.sample_rate = 44100.0  # musdb is fixed sample rate
+        self.sample_rate = 44100.0  # musdb18HQ is fixed sample rate
 
     def __getitem__(self, index):
         audio_sources = []
@@ -873,9 +873,9 @@ class MUSDBDataset(UnmixDataset):
                 y = x - stems[vocind]
 
         # for validation and test, we deterministically yield the full
-        # pre-mixed musdb track
+        # pre-mixed musdb18HQ track
         else:
-            # get the non-linear source mix straight from musdb
+            # get the non-linear source mix straight from musdb18HQ
             x = torch.as_tensor(track.audio.T, dtype=torch.float32)
             y = torch.as_tensor(track.targets[self.target].audio.T, dtype=torch.float32)
 
@@ -890,9 +890,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset",
         type=str,
-        default="musdb",
+        default="musdb18HQ",
         choices=[
-            "musdb",
+            "musdb18HQ",
             "aligned",
             "sourcefolder",
             "trackfolder_var",

@@ -1,6 +1,6 @@
 import os
 import pytest
-import musdb
+import musdb18HQ
 import simplejson as json
 import numpy as np
 import torch
@@ -37,7 +37,7 @@ def method(request):
 
 @pytest.fixture()
 def mus():
-    return musdb.DB(download=True)
+    return musdb18HQ.DB(download=True)
 
 
 def test_estimate_and_evaluate(mus):

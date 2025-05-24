@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /workspace
 
 RUN conda install ffmpeg -c conda-forge
-RUN pip install musdb>=0.4.0
+RUN pip install musdb18HQ>=0.4.0
 
 RUN pip install openunmix['stempeg']
 

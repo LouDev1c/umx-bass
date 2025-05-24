@@ -51,9 +51,7 @@ class OpenUnmix(nn.Module):
                 self.nb_bins = max_bin
             else:
                 self.nb_bins = self.nb_output_bins
-        elif self.method == "cqt":
-            self.nb_bins = 84  # CQT固定使用84个bin
-        else:
+        elif self.method == "hybrid":
             self.nb_bins = self.nb_output_bins
 
         self.hidden_size = hidden_size
@@ -149,12 +147,10 @@ class OpenUnmix(nn.Module):
         # crop
         x = x[..., : self.nb_bins]
         # shift and scale input to mean=0 std=1 (across all bins)
-        if self.method == "stft":
-            x = x + self.input_mean
-            x = x * self.input_scale
-        elif self.method == "cqt":
-            x = x + self.input_mean * 0.3  # 减小均值偏移
-            x = x * (self.input_scale * 0.6)  # 减小缩放因子
+
+        x = x + self.input_mean
+        x = x * self.input_scale
+
         # to (nb_frames*nb_samples, nb_channels*nb_bins)
         # and encode to (nb_frames*nb_samples, hidden_size)
         x = self.fc1(x.reshape(-1, nb_channels * self.nb_bins))
@@ -197,9 +193,6 @@ class OpenUnmix(nn.Module):
         x *= self.output_scale
         x += self.output_mean
 
-        # 确保mix的维度与x匹配
-        if self.method == "cqt":
-            mix = mix[..., :84]  # 对于CQT方法，只取前84个bin
         x = f.relu(x) * mix
         # permute back to (nb_samples, nb_channels, nb_bins, nb_frames)
         return x.permute(1, 2, 3, 0)

@@ -1,6 +1,6 @@
 import os
 import torch
-import musdb
+import musdb18HQ
 import numpy as np
 from openunmix import model, utils
 
@@ -13,7 +13,7 @@ was the commit that umx was trained with
 
 def main():
     test_track = "Al James - Schoolboy Facination"
-    mus = musdb.DB(download=True)
+    mus = musdb18HQ.DB(download=True)
 
     # load audio track
     track = [track for track in mus.tracks if track.name == test_track][0]

@@ -8,7 +8,7 @@ import librosa
 from sklearn.metrics import f1_score
 import os
 
-import musdb
+import musdb18HQ
 import museval
 import torch
 import tqdm
@@ -189,7 +189,7 @@ def calculate_f1_score(original_audio, estimated_audio, sr=44100):
 
 
 def separate_and_evaluate(
-        track: musdb.MultiTrack,
+        track: musdb18HQ.MultiTrack,
         targets: list,
         model_name: str,
         niter: int,
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    mus = musdb.DB(
+    mus = musdb18HQ.DB(
         root=args.root,
         download=args.root is None,
         subsets=args.subset,
