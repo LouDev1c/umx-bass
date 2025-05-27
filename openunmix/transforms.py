@@ -123,6 +123,40 @@ class Hybrid(nn.Module):
         return hybrid
 
 
+class GriffinLim(nn.Module):
+    """Griffin-Lim 算法实现"""
+    def __init__(self, n_iter=32):
+        super(GriffinLim, self).__init__()
+        self.n_iter = n_iter
+
+    def forward(self, magnitude, stft_fn, istft_fn, length=None):
+        """Griffin-Lim 算法
+        Args:
+            magnitude: 幅度谱
+            stft_fn: STFT 函数
+            istft_fn: ISTFT 函数
+            length: 输出信号长度
+        Returns:
+            重建的时域信号
+        """
+        # 初始化随机相位
+        angles = torch.randn_like(magnitude) * 2 * torch.pi
+        complex_spec = magnitude * torch.exp(1j * angles)
+        
+        # 迭代优化
+        for _ in range(self.n_iter):
+            # 重建时域信号
+            signal = istft_fn(complex_spec, length=length)
+            # 重新计算STFT
+            complex_spec = stft_fn(signal)
+            # 保持幅度不变，更新相位
+            complex_spec = magnitude * torch.exp(1j * torch.angle(complex_spec))
+        
+        # 最后一次重建
+        signal = istft_fn(complex_spec, length=length)
+        return signal
+
+
 class Hybrid_Inv(nn.Module):
     def __init__(
         self,
@@ -131,6 +165,7 @@ class Hybrid_Inv(nn.Module):
         center: bool = False,
         sample_rate: float = 44100.0,
         window: Optional[nn.Parameter] = None,
+        n_iter: int = 32,  # Griffin-Lim 迭代次数
     ):
         super(Hybrid_Inv, self).__init__()
         if window is None:
@@ -159,6 +194,54 @@ class Hybrid_Inv(nn.Module):
         # 计算STFT和CQT的分界频率
         self.crossover_freq = 200  # 200Hz作为分界点
         self.crossover_bin = int(self.crossover_freq * n_fft / sample_rate)
+        
+        # 计算过渡带的宽度（以STFT的bin为单位）
+        self.transition_width = 4  # 可以根据需要调整
+        
+        # 创建过渡带权重
+        self.register_buffer('transition_weights', self._create_transition_weights())
+        
+        # 初始化Griffin-Lim
+        self.griffin_lim = GriffinLim(n_iter=n_iter)
+
+    def _create_transition_weights(self):
+        """创建过渡带的权重函数"""
+        weights = torch.ones(self.stft_bins, device=self.window.device)
+        transition_start = self.crossover_bin - self.transition_width
+        transition_end = self.crossover_bin + self.transition_width
+        
+        # 创建平滑的过渡函数
+        transition = torch.linspace(0, 1, 2 * self.transition_width + 1, device=self.window.device)
+        weights[transition_start:transition_end + 1] = transition
+        
+        return weights
+
+    def _stft_fn(self, x):
+        """STFT 函数包装器"""
+        return torch.stft(
+            x,
+            n_fft=self.n_fft,
+            hop_length=self.hop_length,
+            window=self.window,
+            center=self.center,
+            normalized=False,
+            onesided=True,
+            pad_mode="reflect",
+            return_complex=True,
+        )
+
+    def _istft_fn(self, X, length=None):
+        """ISTFT 函数包装器"""
+        return torch.istft(
+            X,
+            n_fft=self.n_fft,
+            hop_length=self.hop_length,
+            window=self.window,
+            center=self.center,
+            normalized=False,
+            onesided=True,
+            length=length,
+        )
 
     def forward(self, X: Tensor, length: Optional[int] = None) -> Tensor:
         """Hybrid inverse transform
@@ -185,6 +268,18 @@ class Hybrid_Inv(nn.Module):
             align_corners=False
         ).permute(0, 2, 3, 1)  # [batch, bins, time, 2]
         
+        # 使用CQT重建低频部分
+        cqt_complex = torch.view_as_complex(cqt_original)
+        cqt_mag = torch.abs(cqt_complex)
+        
+        # 使用Griffin-Lim重建低频信号
+        cqt_signal = self.griffin_lim(
+            cqt_mag,
+            self.cqt.forward,
+            self.cqt.inverse,
+            length=length
+        )
+        
         # 重建STFT
         stft_full = torch.zeros(
             X.shape[0], self.stft_bins, X.shape[2], 2,
@@ -192,16 +287,43 @@ class Hybrid_Inv(nn.Module):
         )
         stft_full[:, self.crossover_bin:, :, :] = stft_part
         
-        # 使用ISTFT重建信号
-        y = torch.istft(
-            torch.view_as_complex(stft_full),
-            n_fft=self.n_fft,
-            hop_length=self.hop_length,
-            window=self.window,
-            center=self.center,
-            normalized=False,
-            onesided=True,
-            length=length,
+        # 使用Griffin-Lim重建高频信号
+        stft_mag = torch.abs(torch.view_as_complex(stft_full))
+        stft_signal = self.griffin_lim(
+            stft_mag,
+            self._stft_fn,
+            self._istft_fn,
+            length=length
+        )
+        
+        # 计算能量归一化因子
+        cqt_energy = torch.mean(torch.abs(cqt_signal))
+        stft_energy = torch.mean(torch.abs(stft_signal))
+        energy_ratio = torch.sqrt(cqt_energy / stft_energy)
+        
+        # 应用能量归一化
+        stft_signal = stft_signal * energy_ratio
+        
+        # 使用过渡带权重合并信号
+        transition_weights = self.transition_weights.view(1, 1, -1, 1)
+        stft_weights = transition_weights
+        cqt_weights = 1 - transition_weights
+        
+        # 在频域应用权重
+        stft_full = stft_full * stft_weights
+        cqt_full = torch.zeros_like(stft_full)
+        cqt_full[:, :self.crossover_bin, :, :] = cqt_part * cqt_weights[:self.crossover_bin]
+        
+        # 合并频域表示
+        combined_stft = stft_full + cqt_full
+        
+        # 使用Griffin-Lim重建最终信号
+        combined_mag = torch.abs(torch.view_as_complex(combined_stft))
+        y = self.griffin_lim(
+            combined_mag,
+            self._stft_fn,
+            self._istft_fn,
+            length=length
         )
         
         y = y.reshape(shape[:-3] + y.shape[-1:])

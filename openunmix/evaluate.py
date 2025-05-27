@@ -6,7 +6,11 @@ from typing import Optional, Union
 import numpy as np
 import librosa
 from sklearn.metrics import f1_score
+import os
 import pandas as pd
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Alignment
 
 import musdb
 import museval
@@ -240,26 +244,6 @@ def separate_and_evaluate(
     return scores
 
 
-def methodstore_to_dataframe(met, model_name):
-    """将MethodStore转换为DataFrame"""
-    # 获取所有track数据
-    tracks_data = []
-    for eval_item in met.methods[model_name]:  # 通过methods字典访问数据
-        track_name = eval_item.track_name
-        # 提取SDR/SIR/SAR（取所有target的平均值）
-        sdr = np.mean([v['SDR'] for v in eval_item.targets.values()])
-        sir = np.mean([v['SIR'] for v in eval_item.targets.values()])
-        sar = np.mean([v['SAR'] for v in eval_item.targets.values()])
-        # 获取F1分数（如果存在）
-        f1 = getattr(eval_item, 'bass_f1', np.nan)
-        tracks_data.append([track_name, sdr, sir, sar, f1])
-
-    # 创建DataFrame
-    df = pd.DataFrame(tracks_data, columns=['Track', 'SDR', 'SIR', 'SAR', 'F1 Score'])
-    df.insert(0, 'Model', model_name)
-    return df
-
-
 if __name__ == "__main__":
     # Training settings
     parser = argparse.ArgumentParser(description="MUSDB18 Evaluation", add_help=False)
@@ -362,30 +346,59 @@ if __name__ == "__main__":
             )
             results.add_track(scores)
 
-    met = museval.MethodStore()
+    # 使用openpyxl创建新的Workbook并写入数据
+    wb = Workbook()
+    ws = wb.active
+    
+    # 写入标题行
+    ws['A1'] = model_name
+    ws['B1'] = 'SDR'
+    ws['C1'] = 'SIR'
+    ws['D1'] = 'SAR'
+    ws['E1'] = 'F1 Score'
+    
+    # 应用居中对齐到标题行
+    for col in ['A', 'B', 'C', 'D', 'E']:
+        ws[col + '1'].alignment = Alignment(horizontal='center', vertical='center')
 
-    # 转换数据并保存Excel
-    try:
-        df = methodstore_to_dataframe(met, model_name)
+    # 写入数据行
+    for i, track in enumerate(mus.tracks):
+        if i >= 50:  # 只处理前50首曲子
+            break
+            
+        # 写入曲目编号
+        track_number_cell = ws.cell(row=i+2, column=1, value=i+1)
+        track_number_cell.alignment = Alignment(horizontal='center', vertical='center')
+        
+        # 获取当前音轨的评估结果
+        track_df = results.df[results.df['track'] == track.name]
+        
+        # 提取bass音轨的评估指标并写入表格
+        bass_df = track_df[track_df['target'] == 'bass']
+        if not bass_df.empty:
+            sdr_score = bass_df[bass_df['metric'] == 'SDR']['score'].values[0] if 'SDR' in bass_df['metric'].values else np.nan
+            sir_score = bass_df[bass_df['metric'] == 'SIR']['score'].values[0] if 'SIR' in bass_df['metric'].values else np.nan
+            sar_score = bass_df[bass_df['metric'] == 'SAR']['score'].values[0] if 'SAR' in bass_df['metric'].values else np.nan
 
-        # 按照要求的格式重构表格
-        final_df = pd.DataFrame()
-        final_df['A'] = [model_name] + list(range(1, 51))  # A列：模型名 + 1-50
+            # 确保正确提取 F1 Score
+            f1_score_val = np.nan
+            if 'bass_f1' in bass_df['metric'].values:
+                 f1_score_val = bass_df[bass_df['metric'] == 'bass_f1']['score'].values[0]
 
-        # 填充数据（不足50行用NaN填充）
-        max_rows = min(50, len(df))
-        final_df['B'] = ['SDR'] + df['SDR'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
-        final_df['C'] = ['SIR'] + df['SIR'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
-        final_df['D'] = ['SAR'] + df['SAR'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
-        final_df['E'] = ['F1 Score'] + df['F1 Score'].tolist()[:max_rows] + [np.nan] * (50 - max_rows)
+            # 写入度量指标并应用居中对齐
+            sdr_cell = ws.cell(row=i+2, column=2, value=sdr_score)
+            sir_cell = ws.cell(row=i+2, column=3, value=sir_score)
+            sar_cell = ws.cell(row=i+2, column=4, value=sar_score)
+            f1_cell = ws.cell(row=i+2, column=5, value=f1_score_val)
 
-        # 保存Excel文件
-        excel_path = f"{model_name}_results.xlsx"
-        final_df.to_excel(excel_path, index=False, header=False)
-        print(f"结果已保存到: {excel_path}")
+            sdr_cell.alignment = Alignment(horizontal='center', vertical='center')
+            sir_cell.alignment = Alignment(horizontal='center', vertical='center')
+            sar_cell.alignment = Alignment(horizontal='center', vertical='center')
+            f1_cell.alignment = Alignment(horizontal='center', vertical='center')
 
-    except Exception as e:
-        print(f"保存Excel时出错: {str(e)}")
-        # 保留原始.pandas备份
-        met.save(model_name + ".pandas")
-        print("已生成原始.pandas备份文件")
+
+    # 保存为Excel文件
+    excel_path = f"{model_name}_evaluation.xlsx"
+    wb.save(excel_path)
+    
+    print(f"评估结果已保存到 {excel_path}")
