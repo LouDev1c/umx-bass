@@ -272,7 +272,7 @@ class Hybrid_Inv(nn.Module):
         cqt_complex = torch.view_as_complex(cqt_original)
         cqt_mag = torch.abs(cqt_complex)
         
-        # 使用Griffin-Lim重建低频信号
+        # 只对低频部分使用Griffin-Lim重建
         cqt_signal = self.griffin_lim(
             cqt_mag,
             self.cqt.forward,
@@ -287,24 +287,7 @@ class Hybrid_Inv(nn.Module):
         )
         stft_full[:, self.crossover_bin:, :, :] = stft_part
         
-        # 使用Griffin-Lim重建高频信号
-        stft_mag = torch.abs(torch.view_as_complex(stft_full))
-        stft_signal = self.griffin_lim(
-            stft_mag,
-            self._stft_fn,
-            self._istft_fn,
-            length=length
-        )
-        
-        # 计算能量归一化因子
-        cqt_energy = torch.mean(torch.abs(cqt_signal))
-        stft_energy = torch.mean(torch.abs(stft_signal))
-        energy_ratio = torch.sqrt(cqt_energy / stft_energy)
-        
-        # 应用能量归一化
-        stft_signal = stft_signal * energy_ratio
-        
-        # 使用过渡带权重合并信号
+        # 计算过渡带权重
         transition_weights = self.transition_weights.view(1, 1, -1, 1)
         stft_weights = transition_weights
         cqt_weights = 1 - transition_weights
@@ -317,14 +300,41 @@ class Hybrid_Inv(nn.Module):
         # 合并频域表示
         combined_stft = stft_full + cqt_full
         
-        # 使用Griffin-Lim重建最终信号
-        combined_mag = torch.abs(torch.view_as_complex(combined_stft))
-        y = self.griffin_lim(
-            combined_mag,
+        # 分离幅度和相位
+        combined_complex = torch.view_as_complex(combined_stft)
+        combined_mag = torch.abs(combined_complex)
+        combined_phase = torch.angle(combined_complex)
+        
+        # 在过渡带区域使用Griffin-Lim优化相位
+        transition_start = self.crossover_bin - self.transition_width
+        transition_end = self.crossover_bin + self.transition_width
+        
+        # 创建过渡带掩码
+        transition_mask = torch.zeros_like(combined_mag)
+        transition_mask[:, transition_start:transition_end + 1, :] = 1
+        
+        # 使用Griffin-Lim优化过渡带相位
+        transition_signal = self.griffin_lim(
+            combined_mag * transition_mask,
             self._stft_fn,
             self._istft_fn,
             length=length
         )
+        
+        # 获取过渡带的相位
+        transition_stft = self._stft_fn(transition_signal)
+        transition_phase = torch.angle(transition_stft)
+        
+        # 在过渡带区域使用优化后的相位
+        combined_phase = torch.where(
+            transition_mask > 0,
+            transition_phase,
+            combined_phase
+        )
+        
+        # 重建最终信号
+        final_complex = combined_mag * torch.exp(1j * combined_phase)
+        y = self._istft_fn(final_complex, length=length)
         
         y = y.reshape(shape[:-3] + y.shape[-1:])
         return y
