@@ -142,7 +142,7 @@ def main():
     parser.add_argument("--epochs", type=int, default=1000, help="number of training epochs")
     parser.add_argument("--batch-size", type=int, default=32, help="batch size for training")
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate, defaults to 1e-3")
-    parser.add_argument("--patience", type=int, default=140, help="maximum number of train epochs (default: 140)")
+    parser.add_argument("--patience", type=int, default=20, help="maximum number of train epochs (default: 140)")
     parser.add_argument("--lr-decay-patience", type=int, default=80, help="lr decay patience for plateau scheduler")
     parser.add_argument("--lr-decay-gamma", type=float, default=0.3, help="gamma of learning rate scheduler decay",)
     parser.add_argument("--weight-decay", type=float, default=0.00001, help="weight decay")
